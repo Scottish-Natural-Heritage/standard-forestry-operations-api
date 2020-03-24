@@ -6,7 +6,13 @@
   "repository": "github:Scottish-Natural-Heritage/standard-forestry-operations-api",
   "type": "module",
   "scripts": {
-    "lint": "xo"
+    "lint": "xo",
+    "build": "npm run lint",
+    "prestart": "npm run build",
+    "start": "node --experimental-modules src/server.js",
+    "dev": "SFO_API_PORT=3999 nodemon --exec \"npm run start\" -e js",
+    "nm:run": "echo newman will run here when tests have been added",
+    "test": "start-server-and-test start http://localhost:3003/standard-forestry-operations-api/v1/health nm:run"
   },
   "engines": {
     "node": "12.14.1",
@@ -25,16 +31,31 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
+    "eslint-plugin-jsdoc": "^22.1.0",
+    "nodemon": "^2.0.2",
     "prettier": "^2.0.2",
+    "start-server-and-test": "^1.10.11",
     "xo": "^0.28.0"
   },
   "xo": {
     "space": 2,
     "prettier": true,
     "parser": "babel-eslint",
+    "plugins": [
+      "jsdoc"
+    ],
+    "extends": [
+      "plugin:jsdoc/recommended"
+    ],
     "rules": {
       "import/extensions": 0,
-      "new-cap": 0
+      "new-cap": 0,
+      "jsdoc/check-examples": 1,
+      "jsdoc/check-indentation": 1,
+      "jsdoc/check-syntax": 1,
+      "jsdoc/match-description": 1,
+      "jsdoc/require-description": 1,
+      "jsdoc/require-description-complete-sentence": 1
     }
   },
   "prettier": {
