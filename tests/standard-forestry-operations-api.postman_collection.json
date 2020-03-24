@@ -1,0 +1,128 @@
+{
+	"info": {
+		"_postman_id": "817207ab-d080-4a47-8e51-270a3736adf8",
+		"name": "standard-forestry-operations-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "404 Error",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f0797fbc-05b4-433e-a0b8-4e42448a694a",
+						"exec": [
+							"pm.test('Status code is 404 Not Found', function () {",
+							"    pm.response.to.have.status(404);",
+							"    pm.response.to.have.status('Not Found');",
+							"});",
+							"",
+							"pm.test('Message is \"Not found.\"', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql('Not found.');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "{{SFO_API_PORT}}",
+					"path": [
+						"{{SFO_API_PATH_PREFIX}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f0797fbc-05b4-433e-a0b8-4e42448a694a",
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Message is \"OK\"', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql('OK');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "{{SFO_API_PORT}}",
+					"path": [
+						"{{SFO_API_PATH_PREFIX}}",
+						"v1",
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "3c32be29-e569-4513-9aed-97d2ada79539",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "fb473a5d-467d-440c-8c97-f1d5bbc42d04",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "4d7b5444-cd35-4b71-956d-df3321da71d0",
+			"key": "SFO_API_PORT",
+			"value": "3003",
+			"type": "string"
+		},
+		{
+			"id": "35555415-f010-4484-ae7c-73cb9c56800c",
+			"key": "SFO_API_PATH_PREFIX",
+			"value": "standard-forestry-operations-api",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
