@@ -1,6 +1,46 @@
-# trap-registration-api
+# standard-forestry-operations-api
 
-Register to use traps under General Licences
+Apply for a Standard Forestry Operations licence
+
+## Develop
+
+```sh
+npm run dev
+```
+
+## Test
+
+```sh
+npm run test
+```
+
+## Debug
+
+### `.vscode/launch.json`
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "runtimeArgs": [
+        "--experimental-modules"
+      ],
+      "request": "launch",
+      "name": "Launch Program",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}\\src\\server.js",
+      "env": {
+        "SFO_API_PORT": "3003",
+        "SFO_API_PATH_PREFIX": "standard-forestry-operations-api",
+      }
+    }
+  ]
+}
+```
 
 ## License
 
