@@ -5,6 +5,6 @@ module.exports = {
     return queryInterface.createSchema('sfo');
   },
   down: (queryInterface) => {
-    return queryInterface.dropSchema( 'sfo');
+    return queryInterface.dropSchema('sfo');
   }
 };
