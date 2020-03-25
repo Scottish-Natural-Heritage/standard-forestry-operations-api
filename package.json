@@ -7,8 +7,9 @@
   "type": "module",
   "scripts": {
     "lint": "xo",
-    "build": "npm run lint",
-    "prestart": "npm run build",
+    "premigrations": "npx sequelize-cli db:migrate --env preMigrations --migrations-path util/db/pre-migrations",
+    "migrations": "echo Migrations will run here once written.",
+    "prestart": "npm run lint && npm run migrations",
     "start": "node --experimental-modules src/server.js",
     "dev": "SFO_API_PORT=3999 nodemon --exec \"npm run start\" -e js",
     "nm:run": "newman run tests/standard-forestry-operations-api.postman_collection.json",

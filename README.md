@@ -36,6 +36,8 @@ npm run test
       "env": {
         "SFO_API_PORT": "3003",
         "SFO_API_PATH_PREFIX": "standard-forestry-operations-api",
+        "LICENSING_DB_PASS": "ChangeMeFromCorrectHorseBatteryStaple",
+        "SFO_DB_PASS": "ChangeMeFromHunter2"
       }
     }
   ]
