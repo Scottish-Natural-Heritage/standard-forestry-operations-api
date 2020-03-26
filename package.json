@@ -57,7 +57,15 @@
       "jsdoc/check-syntax": 1,
       "jsdoc/match-description": 1,
       "jsdoc/require-description": 1,
-      "jsdoc/require-description-complete-sentence": 1
+      "jsdoc/require-description-complete-sentence": 1,
+      "unicorn/prevent-abbreviations": [
+        "error",
+        {
+          "whitelist": {
+            "Application": true
+          }
+        }
+      ]
     }
   },
   "prettier": {
