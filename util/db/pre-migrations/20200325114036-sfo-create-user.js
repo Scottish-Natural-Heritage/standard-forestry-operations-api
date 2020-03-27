@@ -6,16 +6,16 @@
 const config = require('../../../src/config/database').production;
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.query('create role sfo with noinherit login password :sfoPassword;', {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.sequelize.query('create role sfo with noinherit login password :sfoPassword;', {
       type: Sequelize.QueryTypes.RAW,
       replacements: {
         sfoPassword: config.password
       }
     });
   },
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.query('drop role sfo;', {
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.sequelize.query('drop role sfo;', {
       type: Sequelize.QueryTypes.RAW
     });
   }

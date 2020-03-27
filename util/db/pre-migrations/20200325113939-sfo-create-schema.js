@@ -1,10 +1,10 @@
 'use strict';
 
 module.exports = {
-  up: (queryInterface) => {
-    return queryInterface.createSchema('sfo');
+  up: async (queryInterface) => {
+    await queryInterface.createSchema('sfo');
   },
-  down: (queryInterface) => {
-    return queryInterface.dropSchema('sfo');
+  down: async (queryInterface) => {
+    await queryInterface.dropSchema('sfo');
   }
 };
