@@ -86,6 +86,179 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Create new Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e6f5a6dd-e818-446b-bb93-0a5c178f07e6",
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {",
+							"    pm.response.to.have.status(201);",
+							"    pm.response.to.have.status('Created');",
+							"});",
+							"",
+							"pm.test('Location is present', function () {",
+							"    pm.response.to.have.header('Location');",
+							"    ",
+							"    const SFO_API_PORT = pm.collectionVariables.get('SFO_API_PORT');",
+							"    const SFO_API_PATH_PREFIX = pm.collectionVariables.get('SFO_API_PATH_PREFIX');",
+							"    ",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(",
+							"        `http://localhost:${SFO_API_PORT}/${SFO_API_PATH_PREFIX}/v1/applications/`",
+							"    );",
+							"});",
+							"",
+							"pm.collectionVariables.set(\"SFO_NEW_APP_ID\", pm.response.headers.get('Location').split('/').pop());",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/applications",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "{{SFO_API_PORT}}",
+					"path": [
+						"{{SFO_API_PATH_PREFIX}}",
+						"v1",
+						"applications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e6f5a6dd-e818-446b-bb93-0a5c178f07e6",
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Returned object matches posted object', function () {",
+							"    ",
+							"    var reqJsonData = JSON.parse(pm.request.body.raw);",
+							"    var resJsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(reqJsonData.convictions).to.eql(resJsonData.convictions);",
+							"    pm.expect(reqJsonData.complyWithTerms).to.eql(resJsonData.complyWithTerms);",
+							"    ",
+							"    pm.expect(reqJsonData.fullName).to.eql(resJsonData.fullName);",
+							"    pm.expect(reqJsonData.companyOrganisation).to.eql(resJsonData.companyOrganisation);",
+							"    pm.expect(reqJsonData.addressLine1).to.eql(resJsonData.addressLine1);",
+							"    pm.expect(reqJsonData.addressLine2).to.eql(resJsonData.addressLine2);",
+							"    pm.expect(reqJsonData.addressTown).to.eql(resJsonData.addressTown);",
+							"    pm.expect(reqJsonData.addressCounty).to.eql(resJsonData.addressCounty);",
+							"    pm.expect(reqJsonData.addressPostcode).to.eql(resJsonData.addressPostcode);",
+							"    pm.expect(reqJsonData.phoneNumber).to.eql(resJsonData.phoneNumber);",
+							"    pm.expect(reqJsonData.emailAddress).to.eql(resJsonData.emailAddress);",
+							"    ",
+							"    pm.expect(reqJsonData.siteName).to.eql(resJsonData.siteName);",
+							"    ",
+							"    pm.expect(reqJsonData.setts.length).to.eql(resJsonData.Setts.length);",
+							"    ",
+							"    pm.expect(reqJsonData.setts[0].id).to.eql(resJsonData.Setts[0].sett);",
+							"    pm.expect(reqJsonData.setts[0].type).to.eql(resJsonData.Setts[0].SettTypeId);",
+							"    pm.expect(reqJsonData.setts[0].gridReference).to.eql(resJsonData.Setts[0].gridRef);",
+							"    pm.expect(reqJsonData.setts[0].entrances).to.eql(resJsonData.Setts[0].entrances);",
+							"    ",
+							"    pm.expect(reqJsonData.setts[1].id).to.eql(resJsonData.Setts[1].sett);",
+							"    pm.expect(reqJsonData.setts[1].type).to.eql(resJsonData.Setts[1].SettTypeId);",
+							"    pm.expect(reqJsonData.setts[1].gridReference).to.eql(resJsonData.Setts[1].gridRef);",
+							"    pm.expect(reqJsonData.setts[1].entrances).to.eql(resJsonData.Setts[1].entrances);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"convictions\": false,\n  \"complyWithTerms\": true,\n  \"fullName\": \"Nature Scot\",\n  \"companyOrganisation\": \"NatureScot\",\n  \"addressLine1\": \"Great Glen House\",\n  \"addressLine2\": \"\",\n  \"addressTown\": \"Inverness\",\n  \"addressCounty\": \"\",\n  \"addressPostcode\": \"IV3 8NW\",\n  \"phoneNumber\": \"01463 725 000\",\n  \"emailAddress\": \"licensing@nature.scot\",\n  \"siteName\": \"Dunain Hill\",\n  \"setts\": [\n  \t{\n  \t\t\"id\": \"ABC123\",\n  \t\t\"type\": 1,\n  \t\t\"gridReference\": \"NH63054372\",\n  \t\t\"entrances\": 5\n  \t},\n  \t{\n  \t\t\"id\": \"DEF456\",\n  \t\t\"type\": 2,\n  \t\t\"gridReference\": \"NH63044379\",\n  \t\t\"entrances\": 2\n  \t}\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "{{SFO_API_PORT}}",
+					"path": [
+						"{{SFO_API_PATH_PREFIX}}",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a non-existent Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e6f5a6dd-e818-446b-bb93-0a5c178f07e6",
+						"exec": [
+							"pm.test('Status code is 404 Not Found', function () {",
+							"    pm.response.to.have.status(404);",
+							"    pm.response.to.have.status('Not Found');",
+							"});",
+							"",
+							"pm.test('Message is \"Application -1 not allocated.\"', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql('Application -1 not allocated.');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/applications/-1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "{{SFO_API_PORT}}",
+					"path": [
+						"{{SFO_API_PATH_PREFIX}}",
+						"v1",
+						"applications",
+						"-1"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -112,15 +285,21 @@
 	],
 	"variable": [
 		{
-			"id": "4d7b5444-cd35-4b71-956d-df3321da71d0",
+			"id": "141636bd-4494-44bc-877f-bd8358574ee1",
 			"key": "SFO_API_PORT",
 			"value": "3003",
 			"type": "string"
 		},
 		{
-			"id": "35555415-f010-4484-ae7c-73cb9c56800c",
+			"id": "d7d3c1f6-0d2a-4454-83d8-5281c20783f9",
 			"key": "SFO_API_PATH_PREFIX",
 			"value": "standard-forestry-operations-api",
+			"type": "string"
+		},
+		{
+			"id": "7eac1c5a-ccdb-432f-8aa9-dd359517cd23",
+			"key": "SFO_NEW_APP_ID",
+			"value": "",
 			"type": "string"
 		}
 	],
