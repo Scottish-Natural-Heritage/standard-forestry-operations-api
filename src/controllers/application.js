@@ -2,7 +2,7 @@
 import database from '../models/index.js';
 import Sequelize from 'sequelize';
 
-const {Application} = database;
+const {Application, Sett, SettType} = database;
 
 /**
  * Attempt to create an empty, randomly allocated application.
@@ -67,6 +67,64 @@ const ApplicationController = {
 
     // On success, return the new application.
     return newApp;
+  },
+
+  /**
+   * Retrieve the specified application from the database.
+   *
+   * @param {number} id An existing application's ID.
+   * @returns {Sequelize.Model} An existing application.
+   */
+  findOne: async (id) => {
+    return Application.findByPk(id, {include: [{model: Sett, include: SettType}]});
+  },
+
+  /**
+   * Replace an application in the database with our new JSON model.
+   *
+   * @param {number} id An existing application's ID.
+   * @param {any} jsonApp A JSON version of the model to replace the database's copy.
+   * @returns {Sequelize.Model} The updated application.
+   */
+  update: async (id, jsonApp) => {
+    // Grab the already existing object from the database.
+    const existingApp = await Application.findByPk(id);
+
+    // It doesn't exist, you say?
+    if (existingApp === undefined) {
+      // Tell the caller.
+      return undefined;
+    }
+
+    // Split the incoming json blob in to each object to be persisted.
+    const {setts, ...app} = jsonApp;
+
+    // Update the application object with the new fields.
+    const updatedApp = await existingApp.update(app);
+
+    // Loop over the array of setts we've received and map them into an array
+    // of promises and then resolve them all so that they...
+    await Promise.all(
+      setts.map(async (jsonSett) => {
+        // Create the new sett object.
+        const sett = await Sett.create({
+          sett: jsonSett.id,
+          gridRef: jsonSett.gridReference,
+          entrances: jsonSett.entrances
+        });
+
+        // Find the right sett type object...
+        const settType = await SettType.findByPk(jsonSett.type);
+        // ...and associate it.
+        await sett.setSettType(settType);
+
+        // Associate the sett to the application.
+        await sett.setApplication(updatedApp);
+      })
+    );
+
+    // Fetch the now fully updated application object and return it
+    return Application.findByPk(id, {include: [{model: Sett, include: SettType}]});
   }
 };
 
