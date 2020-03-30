@@ -44,6 +44,28 @@ npm run test
 }
 ```
 
+## Build
+
+```sh
+docker build \
+  -t naturescot/standard-forestry-operations-api \
+  .
+```
+
+## Run
+
+```sh
+docker run \
+  --name standard-forestry-operations-api \
+  --env LICENSING_DB_HOST=licensing-database \
+  --env LICENSING_DB_PASS=ChangeMeFromCorrectHorseBatteryStaple \
+  --env SFO_DB_PASS=ChangeMeFromHunter2 \
+  --network licensing \
+  -p "3002:3003" \
+  --detach \
+  naturescot/standard-forestry-operations-api
+```
+
 ## License
 
 Unless stated otherwise, the codebase is released under the [MIT License](LICENSE.txt). The documentation is available under the terms of the [Open Government Licence, Version 3](LICENSE-OGL.md).
