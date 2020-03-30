@@ -16,7 +16,7 @@ const SettModel = (sequelize) => {
         }
       },
       sett: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         validate: {
           notEmpty: true
         }

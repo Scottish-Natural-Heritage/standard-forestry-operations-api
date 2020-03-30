@@ -18,7 +18,7 @@ module.exports = {
         }
       },
       sett: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       SettTypeId: {
         type: Sequelize.INTEGER,
