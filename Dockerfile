@@ -25,6 +25,7 @@ ENV SFO_API_PATH_PREFIX standard-forestry-operations-api
 ENV LICENSING_DB_HOST override_this_value
 ENV LICENSING_DB_PASS override_this_value
 ENV SFO_DB_PASS override_this_value
+ENV SFO_NOTIFY_API_KEY override_this_value
 
 # let docker know about our listening port
 EXPOSE $SFO_API_PORT

@@ -1,6 +1,8 @@
 // eslint-disable-next-line unicorn/import-index, import/no-useless-path-segments
 import database from '../models/index.js';
 import Sequelize from 'sequelize';
+import NotifyClient from 'notifications-node-client';
+import config from '../config/app.js';
 
 const {Application, Sett, SettType} = database;
 
@@ -37,6 +39,28 @@ const tryCreate = async () => {
     // that case, just throw it up to the calling code.
     throw error;
   }
+};
+
+/**
+ * Send emails to the applicant to let them know it was successful.
+ *
+ * @param {any} application an enhanced JSON version of the model
+ */
+const sendSuccessEmail = async (application) => {
+  const notifyClient = new NotifyClient.NotifyClient(config.notifyApiKey);
+
+  await notifyClient.sendEmail('843889da-5a85-470c-a9e5-38f68cdb9ae1', application.emailAddress, {
+    personalisation: {
+      licenceNo: `NS-SFO-${application.id}`,
+      convictions: application.convictions ? 'yes' : 'no',
+      noConvictions: application.convictions ? 'no' : 'yes',
+      comply: application.complyWithTerms ? 'yes' : 'no',
+      noComply: application.complyWithTerms ? 'no' : 'yes',
+      expiryDate: `30/11/${new Date().getFullYear()}`
+    },
+    reference: `NS-SFO-${application.id}`,
+    emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
+  });
 };
 
 /**
@@ -122,6 +146,9 @@ const ApplicationController = {
         await sett.setApplication(updatedApp);
       })
     );
+
+    // Send the applicant their confirmation email.
+    await sendSuccessEmail(updatedApp);
 
     // Fetch the now fully updated application object and return it
     return Application.findByPk(id, {include: [{model: Sett, include: SettType}]});
