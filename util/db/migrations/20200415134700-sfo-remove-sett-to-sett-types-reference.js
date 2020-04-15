@@ -1,6 +1,6 @@
 'use strict';
 
-const dbConfig = require('../../../src/config/database.js');
+const databaseConfig = require('../../../src/config/database.js');
 
 module.exports = {
   up: async (queryInterface) => {
@@ -27,10 +27,13 @@ module.exports = {
       await queryInterface.removeConstraint('Setts', fkConstraintName);
 
       // Remove the column from the table
-      await queryInterface.removeColumn({
-        schema: dbConfig.production.schema,
-        tableName: 'Setts'
-      }, 'SettTypeId');
+      await queryInterface.removeColumn(
+        {
+          schema: databaseConfig.production.schema,
+          tableName: 'Setts'
+        },
+        'SettTypeId'
+      );
 
       // Remember to commit our changes.
       await transaction.commit();
@@ -45,10 +48,14 @@ module.exports = {
   down: async (queryInterface, Sequelize) => {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      await queryInterface.addColumn({
-        schema: dbConfig.production.schema,
-        tableName: 'Setts'
-      }, 'SettTypeId', Sequelize.INTEGER);
+      await queryInterface.addColumn(
+        {
+          schema: databaseConfig.production.schema,
+          tableName: 'Setts'
+        },
+        'SettTypeId',
+        Sequelize.INTEGER
+      );
 
       await queryInterface.addConstraint('Setts', ['SettTypeId'], {
         type: 'foreign key',
@@ -62,7 +69,7 @@ module.exports = {
     } catch (error) {
       // If something has gone wrong undo everything we've done up to
       // this point.
-    await transaction.rollback();
+      await transaction.rollback();
       throw error;
     }
   }
