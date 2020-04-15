@@ -21,12 +21,6 @@ const SettModel = (sequelize) => {
           notEmpty: true
         }
       },
-      SettTypeId: {
-        type: Sequelize.INTEGER,
-        validate: {
-          notEmpty: true
-        }
-      },
       gridRef: {
         type: Sequelize.STRING,
         validate: {

@@ -58,8 +58,7 @@ const cleanInput = (body) => {
         ? undefined
         : body.setts.map((sett) => {
             return {
-              // The two numbers are just copied across.
-              type: sett.type,
+              // The number is just copied across.
               entrances: sett.entrances,
 
               // The two strings are trimmed then copied.

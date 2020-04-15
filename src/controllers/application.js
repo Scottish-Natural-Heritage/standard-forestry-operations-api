@@ -4,7 +4,7 @@ import Sequelize from 'sequelize';
 import NotifyClient from 'notifications-node-client';
 import config from '../config/app.js';
 
-const {Application, Sett, SettType} = database;
+const {Application, Sett} = database;
 
 /**
  * Attempt to create an empty, randomly allocated application.
@@ -44,7 +44,7 @@ const tryCreate = async () => {
 /**
  * Send emails to the applicant to let them know it was successful.
  *
- * @param {any} application an enhanced JSON version of the model
+ * @param {any} application An enhanced JSON version of the model.
  */
 const sendSuccessEmail = async (application) => {
   const notifyClient = new NotifyClient.NotifyClient(config.notifyApiKey);
@@ -100,7 +100,7 @@ const ApplicationController = {
    * @returns {Sequelize.Model} An existing application.
    */
   findOne: async (id) => {
-    return Application.findByPk(id, {include: [{model: Sett, include: SettType}]});
+    return Application.findByPk(id, {include: Sett});
   },
 
   /**
@@ -137,11 +137,6 @@ const ApplicationController = {
           entrances: jsonSett.entrances
         });
 
-        // Find the right sett type object...
-        const settType = await SettType.findByPk(jsonSett.type);
-        // ...and associate it.
-        await sett.setSettType(settType);
-
         // Associate the sett to the application.
         await sett.setApplication(updatedApp);
       })
@@ -151,7 +146,7 @@ const ApplicationController = {
     await sendSuccessEmail(updatedApp);
 
     // Fetch the now fully updated application object and return it
-    return Application.findByPk(id, {include: [{model: Sett, include: SettType}]});
+    return Application.findByPk(id, {include: Sett});
   }
 };
 

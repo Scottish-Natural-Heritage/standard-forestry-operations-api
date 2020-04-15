@@ -173,12 +173,10 @@
 							"    pm.expect(reqJsonData.setts.length).to.eql(resJsonData.Setts.length);",
 							"    ",
 							"    pm.expect(reqJsonData.setts[0].id).to.eql(resJsonData.Setts[0].sett);",
-							"    pm.expect(reqJsonData.setts[0].type).to.eql(resJsonData.Setts[0].SettTypeId);",
 							"    pm.expect(reqJsonData.setts[0].gridReference).to.eql(resJsonData.Setts[0].gridRef);",
 							"    pm.expect(reqJsonData.setts[0].entrances).to.eql(resJsonData.Setts[0].entrances);",
 							"    ",
 							"    pm.expect(reqJsonData.setts[1].id).to.eql(resJsonData.Setts[1].sett);",
-							"    pm.expect(reqJsonData.setts[1].type).to.eql(resJsonData.Setts[1].SettTypeId);",
 							"    pm.expect(reqJsonData.setts[1].gridReference).to.eql(resJsonData.Setts[1].gridRef);",
 							"    pm.expect(reqJsonData.setts[1].entrances).to.eql(resJsonData.Setts[1].entrances);",
 							"});",
@@ -193,7 +191,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"convictions\": false,\n  \"complyWithTerms\": true,\n  \"fullName\": \"Nature Scot\",\n  \"companyOrganisation\": \"NatureScot\",\n  \"addressLine1\": \"Great Glen House\",\n  \"addressLine2\": \"\",\n  \"addressTown\": \"Inverness\",\n  \"addressCounty\": \"\",\n  \"addressPostcode\": \"IV3 8NW\",\n  \"phoneNumber\": \"01463 725 000\",\n  \"emailAddress\": \"licensing@nature.scot\",\n  \"siteName\": \"Dunain Hill\",\n  \"setts\": [\n  \t{\n  \t\t\"id\": \"ABC123\",\n  \t\t\"type\": 1,\n  \t\t\"gridReference\": \"NH63054372\",\n  \t\t\"entrances\": 5\n  \t},\n  \t{\n  \t\t\"id\": \"DEF456\",\n  \t\t\"type\": 2,\n  \t\t\"gridReference\": \"NH63044379\",\n  \t\t\"entrances\": 2\n  \t}\n  ]\n}",
+					"raw": "{\n  \"convictions\": false,\n  \"complyWithTerms\": true,\n  \"fullName\": \"Nature Scot\",\n  \"companyOrganisation\": \"NatureScot\",\n  \"addressLine1\": \"Great Glen House\",\n  \"addressLine2\": \"\",\n  \"addressTown\": \"Inverness\",\n  \"addressCounty\": \"\",\n  \"addressPostcode\": \"IV3 8NW\",\n  \"phoneNumber\": \"01463 725 000\",\n  \"emailAddress\": \"licensing@nature.scot\",\n  \"siteName\": \"Dunain Hill\",\n  \"setts\": [\n  \t{\n  \t\t\"id\": \"ABC123\",\n  \t\t\"gridReference\": \"NH63054372\",\n  \t\t\"entrances\": 5\n  \t},\n  \t{\n  \t\t\"id\": \"DEF456\",\n  \t\t\"gridReference\": \"NH63044379\",\n  \t\t\"entrances\": 2\n  \t}\n  ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -285,19 +283,19 @@
 	],
 	"variable": [
 		{
-			"id": "141636bd-4494-44bc-877f-bd8358574ee1",
+			"id": "8508e13a-e4e2-4a81-a0fd-b28917f1b7c6",
 			"key": "SFO_API_PORT",
 			"value": "3003",
 			"type": "string"
 		},
 		{
-			"id": "d7d3c1f6-0d2a-4454-83d8-5281c20783f9",
+			"id": "cbbe429b-1930-4d32-aa7c-02f7e87c6e3d",
 			"key": "SFO_API_PATH_PREFIX",
 			"value": "standard-forestry-operations-api",
 			"type": "string"
 		},
 		{
-			"id": "7eac1c5a-ccdb-432f-8aa9-dd359517cd23",
+			"id": "43c34aa4-4e32-49d4-885e-b94735f035bb",
 			"key": "SFO_NEW_APP_ID",
 			"value": "",
 			"type": "string"
