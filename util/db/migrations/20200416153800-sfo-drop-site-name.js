@@ -7,7 +7,7 @@ module.exports = {
     await queryInterface.removeColumn(
       {
         schema: databaseConfig.production.schema,
-        tableName: 'Applications',
+        tableName: 'Applications'
       },
       'siteName'
     );
@@ -17,7 +17,7 @@ module.exports = {
     await queryInterface.addColumn(
       {
         schema: databaseConfig.production.schema,
-        tableName: 'Applications',
+        tableName: 'Applications'
       },
       'siteName',
       Sequelize.STRING
