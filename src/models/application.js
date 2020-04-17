@@ -66,12 +66,6 @@ const ApplicationModel = (sequelize) => {
           notEmpty: true,
           isEmail: true
         }
-      },
-      siteName: {
-        type: Sequelize.STRING,
-        validate: {
-          notEmpty: true
-        }
       }
     },
     {

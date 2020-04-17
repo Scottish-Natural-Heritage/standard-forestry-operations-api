@@ -50,7 +50,6 @@ const cleanInput = (body) => {
     addressPostcode: body.addressPostcode === undefined ? undefined : body.addressPostcode.trim(),
     phoneNumber: body.phoneNumber === undefined ? undefined : body.phoneNumber.trim(),
     emailAddress: body.emailAddress === undefined ? undefined : body.emailAddress.trim(),
-    siteName: body.siteName === undefined ? undefined : body.siteName.trim(),
 
     // We copy across the setts, cleaning them as we go.
     setts:
@@ -87,7 +86,7 @@ router.put('/applications/:id', async (request, response) => {
     }
 
     // Check the specified application hasn't been assigned yet.
-    if (existingApp.siteName !== undefined && existingApp.siteName !== null) {
+    if (existingApp.fullName !== undefined && existingApp.fullName !== null) {
       response.status(409).send({message: `Application ${existingId} already assigned.`});
       return;
     }

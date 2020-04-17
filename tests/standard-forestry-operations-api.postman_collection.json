@@ -168,8 +168,6 @@
 							"    pm.expect(reqJsonData.phoneNumber).to.eql(resJsonData.phoneNumber);",
 							"    pm.expect(reqJsonData.emailAddress).to.eql(resJsonData.emailAddress);",
 							"    ",
-							"    pm.expect(reqJsonData.siteName).to.eql(resJsonData.siteName);",
-							"    ",
 							"    pm.expect(reqJsonData.setts.length).to.eql(resJsonData.Setts.length);",
 							"    ",
 							"    pm.expect(reqJsonData.setts[0].id).to.eql(resJsonData.Setts[0].sett);",
@@ -191,7 +189,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"convictions\": false,\n  \"complyWithTerms\": true,\n  \"fullName\": \"Nature Scot\",\n  \"companyOrganisation\": \"NatureScot\",\n  \"addressLine1\": \"Great Glen House\",\n  \"addressLine2\": \"\",\n  \"addressTown\": \"Inverness\",\n  \"addressCounty\": \"\",\n  \"addressPostcode\": \"IV3 8NW\",\n  \"phoneNumber\": \"01463 725 000\",\n  \"emailAddress\": \"licensing@nature.scot\",\n  \"siteName\": \"Dunain Hill\",\n  \"setts\": [\n  \t{\n  \t\t\"id\": \"ABC123\",\n  \t\t\"gridReference\": \"NH63054372\",\n  \t\t\"entrances\": 5\n  \t},\n  \t{\n  \t\t\"id\": \"DEF456\",\n  \t\t\"gridReference\": \"NH63044379\",\n  \t\t\"entrances\": 2\n  \t}\n  ]\n}",
+					"raw": "{\n  \"convictions\": false,\n  \"complyWithTerms\": true,\n  \"fullName\": \"Nature Scot\",\n  \"companyOrganisation\": \"NatureScot\",\n  \"addressLine1\": \"Great Glen House\",\n  \"addressLine2\": \"\",\n  \"addressTown\": \"Inverness\",\n  \"addressCounty\": \"\",\n  \"addressPostcode\": \"IV3 8NW\",\n  \"phoneNumber\": \"01463 725 000\",\n  \"emailAddress\": \"licensing@nature.scot\",\n  \"setts\": [\n  \t{\n  \t\t\"id\": \"ABC123\",\n  \t\t\"gridReference\": \"NH63054372\",\n  \t\t\"entrances\": 5\n  \t},\n  \t{\n  \t\t\"id\": \"DEF456\",\n  \t\t\"gridReference\": \"NH63044379\",\n  \t\t\"entrances\": 2\n  \t}\n  ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -283,19 +281,19 @@
 	],
 	"variable": [
 		{
-			"id": "8508e13a-e4e2-4a81-a0fd-b28917f1b7c6",
+			"id": "69971ba8-b525-42df-97f0-7e6909a07aee",
 			"key": "SFO_API_PORT",
 			"value": "3003",
 			"type": "string"
 		},
 		{
-			"id": "cbbe429b-1930-4d32-aa7c-02f7e87c6e3d",
+			"id": "1ddc241b-11ad-4cc5-ba50-7cc1ce68f867",
 			"key": "SFO_API_PATH_PREFIX",
 			"value": "standard-forestry-operations-api",
 			"type": "string"
 		},
 		{
-			"id": "43c34aa4-4e32-49d4-885e-b94735f035bb",
+			"id": "21e518dd-3c40-4c44-81aa-de01e0c0d8ad",
 			"key": "SFO_NEW_APP_ID",
 			"value": "",
 			"type": "string"
