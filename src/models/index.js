@@ -10,7 +10,7 @@ const sequelize = new Sequelize(databaseConfig.production);
 const database = {
   Application: Application(sequelize),
   Sett: Sett(sequelize),
-  ApplyOther: ApplyOther(sequelize),
+  ApplyOther: ApplyOther(sequelize)
 };
 
 database.Application.hasMany(database.Sett);

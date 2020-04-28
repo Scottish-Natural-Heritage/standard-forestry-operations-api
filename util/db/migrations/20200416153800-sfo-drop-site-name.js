@@ -22,5 +22,5 @@ module.exports = {
       'siteName',
       Sequelize.STRING
     );
-  },
+  }
 };

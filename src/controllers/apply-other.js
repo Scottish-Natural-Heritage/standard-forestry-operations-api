@@ -12,11 +12,12 @@ const ApplyOtherController = {
   /**
    * Create a new apply-on-behalf-of-others-email-notification object.
    *
+   * @param {any} jsonApplyOther A JSON version of the model to insert into the database.
    * @returns {Sequelize.Model} The new apply-on-behalf-of-others-email-notification
    * object.
    */
   create: async (jsonApplyOther) => {
-    return await ApplyOther.create({
+    return ApplyOther.create({
       emailAddress: jsonApplyOther.emailAddress
     });
   }

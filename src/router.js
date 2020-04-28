@@ -111,7 +111,6 @@ router.put('/applications/:id', async (request, response) => {
   }
 });
 
-
 /**
  * Clean the incoming POST request body to make it more compatible with the
  * database and its validation rules.
@@ -123,10 +122,9 @@ const cleanApplyOther = (body) => {
   return {
     // The string is trimmed for leading and trailing whitespace and then copied
     // across if it's in the POST body or is set to undefined if it's missing.
-    emailAddress: body.emailAddress === undefined ? undefined : body.emailAddress.trim(),
+    emailAddress: body.emailAddress === undefined ? undefined : body.emailAddress.trim()
   };
 };
-
 
 // Save an incoming email address so we can email them later once the apply on
 // behalf of others service is up and running.
