@@ -4,6 +4,7 @@ import config from './config/app.js';
 const router = express.Router();
 
 import Application from './controllers/application.js';
+import ApplyOther from './controllers/apply-other.js';
 
 router.get('/health', async (request, response) => {
   response.status(200).send({message: 'OK'});
@@ -106,6 +107,43 @@ router.put('/applications/:id', async (request, response) => {
     response.status(200).send(updatedApp);
   } catch (error) {
     // If anything goes wrong (such as a validation error), tell the client.
+    response.status(500).send({error});
+  }
+});
+
+
+/**
+ * Clean the incoming POST request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} A json object that's just got our cleaned up field on it.
+ */
+const cleanApplyOther = (body) => {
+  return {
+    // The string is trimmed for leading and trailing whitespace and then copied
+    // across if it's in the POST body or is set to undefined if it's missing.
+    emailAddress: body.emailAddress === undefined ? undefined : body.emailAddress.trim(),
+  };
+};
+
+
+// Save an incoming email address so we can email them later once the apply on
+// behalf of others service is up and running.
+router.post('/apply-other', async (request, response) => {
+  const baseUrl = new URL(
+    `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
+      request.originalUrl.endsWith('/') ? '' : '/'
+    }`
+  );
+
+  try {
+    // Clean up the user's input before we store it in the database.
+    const cleanObject = cleanApplyOther(request.body);
+
+    const newApplyOther = await ApplyOther.create(cleanObject);
+    response.status(201).location(new URL(newApplyOther.id, baseUrl)).send();
+  } catch (error) {
     response.status(500).send({error});
   }
 });

@@ -88,6 +88,62 @@
 			"response": []
 		},
 		{
+			"name": "Create new ApplyOther",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e6f5a6dd-e818-446b-bb93-0a5c178f07e6",
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {",
+							"    pm.response.to.have.status(201);",
+							"    pm.response.to.have.status('Created');",
+							"});",
+							"",
+							"pm.test('Location is present', function () {",
+							"    pm.response.to.have.header('Location');",
+							"    ",
+							"    const SFO_API_PORT = pm.collectionVariables.get('SFO_API_PORT');",
+							"    const SFO_API_PATH_PREFIX = pm.collectionVariables.get('SFO_API_PATH_PREFIX');",
+							"    ",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(",
+							"        `http://localhost:${SFO_API_PORT}/${SFO_API_PATH_PREFIX}/v1/apply-other/`",
+							"    );",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"emailAddress\": \"licensing@nature.scot\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/apply-other",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "{{SFO_API_PORT}}",
+					"path": [
+						"{{SFO_API_PATH_PREFIX}}",
+						"v1",
+						"apply-other"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create new Application",
 			"event": [
 				{
@@ -281,19 +337,19 @@
 	],
 	"variable": [
 		{
-			"id": "69971ba8-b525-42df-97f0-7e6909a07aee",
+			"id": "3d5a00f5-f39c-41d6-973c-145c83ffcd24",
 			"key": "SFO_API_PORT",
 			"value": "3003",
 			"type": "string"
 		},
 		{
-			"id": "1ddc241b-11ad-4cc5-ba50-7cc1ce68f867",
+			"id": "d495c08b-1b2e-49fe-a644-b513135419f9",
 			"key": "SFO_API_PATH_PREFIX",
 			"value": "standard-forestry-operations-api",
 			"type": "string"
 		},
 		{
-			"id": "21e518dd-3c40-4c44-81aa-de01e0c0d8ad",
+			"id": "72f3504e-8973-49f3-8b37-c2363b0bfa84",
 			"key": "SFO_NEW_APP_ID",
 			"value": "",
 			"type": "string"
