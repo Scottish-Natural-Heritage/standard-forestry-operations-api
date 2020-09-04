@@ -24,7 +24,10 @@ module.exports = {
 
       // Remove the foreign key constraint.
       const fkConstraintName = ourConstraints[0].constraintName;
-      await queryInterface.removeConstraint('Setts', fkConstraintName);
+
+      if (fkConstraintName !== undefined) {
+        await queryInterface.removeConstraint('Setts', fkConstraintName);
+      }
 
       // Remove the column from the table
       await queryInterface.removeColumn(
