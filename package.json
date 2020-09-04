@@ -8,7 +8,7 @@
   "scripts": {
     "lint": "xo",
     "premigrations": "npx sequelize-cli db:migrate --env preMigrations --migrations-path util/db/pre-migrations",
-    "migrations": "npx sequelize-cli db:migrate --env production",
+    "migrations": "npx sequelize-cli db:migrate --env database",
     "prestart": "npm run migrations",
     "start": "node --experimental-modules src/server.js",
     "dev": "SFO_API_PORT=3999 nodemon --exec \"npm run lint && npm run start\" -e js",
@@ -28,6 +28,7 @@
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.21.5",
     "sequelize-cli": "^5.5.1",
+    "sqlite3": "^5.0.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {

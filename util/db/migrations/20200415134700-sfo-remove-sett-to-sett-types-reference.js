@@ -24,12 +24,15 @@ module.exports = {
 
       // Remove the foreign key constraint.
       const fkConstraintName = ourConstraints[0].constraintName;
-      await queryInterface.removeConstraint('Setts', fkConstraintName);
+
+      if (fkConstraintName !== undefined) {
+        await queryInterface.removeConstraint('Setts', fkConstraintName);
+      }
 
       // Remove the column from the table
       await queryInterface.removeColumn(
         {
-          schema: databaseConfig.production.schema,
+          schema: databaseConfig.database.schema,
           tableName: 'Setts'
         },
         'SettTypeId'
@@ -50,7 +53,7 @@ module.exports = {
     try {
       await queryInterface.addColumn(
         {
-          schema: databaseConfig.production.schema,
+          schema: databaseConfig.database.schema,
           tableName: 'Setts'
         },
         'SettTypeId',

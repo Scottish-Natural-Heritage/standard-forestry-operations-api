@@ -6,7 +6,7 @@ module.exports = {
   up: async (queryInterface) => {
     await queryInterface.removeColumn(
       {
-        schema: databaseConfig.production.schema,
+        schema: databaseConfig.database.schema,
         tableName: 'Applications'
       },
       'siteName'
@@ -16,7 +16,7 @@ module.exports = {
   down: async (queryInterface, Sequelize) => {
     await queryInterface.addColumn(
       {
-        schema: databaseConfig.production.schema,
+        schema: databaseConfig.database.schema,
         tableName: 'Applications'
       },
       'siteName',
