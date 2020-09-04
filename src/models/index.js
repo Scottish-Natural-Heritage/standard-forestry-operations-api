@@ -5,7 +5,7 @@ import Application from './application.js';
 import Sett from './sett.js';
 import ApplyOther from './apply-other.js';
 
-const sequelize = new Sequelize(databaseConfig.production);
+const sequelize = new Sequelize(databaseConfig.database);
 
 const database = {
   Application: Application(sequelize),

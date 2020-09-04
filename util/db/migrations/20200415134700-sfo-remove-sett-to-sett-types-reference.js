@@ -29,7 +29,7 @@ module.exports = {
       // Remove the column from the table
       await queryInterface.removeColumn(
         {
-          schema: databaseConfig.production.schema,
+          schema: databaseConfig.database.schema,
           tableName: 'Setts'
         },
         'SettTypeId'
@@ -50,7 +50,7 @@ module.exports = {
     try {
       await queryInterface.addColumn(
         {
-          schema: databaseConfig.production.schema,
+          schema: databaseConfig.database.schema,
           tableName: 'Setts'
         },
         'SettTypeId',
