@@ -6,6 +6,7 @@ on:
 
 env:
   ECR_REPOSITORY: naturescot/standard-forestry-operations-api
+  SFO_NOTIFY_API_KEY: ${{ secrets.SFO_NOTIFY_TEST_KEY }}
 
 jobs:
 

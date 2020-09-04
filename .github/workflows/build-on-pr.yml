@@ -4,6 +4,9 @@ on:
   pull_request:
     branches: [ main, develop ]
 
+env:
+  SFO_NOTIFY_API_KEY: ${{ secrets.SFO_NOTIFY_TEST_KEY }}
+
 jobs:
 
   lint_and_test:
