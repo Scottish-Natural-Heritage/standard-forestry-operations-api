@@ -103,6 +103,15 @@ const ApplicationController = {
     return Application.findByPk(id, {include: Sett});
   },
 
+    /**
+   * Retrieve all applications from the database.
+   *
+   * @returns all existing applications
+   */
+  findAll: async () => {
+    return Application.findAll();
+  },
+
   /**
    * Replace an application in the database with our new JSON model.
    *
