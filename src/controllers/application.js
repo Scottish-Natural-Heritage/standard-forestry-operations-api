@@ -103,10 +103,10 @@ const ApplicationController = {
     return Application.findByPk(id, {include: Sett});
   },
 
-    /**
+  /**
    * Retrieve all applications from the database.
    *
-   * @returns all existing applications
+   * @returns  {Sequelize.Model} All existing applications.
    */
   findAll: async () => {
     return Application.findAll();
