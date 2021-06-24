@@ -97,11 +97,10 @@
 							"    pm.response.to.have.status('OK');",
 							"});",
 							"",
-							"pm.test('Message is \"OK\"', function () {",
+							"pm.test('JSON response length is greater than 1', function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.message).to.eql('OK');",
-							"});",
-							""
+							"    pm.expect(jsonData.length).to.be.above(1);",
+							"});"
 						],
 						"type": "text/javascript"
 					}
@@ -111,7 +110,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/health",
+					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/applications",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -120,7 +119,7 @@
 					"path": [
 						"{{SFO_API_PATH_PREFIX}}",
 						"v1",
-						"health"
+						"applications"
 					]
 				}
 			},
