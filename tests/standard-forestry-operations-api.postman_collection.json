@@ -86,7 +86,7 @@
 			"response": []
 		},
 		{
-			"name": "Get All Standard Forestry Operations",
+			"name": "Get All Applications",
 			"event": [
 				{
 					"listen": "test",
