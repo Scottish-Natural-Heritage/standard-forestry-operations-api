@@ -104,6 +104,15 @@ const ApplicationController = {
   },
 
   /**
+   * Retrieve all applications from the database.
+   *
+   * @returns  {Sequelize.Model} All existing applications.
+   */
+  findAll: async () => {
+    return Application.findAll({include: Sett});
+  },
+
+  /**
    * Replace an application in the database with our new JSON model.
    *
    * @param {number} id An existing application's ID.

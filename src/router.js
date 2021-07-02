@@ -10,6 +10,20 @@ router.get('/health', async (request, response) => {
   response.status(200).send({message: 'OK'});
 });
 
+router.get('/applications', async (request, response) => {
+  try {
+    const applications = await Application.findAll();
+
+    if (applications === undefined || applications === null) {
+      return response.status(404).send({message: `No applications found.`});
+    }
+
+    return response.status(200).send(applications);
+  } catch (error) {
+    return response.status(500).send({error});
+  }
+});
+
 // Allow an API consumer to allocate a new application number.
 router.post('/applications', async (request, response) => {
   const baseUrl = new URL(

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "817207ab-d080-4a47-8e51-270a3736adf8",
+		"_postman_id": "085d5873-0ac4-4b10-98c9-1c4b3928d95a",
 		"name": "standard-forestry-operations-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -11,7 +11,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "f0797fbc-05b4-433e-a0b8-4e42448a694a",
 						"exec": [
 							"pm.test('Status code is 404 Not Found', function () {",
 							"    pm.response.to.have.status(404);",
@@ -51,7 +50,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "f0797fbc-05b4-433e-a0b8-4e42448a694a",
 						"exec": [
 							"pm.test('Status code is 200 OK', function () {",
 							"    pm.response.to.have.status(200);",
@@ -88,12 +86,68 @@
 			"response": []
 		},
 		{
+			"name": "Get All Applications",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('JSON response length is greater than 1', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.be.above(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const port = pm.collectionVariables.get(\"SFO_API_PORT\");\r",
+							"const path = pm.collectionVariables.get(\"SFO_API_PATH_PREFIX\");\r",
+							"\r",
+							"for (let i = 0; i < 3; i++) {\r",
+							"  pm.sendRequest({\r",
+							"    url:`http://localhost:${port}/${path}/v1/applications`,\r",
+							"    method:'POST'\r",
+							"  });\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/applications",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "{{SFO_API_PORT}}",
+					"path": [
+						"{{SFO_API_PATH_PREFIX}}",
+						"v1",
+						"applications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create new ApplyOther",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "e6f5a6dd-e818-446b-bb93-0a5c178f07e6",
 						"exec": [
 							"pm.test('Status code is 201 Created', function () {",
 							"    pm.response.to.have.status(201);",
@@ -149,7 +203,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "e6f5a6dd-e818-446b-bb93-0a5c178f07e6",
 						"exec": [
 							"pm.test('Status code is 201 Created', function () {",
 							"    pm.response.to.have.status(201);",
@@ -199,7 +252,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "e6f5a6dd-e818-446b-bb93-0a5c178f07e6",
 						"exec": [
 							"pm.test('Status code is 200 OK', function () {",
 							"    pm.response.to.have.status(200);",
@@ -275,7 +327,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "e6f5a6dd-e818-446b-bb93-0a5c178f07e6",
 						"exec": [
 							"pm.test('Status code is 404 Not Found', function () {",
 							"    pm.response.to.have.status(404);",
@@ -317,7 +368,6 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "3c32be29-e569-4513-9aed-97d2ada79539",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -327,7 +377,6 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "fb473a5d-467d-440c-8c97-f1d5bbc42d04",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -337,23 +386,16 @@
 	],
 	"variable": [
 		{
-			"id": "3d5a00f5-f39c-41d6-973c-145c83ffcd24",
 			"key": "SFO_API_PORT",
-			"value": "3003",
-			"type": "string"
+			"value": "3003"
 		},
 		{
-			"id": "d495c08b-1b2e-49fe-a644-b513135419f9",
 			"key": "SFO_API_PATH_PREFIX",
-			"value": "standard-forestry-operations-api",
-			"type": "string"
+			"value": "standard-forestry-operations-api"
 		},
 		{
-			"id": "72f3504e-8973-49f3-8b37-c2363b0bfa84",
 			"key": "SFO_NEW_APP_ID",
-			"value": "",
-			"type": "string"
+			"value": ""
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
