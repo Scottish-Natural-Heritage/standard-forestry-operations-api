@@ -104,6 +104,23 @@
 						],
 						"type": "text/javascript"
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const port = pm.collectionVariables.get(\"SFO_API_PORT\");\r",
+							"const path = pm.collectionVariables.get(\"SFO_API_PATH_PREFIX\");\r",
+							"\r",
+							"for (let i = 0; i < 3; i++) {\r",
+							"  pm.sendRequest({\r",
+							"    url:`http://localhost:${port}/${path}/v1/applications`,\r",
+							"    method:'POST'\r",
+							"  });\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
 				}
 			],
 			"request": {
@@ -370,18 +387,15 @@
 	"variable": [
 		{
 			"key": "SFO_API_PORT",
-			"value": "3003",
-			"type": "string"
+			"value": "3003"
 		},
 		{
 			"key": "SFO_API_PATH_PREFIX",
-			"value": "standard-forestry-operations-api",
-			"type": "string"
+			"value": "standard-forestry-operations-api"
 		},
 		{
 			"key": "SFO_NEW_APP_ID",
-			"value": "",
-			"type": "string"
+			"value": ""
 		}
 	]
 }
