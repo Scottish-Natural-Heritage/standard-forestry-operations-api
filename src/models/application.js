@@ -66,6 +66,9 @@ const ApplicationModel = (sequelize) => {
           notEmpty: true,
           isEmail: true
         }
+      },
+      createdByLicensingOfficer: {
+        type: Sequelize.STRING
       }
     },
     {
