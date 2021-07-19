@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "085d5873-0ac4-4b10-98c9-1c4b3928d95a",
+		"_postman_id": "ce87aa61-0a29-4624-98f0-267f46eeeded",
 		"name": "standard-forestry-operations-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -31,14 +31,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}",
+					"raw": "http://localhost:3003/standard-forestry-operations-api",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "{{SFO_API_PORT}}",
+					"port": "3003",
 					"path": [
-						"{{SFO_API_PATH_PREFIX}}"
+						"standard-forestry-operations-api"
 					]
 				}
 			},
@@ -70,14 +70,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/health",
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/health",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "{{SFO_API_PORT}}",
+					"port": "3003",
 					"path": [
-						"{{SFO_API_PATH_PREFIX}}",
+						"standard-forestry-operations-api",
 						"v1",
 						"health"
 					]
@@ -127,14 +127,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/applications",
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "{{SFO_API_PORT}}",
+					"port": "3003",
 					"path": [
-						"{{SFO_API_PATH_PREFIX}}",
+						"standard-forestry-operations-api",
 						"v1",
 						"applications"
 					]
@@ -157,11 +157,8 @@
 							"pm.test('Location is present', function () {",
 							"    pm.response.to.have.header('Location');",
 							"    ",
-							"    const SFO_API_PORT = pm.collectionVariables.get('SFO_API_PORT');",
-							"    const SFO_API_PATH_PREFIX = pm.collectionVariables.get('SFO_API_PATH_PREFIX');",
-							"    ",
 							"    pm.expect(pm.response.headers.get('Location')).to.include(",
-							"        `http://localhost:${SFO_API_PORT}/${SFO_API_PATH_PREFIX}/v1/apply-other/`",
+							"        `http://localhost:3003/standard-forestry-operations-api/v1/apply-other/`",
 							"    );",
 							"});"
 						],
@@ -182,14 +179,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/apply-other",
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/apply-other",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "{{SFO_API_PORT}}",
+					"port": "3003",
 					"path": [
-						"{{SFO_API_PATH_PREFIX}}",
+						"standard-forestry-operations-api",
 						"v1",
 						"apply-other"
 					]
@@ -212,11 +209,8 @@
 							"pm.test('Location is present', function () {",
 							"    pm.response.to.have.header('Location');",
 							"    ",
-							"    const SFO_API_PORT = pm.collectionVariables.get('SFO_API_PORT');",
-							"    const SFO_API_PATH_PREFIX = pm.collectionVariables.get('SFO_API_PATH_PREFIX');",
-							"    ",
 							"    pm.expect(pm.response.headers.get('Location')).to.include(",
-							"        `http://localhost:${SFO_API_PORT}/${SFO_API_PATH_PREFIX}/v1/applications/`",
+							"        `http://localhost:3003/standard-forestry-operations-api/v1/applications/`",
 							"    );",
 							"});",
 							"",
@@ -231,14 +225,14 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/applications",
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "{{SFO_API_PORT}}",
+					"port": "3003",
 					"path": [
-						"{{SFO_API_PATH_PREFIX}}",
+						"standard-forestry-operations-api",
 						"v1",
 						"applications"
 					]
@@ -305,14 +299,137 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/applications/{{SFO_NEW_APP_ID}}",
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "{{SFO_API_PORT}}",
+					"port": "3003",
 					"path": [
-						"{{SFO_API_PATH_PREFIX}}",
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new Application By LO",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {",
+							"    pm.response.to.have.status(201);",
+							"    pm.response.to.have.status('Created');",
+							"});",
+							"",
+							"pm.test('Location is present', function () {",
+							"    pm.response.to.have.header('Location');",
+							"",
+							"    ",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(",
+							"        `http://localhost:3003/standard-forestry-operations-api/v1/applications/`",
+							"    );",
+							"});",
+							"",
+							"pm.collectionVariables.set(\"SFO_NEW_APP_ID\", pm.response.headers.get('Location').split('/').pop());",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an Application Created by an LO",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Returned object matches posted object', function () {",
+							"    ",
+							"    var reqJsonData = JSON.parse(pm.request.body.raw);",
+							"    var resJsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(reqJsonData.convictions).to.eql(resJsonData.convictions);",
+							"    pm.expect(reqJsonData.complyWithTerms).to.eql(resJsonData.complyWithTerms);",
+							"    ",
+							"    pm.expect(reqJsonData.fullName).to.eql(resJsonData.fullName);",
+							"    pm.expect(reqJsonData.companyOrganisation).to.eql(resJsonData.companyOrganisation);",
+							"    pm.expect(reqJsonData.addressLine1).to.eql(resJsonData.addressLine1);",
+							"    pm.expect(reqJsonData.addressLine2).to.eql(resJsonData.addressLine2);",
+							"    pm.expect(reqJsonData.addressTown).to.eql(resJsonData.addressTown);",
+							"    pm.expect(reqJsonData.addressCounty).to.eql(resJsonData.addressCounty);",
+							"    pm.expect(reqJsonData.addressPostcode).to.eql(resJsonData.addressPostcode);",
+							"    pm.expect(reqJsonData.phoneNumber).to.eql(resJsonData.phoneNumber);",
+							"    pm.expect(reqJsonData.emailAddress).to.eql(resJsonData.emailAddress);",
+							"    pm.expect(reqJsonData.createdByLicensingOfficer).to.eql(resJsonData.createdByLicensingOfficer);",
+							"    ",
+							"    pm.expect(reqJsonData.setts.length).to.eql(resJsonData.Setts.length);",
+							"    ",
+							"    pm.expect(reqJsonData.setts[0].id).to.eql(resJsonData.Setts[0].sett);",
+							"    pm.expect(reqJsonData.setts[0].gridReference).to.eql(resJsonData.Setts[0].gridRef);",
+							"    pm.expect(reqJsonData.setts[0].entrances).to.eql(resJsonData.Setts[0].entrances);",
+							"    ",
+							"    pm.expect(reqJsonData.setts[1].id).to.eql(resJsonData.Setts[1].sett);",
+							"    pm.expect(reqJsonData.setts[1].gridReference).to.eql(resJsonData.Setts[1].gridRef);",
+							"    pm.expect(reqJsonData.setts[1].entrances).to.eql(resJsonData.Setts[1].entrances);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"convictions\": false,\n    \"complyWithTerms\": true,\n    \"fullName\": \"Nature Scot\",\n    \"companyOrganisation\": \"NatureScot\",\n    \"addressLine1\": \"Great Glen House\",\n    \"addressLine2\": \"\",\n    \"addressTown\": \"Inverness\",\n    \"addressCounty\": \"\",\n    \"addressPostcode\": \"IV3 8NW\",\n    \"phoneNumber\": \"01463 725 000\",\n    \"emailAddress\": \"licensing@nature.scot\",\n    \"createdByLicensingOfficer\": \"939123\",\n    \"setts\": [\n        {\n            \"id\": \"ABC123\",\n            \"gridReference\": \"NH63054372\",\n            \"entrances\": 5\n        },\n        {\n            \"id\": \"DEF456\",\n            \"gridReference\": \"NH63044379\",\n            \"entrances\": 2\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
 						"v1",
 						"applications",
 						"{{SFO_NEW_APP_ID}}"
@@ -347,14 +464,14 @@
 				"method": "PUT",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:{{SFO_API_PORT}}/{{SFO_API_PATH_PREFIX}}/v1/applications/-1",
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/-1",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "{{SFO_API_PORT}}",
+					"port": "3003",
 					"path": [
-						"{{SFO_API_PATH_PREFIX}}",
+						"standard-forestry-operations-api",
 						"v1",
 						"applications",
 						"-1"
