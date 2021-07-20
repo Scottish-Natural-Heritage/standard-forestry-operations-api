@@ -44,23 +44,26 @@ const tryCreate = async () => {
 /**
  * Send emails to the applicant to let them know it was successful.
  *
+ * @param {string} notifyApiKey API key for sending emails.
  * @param {any} application An enhanced JSON version of the model.
  */
-const sendSuccessEmail = async (application) => {
-  const notifyClient = new NotifyClient.NotifyClient(config.notifyApiKey);
+const sendSuccessEmail = async (notifyApiKey, application) => {
+  if (notifyApiKey) {
+    const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
 
-  await notifyClient.sendEmail('843889da-5a85-470c-a9e5-38f68cdb9ae1', application.emailAddress, {
-    personalisation: {
-      licenceNo: `NS-SFO-${application.id}`,
-      convictions: application.convictions ? 'yes' : 'no',
-      noConvictions: application.convictions ? 'no' : 'yes',
-      comply: application.complyWithTerms ? 'yes' : 'no',
-      noComply: application.complyWithTerms ? 'no' : 'yes',
-      expiryDate: `30/11/${new Date().getFullYear()}`
-    },
-    reference: `NS-SFO-${application.id}`,
-    emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
-  });
+    await notifyClient.sendEmail('843889da-5a85-470c-a9e5-38f68cdb9ae1', application.emailAddress, {
+      personalisation: {
+        licenceNo: `NS-SFO-${application.id}`,
+        convictions: application.convictions ? 'yes' : 'no',
+        noConvictions: application.convictions ? 'no' : 'yes',
+        comply: application.complyWithTerms ? 'yes' : 'no',
+        noComply: application.complyWithTerms ? 'no' : 'yes',
+        expiryDate: `30/11/${new Date().getFullYear()}`
+      },
+      reference: `NS-SFO-${application.id}`,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
+    });
+  }
 };
 
 /**
@@ -152,7 +155,7 @@ const ApplicationController = {
     );
 
     // Send the applicant their confirmation email.
-    await sendSuccessEmail(updatedApp);
+    await sendSuccessEmail(config.notifyApiKey, updatedApp);
 
     // Fetch the now fully updated application object and return it
     return Application.findByPk(id, {include: Sett});
