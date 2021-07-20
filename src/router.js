@@ -65,6 +65,7 @@ const cleanInput = (body) => {
     addressPostcode: body.addressPostcode === undefined ? undefined : body.addressPostcode.trim(),
     phoneNumber: body.phoneNumber === undefined ? undefined : body.phoneNumber.trim(),
     emailAddress: body.emailAddress === undefined ? undefined : body.emailAddress.trim(),
+    createdByLicensingOfficer: body.createdByLicensingOfficer,
 
     // We copy across the setts, cleaning them as we go.
     setts:
