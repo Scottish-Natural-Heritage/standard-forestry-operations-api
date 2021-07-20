@@ -109,12 +109,9 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"const port = pm.collectionVariables.get(\"SFO_API_PORT\");\r",
-							"const path = pm.collectionVariables.get(\"SFO_API_PATH_PREFIX\");\r",
-							"\r",
 							"for (let i = 0; i < 3; i++) {\r",
 							"  pm.sendRequest({\r",
-							"    url:`http://localhost:${port}/${path}/v1/applications`,\r",
+							"    url:`http://localhost:3003/standard-forestry-operations-api/v1/applications`,\r",
 							"    method:'POST'\r",
 							"  });\r",
 							"}"
