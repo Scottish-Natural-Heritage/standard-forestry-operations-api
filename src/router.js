@@ -24,6 +24,28 @@ router.get('/applications', async (request, response) => {
   }
 });
 
+/**
+ * READs a single application.
+ */
+router.get('/applications/:id', async (request, response) => {
+  try {
+    const existingId = Number(request.params.id);
+    if (Number.isNaN(existingId)) {
+      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+    }
+
+    const applications = await Application.findOne(existingId);
+
+    if (applications === undefined || applications === null) {
+      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+    }
+
+    return response.status(200).send(applications);
+  } catch (error) {
+    return response.status(500).send({error});
+  }
+});
+
 // Allow an API consumer to allocate a new application number.
 router.post('/applications', async (request, response) => {
   const baseUrl = new URL(
