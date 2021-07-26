@@ -1,6 +1,8 @@
 import express from 'express';
 import config from './config/app.js';
 
+import logger, {unErrorJson} from './logger.js';
+
 const router = express.Router();
 
 import Application from './controllers/application.js';
@@ -20,6 +22,7 @@ router.get('/applications', async (request, response) => {
 
     return response.status(200).send(applications);
   } catch (error) {
+    logger.error(unErrorJson(error));
     return response.status(500).send({error});
   }
 });
@@ -42,6 +45,7 @@ router.get('/applications/:id', async (request, response) => {
 
     return response.status(200).send(applications);
   } catch (error) {
+    logger.error(unErrorJson(error));
     return response.status(500).send({error});
   }
 });
@@ -58,6 +62,7 @@ router.post('/applications', async (request, response) => {
     const newApplication = await Application.create();
     response.status(201).location(new URL(newApplication.id, baseUrl)).send();
   } catch (error) {
+    logger.error(unErrorJson(error));
     response.status(500).send({error});
   }
 });
@@ -144,6 +149,7 @@ router.put('/applications/:id', async (request, response) => {
     response.status(200).send(updatedApp);
   } catch (error) {
     // If anything goes wrong (such as a validation error), tell the client.
+    logger.error(unErrorJson(error));
     response.status(500).send({error});
   }
 });
@@ -179,6 +185,7 @@ router.post('/apply-other', async (request, response) => {
     const newApplyOther = await ApplyOther.create(cleanObject);
     response.status(201).location(new URL(newApplyOther.id, baseUrl)).send();
   } catch (error) {
+    logger.error(unErrorJson(error));
     response.status(500).send({error});
   }
 });
