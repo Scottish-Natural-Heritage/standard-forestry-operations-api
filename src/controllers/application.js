@@ -28,7 +28,7 @@ const tryCreate = async () => {
     // new model.
     return newApp;
   } catch (error) {
-    logger.error(unErrorJson((error)));
+    logger.error(unErrorJson(error));
     // There are two possible error conditions here...
 
     // The first is if we try to create a duplicate ID, which we manually check
@@ -51,7 +51,7 @@ const tryCreate = async () => {
  */
 const sendSuccessEmail = async (notifyApiKey, application) => {
   if (notifyApiKey) {
-    try{
+    try {
       const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
 
       await notifyClient.sendEmail('843889da-5a85-470c-a9e5-38f68cdb9ae1', application.emailAddress, {
