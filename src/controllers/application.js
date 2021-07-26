@@ -3,6 +3,7 @@ import database from '../models/index.js';
 import Sequelize from 'sequelize';
 import NotifyClient from 'notifications-node-client';
 import config from '../config/app.js';
+import logger, {unErrorJson} from '../logger.js';
 
 const {Application, Sett} = database;
 
@@ -27,6 +28,7 @@ const tryCreate = async () => {
     // new model.
     return newApp;
   } catch (error) {
+    logger.error(unErrorJson((error)));
     // There are two possible error conditions here...
 
     // The first is if we try to create a duplicate ID, which we manually check
@@ -49,20 +51,25 @@ const tryCreate = async () => {
  */
 const sendSuccessEmail = async (notifyApiKey, application) => {
   if (notifyApiKey) {
-    const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
+    try{
+      const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
 
-    await notifyClient.sendEmail('843889da-5a85-470c-a9e5-38f68cdb9ae1', application.emailAddress, {
-      personalisation: {
-        licenceNo: `NS-SFO-${application.id}`,
-        convictions: application.convictions ? 'yes' : 'no',
-        noConvictions: application.convictions ? 'no' : 'yes',
-        comply: application.complyWithTerms ? 'yes' : 'no',
-        noComply: application.complyWithTerms ? 'no' : 'yes',
-        expiryDate: `30/11/${new Date().getFullYear()}`
-      },
-      reference: `NS-SFO-${application.id}`,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
-    });
+      await notifyClient.sendEmail('843889da-5a85-470c-a9e5-38f68cdb9ae1', application.emailAddress, {
+        personalisation: {
+          licenceNo: `NS-SFO-${application.id}`,
+          convictions: application.convictions ? 'yes' : 'no',
+          noConvictions: application.convictions ? 'no' : 'yes',
+          comply: application.complyWithTerms ? 'yes' : 'no',
+          noComply: application.complyWithTerms ? 'no' : 'yes',
+          expiryDate: `30/11/${new Date().getFullYear()}`
+        },
+        reference: `NS-SFO-${application.id}`,
+        emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
+      });
+    } catch (error) {
+      logger.error(unErrorJson(error));
+      throw error;
+    }
   }
 };
 

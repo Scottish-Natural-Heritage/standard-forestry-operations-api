@@ -13,4 +13,16 @@ logger.stream = {
   }
 };
 
-export {logger as default};
+const unErrorJson = (json) => {
+  if (json instanceof Error) {
+    const unError = {};
+    for (const key of Object.getOwnPropertyNames(json)) {
+      unError[key] = json[key]
+    }
+    return unError;
+  }
+
+  return json;
+}
+
+export {logger as default, unErrorJson};
