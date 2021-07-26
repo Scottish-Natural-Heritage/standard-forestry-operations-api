@@ -9,7 +9,6 @@ import Revocation from './revocation.js';
 const sequelize = new Sequelize(databaseConfig.database);
 
 const database = {
-  Sequelize: Sequelize,
   sequelize: sequelize,
   Application: Application(sequelize),
   Sett: Sett(sequelize),
