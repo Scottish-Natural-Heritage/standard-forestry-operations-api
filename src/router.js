@@ -155,6 +155,52 @@ router.put('/applications/:id', async (request, response) => {
 });
 
 /**
+ * Clean the incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} existingId the application that is being revoked
+ * @param {any} body the incoming request's body
+ * @returns {any} a json object that's just got our cleaned up fields on it
+ */
+const cleanRevokeInput = (existingId, body) => {
+  return {
+    ApplicationId: existingId,
+    // The strings are trimmed for leading and trailing whitespace and then
+    // copied across if they're in the POST body or are set to undefined if
+    // they're missing.
+    reason: body.reason === undefined ? undefined : body.reason.trim(),
+    createdBy: body.createdBy === undefined ? undefined : body.createdBy.trim(),
+    isRevoked: body.isRevoked
+  };
+};
+
+// Allow an API consumer to delete a application.
+router.delete('/applications/:id', async (request, response) => {
+  try {
+    // Try to parse the incoming ID to make sure it's really a number.
+    const existingId = Number(request.params.id);
+    if (isNaN(existingId)) {
+      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+    }
+
+    // Clean up the user's input before we store it in the database.
+    const cleanObject = cleanRevokeInput(existingId, request.body);
+
+    const deleteApplication = await Application.delete(existingId, cleanObject);
+
+    if (deleteApplication === false) {
+      return response.status(500).send({message: `Could not delete Application ${existingId}.`});
+    }
+
+    // If they are, send back true.
+    return response.status(200).send();
+  } catch (error) {
+    // If anything goes wrong (such as a validation error), tell the client.
+    return response.status(500).send({error});
+  }
+});
+
+/**
  * Clean the incoming POST request body to make it more compatible with the
  * database and its validation rules.
  *

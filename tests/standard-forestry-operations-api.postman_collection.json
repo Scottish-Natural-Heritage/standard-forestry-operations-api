@@ -615,6 +615,88 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Revoke Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reason\": \"Nature Scot Reason\",\r\n    \"createdBy\": \"989745\",\r\n    \"isRevoked\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET revoked application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 404 Not Found', function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"    pm.response.to.have.status('Not Found');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
