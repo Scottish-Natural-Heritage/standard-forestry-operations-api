@@ -1,10 +1,11 @@
 // eslint-disable-next-line unicorn/import-index, import/no-useless-path-segments
-import database from '../models/index.js';
 import Sequelize from 'sequelize';
 import NotifyClient from 'notifications-node-client';
+
+import database from '../models/index.js';
 import config from '../config/app.js';
 
-const {Application, Sett} = database;
+const {Application, Sett, Revocation} = database;
 
 /**
  * Attempt to create an empty, randomly allocated application.
@@ -159,6 +160,26 @@ const ApplicationController = {
 
     // Fetch the now fully updated application object and return it
     return Application.findByPk(id, {include: Sett});
+  },
+
+  /**
+   * Soft delete a application in the database.
+   *
+   * @param {Number} id a possible ID of a application.
+   * @param {Object} cleanObject an new revocation object to be added to the database.
+   * @returns {boolean} true if the record is deleted, otherwise false
+   */
+  delete: async (id, cleanObject) => {
+    try {
+      await database.sequelize.transaction(async (t) => {
+        await Application.findByPk(id, {transaction: t, rejectOnEmpty: true});
+        await Revocation.create(cleanObject, {transaction: t});
+        await Application.destroy({where: {id}, transaction: t});
+        return true;
+      });
+    } catch {
+      return false;
+    }
   }
 };
 
