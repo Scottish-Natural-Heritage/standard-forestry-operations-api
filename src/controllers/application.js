@@ -171,9 +171,9 @@ const ApplicationController = {
   /**
    * Soft delete a application in the database.
    *
-   * @param {Number} id a possible ID of a application.
-   * @param {Object} cleanObject an new revocation object to be added to the database.
-   * @returns {boolean} true if the record is deleted, otherwise false
+   * @param {number} id A possible ID of a application.
+   * @param {object} cleanObject A new revocation object to be added to the database.
+   * @returns {boolean} True if the record is deleted, otherwise false.
    */
   delete: async (id, cleanObject) => {
     try {
