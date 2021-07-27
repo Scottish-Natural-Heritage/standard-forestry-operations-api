@@ -7,6 +7,7 @@ const router = express.Router();
 
 import Application from './controllers/application.js';
 import ApplyOther from './controllers/apply-other.js';
+import Sett from './controllers/sett.js';
 
 router.get('/health', async (request, response) => {
   response.status(200).send({message: 'OK'});
@@ -158,9 +159,9 @@ router.put('/applications/:id', async (request, response) => {
  * Clean the incoming request body to make it more compatible with the
  * database and its validation rules.
  *
- * @param {any} existingId the application that is being revoked
- * @param {any} body the incoming request's body
- * @returns {any} a json object that's just got our cleaned up fields on it
+ * @param {any} existingId The application that is being revoked.
+ * @param {any} body The incoming request's body.
+ * @returns {any} A json object that's just got our cleaned up fields on it.
  */
 const cleanRevokeInput = (existingId, body) => {
   return {
@@ -233,6 +234,23 @@ router.post('/apply-other', async (request, response) => {
   } catch (error) {
     logger.error(unErrorJson(error));
     response.status(500).send({error});
+  }
+});
+
+/**
+ * GET all setts endpoint.
+ */
+router.get('/setts', async (request, response) => {
+  try {
+    const setts = await Sett.findAll();
+
+    if (setts === undefined || setts === null) {
+      return response.status(404).send({message: `No setts found.`});
+    }
+
+    return response.status(200).send(setts);
+  } catch (error) {
+    return response.status(500).send({error});
   }
 });
 
