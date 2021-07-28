@@ -1,15 +1,18 @@
-FROM node:lts-alpine
+FROM node:12-alpine
 
 # drop back to the non-privileged user for run-time
 WORKDIR /home/node
 USER node
+
+# tell node, et al to run in production mode
+ENV NODE_ENV production
 
 # copy in the package files so that we can install and build the project
 # dependencies
 COPY --chown=node:node package*.json ./
 
 # install all the node modules required
-RUN npm ci && npm prune --production
+RUN npm ci && npm prune
 
 # copy the code from the project
 COPY --chown=node:node ./src ./src

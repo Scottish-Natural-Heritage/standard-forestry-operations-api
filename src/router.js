@@ -1,10 +1,13 @@
 import express from 'express';
 import config from './config/app.js';
 
+import logger, {unErrorJson} from './logger.js';
+
 const router = express.Router();
 
 import Application from './controllers/application.js';
 import ApplyOther from './controllers/apply-other.js';
+import Sett from './controllers/sett.js';
 
 router.get('/health', async (request, response) => {
   response.status(200).send({message: 'OK'});
@@ -20,6 +23,7 @@ router.get('/applications', async (request, response) => {
 
     return response.status(200).send(applications);
   } catch (error) {
+    logger.error(unErrorJson(error));
     return response.status(500).send({error});
   }
 });
@@ -42,6 +46,7 @@ router.get('/applications/:id', async (request, response) => {
 
     return response.status(200).send(applications);
   } catch (error) {
+    logger.error(unErrorJson(error));
     return response.status(500).send({error});
   }
 });
@@ -58,6 +63,7 @@ router.post('/applications', async (request, response) => {
     const newApplication = await Application.create();
     response.status(201).location(new URL(newApplication.id, baseUrl)).send();
   } catch (error) {
+    logger.error(unErrorJson(error));
     response.status(500).send({error});
   }
 });
@@ -144,7 +150,54 @@ router.put('/applications/:id', async (request, response) => {
     response.status(200).send(updatedApp);
   } catch (error) {
     // If anything goes wrong (such as a validation error), tell the client.
+    logger.error(unErrorJson(error));
     response.status(500).send({error});
+  }
+});
+
+/**
+ * Clean the incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} existingId The application that is being revoked.
+ * @param {any} body The incoming request's body.
+ * @returns {any} A json object that's just got our cleaned up fields on it.
+ */
+const cleanRevokeInput = (existingId, body) => {
+  return {
+    ApplicationId: existingId,
+    // The strings are trimmed for leading and trailing whitespace and then
+    // copied across if they're in the POST body or are set to undefined if
+    // they're missing.
+    reason: body.reason === undefined ? undefined : body.reason.trim(),
+    createdBy: body.createdBy === undefined ? undefined : body.createdBy.trim(),
+    isRevoked: body.isRevoked
+  };
+};
+
+// Allow an API consumer to delete a application.
+router.delete('/applications/:id', async (request, response) => {
+  try {
+    // Try to parse the incoming ID to make sure it's really a number.
+    const existingId = Number(request.params.id);
+    if (isNaN(existingId)) {
+      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+    }
+
+    // Clean up the user's input before we store it in the database.
+    const cleanObject = cleanRevokeInput(existingId, request.body);
+
+    const deleteApplication = await Application.delete(existingId, cleanObject);
+
+    if (deleteApplication === false) {
+      return response.status(500).send({message: `Could not delete Application ${existingId}.`});
+    }
+
+    // If they are, send back true.
+    return response.status(200).send();
+  } catch (error) {
+    // If anything goes wrong (such as a validation error), tell the client.
+    return response.status(500).send({error});
   }
 });
 
@@ -179,7 +232,25 @@ router.post('/apply-other', async (request, response) => {
     const newApplyOther = await ApplyOther.create(cleanObject);
     response.status(201).location(new URL(newApplyOther.id, baseUrl)).send();
   } catch (error) {
+    logger.error(unErrorJson(error));
     response.status(500).send({error});
+  }
+});
+
+/**
+ * GET all setts endpoint.
+ */
+router.get('/setts', async (request, response) => {
+  try {
+    const setts = await Sett.findAll();
+
+    if (setts === undefined || setts === null) {
+      return response.status(404).send({message: `No setts found.`});
+    }
+
+    return response.status(200).send(setts);
+  } catch (error) {
+    return response.status(500).send({error});
   }
 });
 
