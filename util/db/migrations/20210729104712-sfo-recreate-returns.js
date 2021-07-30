@@ -16,10 +16,10 @@ module.exports = {
         }
       },
       beforeObjectiveRef: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       afterObjectiveRef: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       fromDate: {
         type: Sequelize.DATE
@@ -28,10 +28,10 @@ module.exports = {
         type: Sequelize.DATE
       },
       comment: {
-        type: Sequelize.TEXT,
+        type: Sequelize.TEXT
       },
       createdByLicensingOfficer: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
