@@ -5,7 +5,7 @@ import database from '../models/index.js';
 import config from '../config/app.js';
 import logger, {unErrorJson} from '../logger.js';
 
-const {Application, Sett, Revocation} = database;
+const {Application, Returns, Sett, Revocation} = database;
 
 /**
  * Attempt to create an empty, randomly allocated application.
@@ -110,7 +110,7 @@ const ApplicationController = {
    * @returns {Sequelize.Model} An existing application.
    */
   findOne: async (id) => {
-    return Application.findByPk(id, {include: Sett});
+    return Application.findByPk(id, {include: [Sett, Returns]});
   },
 
   /**
