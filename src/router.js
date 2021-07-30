@@ -86,7 +86,7 @@ const cleanReturnInput = (existingId, body) => {
     beforeObjectiveRef: body.beforeObjectiveRef === undefined ? undefined : body.beforeObjectiveRef.trim(),
     afterObjectiveRef: body.afterObjectiveRef === undefined ? undefined : body.afterObjectiveRef.trim(),
     fromDate: body.fromDate === undefined ? undefined : body.fromDate,
-    toDate:body.toDate === undefined ? undefined : body.toDate,
+    toDate: body.toDate === undefined ? undefined : body.toDate,
     comment: body.comment === undefined ? undefined : body.comment.trim(),
     createdByLicensingOfficer: body.createdByLicensingOfficer
   };
