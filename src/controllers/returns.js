@@ -11,9 +11,9 @@ const ReturnsController = {
    *
    * Transaction completes all requests and returns the new return transaction id.
    *
-   * @param {number} id An existing return's ID.
-   * @param {any} cleanObject A new revocation object to be added to the database.
-   * @returns {number} The new Return transaction id.
+   * @param {number | undefined} id An existing application/license ID.
+   * @param {any} cleanObject A new return object to be added to the database.
+   * @returns {number} The newly created returns id.
    */
   create: async (id, cleanObject) => {
     try {
