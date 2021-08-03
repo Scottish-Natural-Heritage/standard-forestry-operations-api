@@ -8,6 +8,7 @@ const router = express.Router();
 import Application from './controllers/application.js';
 import ApplyOther from './controllers/apply-other.js';
 import Sett from './controllers/sett.js';
+import Returns from './controllers/returns.js';
 
 router.get('/health', async (request, response) => {
   response.status(200).send({message: 'OK'});
@@ -65,6 +66,60 @@ router.post('/applications', async (request, response) => {
   } catch (error) {
     logger.error(unErrorJson(error));
     response.status(500).send({error});
+  }
+});
+
+/**
+ * Clean the incoming POST request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} existingId The return that is being created.
+ * @param {any} body The incoming request's body.
+ * @returns {any} A json object that's just got our cleaned up fields on it.
+ */
+const cleanReturnInput = (existingId, body) => {
+  return {
+    ApplicationId: existingId,
+    // The strings are trimmed for leading and trailing whitespace and then
+    // copied across if they're in the POST body or are set to undefined if
+    // they're missing.
+    beforeObjectiveRef: body.beforeObjectiveRef === undefined ? undefined : body.beforeObjectiveRef.trim(),
+    afterObjectiveRef: body.afterObjectiveRef === undefined ? undefined : body.afterObjectiveRef.trim(),
+    fromDate: body.fromDate === undefined ? undefined : body.fromDate,
+    toDate: body.toDate === undefined ? undefined : body.toDate,
+    comment: body.comment === undefined ? undefined : body.comment.trim(),
+    createdByLicensingOfficer: body.createdByLicensingOfficer
+  };
+};
+
+// Allow the API consumer to submit a return against a application.
+router.post('/applications/:id/returns', async (request, response) => {
+  try {
+    // Try to parse the incoming ID to make sure it's really a number.
+    const existingId = Number(request.params.id);
+    if (Number.isNaN(existingId)) {
+      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+    }
+
+    const baseUrl = new URL(
+      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
+        request.originalUrl.endsWith('/') ? '' : '/'
+      }`
+    );
+
+    // Clean up the user's input before we store it in the database.
+    const cleanObject = cleanReturnInput(existingId, request.body);
+
+    // Create a new id wrapped in a database transaction
+    const newId = await Returns.create(existingId, cleanObject);
+
+    if (newId === undefined) {
+      return response.status(500).send({message: `Could not create return for license ${existingId}.`});
+    }
+
+    return response.status(201).location(new URL(newId, baseUrl)).send();
+  } catch (error) {
+    return response.status(500).send({error});
   }
 });
 
