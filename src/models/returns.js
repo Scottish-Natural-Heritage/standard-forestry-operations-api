@@ -23,16 +23,28 @@ const ReturnsModel = (sequelize) => {
         }
       },
       beforeObjectiveRef: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        validate: {
+          notEmpty: true
+        }
       },
       afterObjectiveRef: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        validate: {
+          notEmpty: true
+        }
       },
       fromDate: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        validate: {
+          notEmpty: true
+        }
       },
       toDate: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        validate: {
+          notEmpty: true
+        }
       },
       comment: {
         type: Sequelize.TEXT
