@@ -73,6 +73,58 @@ router.post('/applications', async (request, response) => {
  * Clean the incoming POST request body to make it more compatible with the
  * database and its validation rules.
  *
+ * @param {any} existingId The ID of the license that the sett belongs to.
+ * @param {any} body The incoming request's body.
+ * @returns {any} A json object that's just got our cleaned up fields on it.
+ */
+const cleanSettInput = (existingId, body) => {
+  return {
+    ApplicationId: existingId,
+    // The strings are trimmed for leading and trailing whitespace and then
+    // copied across if they're in the POST body or are set to undefined if
+    // they're missing.
+    sett: body.sett === undefined ? undefined : body.sett.trim(),
+    gridRef: body.gridRef === undefined ? undefined : body.gridRef.trim(),
+    entrances: body.entrances === undefined ? undefined : body.entrances,
+    createdByLicensingOfficer: body.createdByLicensingOfficer
+  };
+};
+
+// Allow the API consumer to submit a sett against a application.
+router.post('/applications/:id/setts', async (request, response) => {
+  try {
+    // Try to parse the incoming ID to make sure it's really a number.
+    const existingId = Number(request.params.id);
+    if (Number.isNaN(existingId)) {
+      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+    }
+
+    const baseUrl = new URL(
+      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
+        request.originalUrl.endsWith('/') ? '' : '/'
+      }`
+    );
+
+    // Clean up the user's input before we store it in the database.
+    const cleanObject = cleanSettInput(existingId, request.body);
+
+    // Create a new id wrapped in a database transaction
+    const newId = await Sett.create(existingId, cleanObject);
+
+    if (newId === undefined) {
+      return response.status(500).send({message: `Could not create sett for license ${existingId}.`});
+    }
+
+    return response.status(201).location(new URL(newId, baseUrl)).send();
+  } catch (error) {
+    return response.status(500).send({error});
+  }
+});
+
+/**
+ * Clean the incoming POST request body to make it more compatible with the
+ * database and its validation rules.
+ *
  * @param {any} existingId The return that is being created.
  * @param {any} body The incoming request's body.
  * @returns {any} A json object that's just got our cleaned up fields on it.
