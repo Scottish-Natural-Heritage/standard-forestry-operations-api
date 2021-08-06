@@ -84,7 +84,7 @@ const cleanSettInput = (existingId, body) => {
     // copied across if they're in the POST body or are set to undefined if
     // they're missing.
     sett: body.sett === undefined ? undefined : body.sett.trim(),
-    gridRef: body.gridRef === undefined ? undefined : body.gridRef.trim(),
+    gridRef: body.gridReference === undefined ? undefined : body.gridReference.trim(),
     entrances: body.entrances === undefined ? undefined : body.entrances,
     createdByLicensingOfficer: body.createdByLicensingOfficer
   };
