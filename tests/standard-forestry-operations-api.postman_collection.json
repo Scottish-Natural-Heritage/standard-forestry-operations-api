@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "08f8148f-471a-4179-8543-bf3be2bb30d6",
+		"_postman_id": "51788914-51f8-44c5-a89e-e4792111aace",
 		"name": "standard-forestry-operations-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -346,6 +346,134 @@
 							"    pm.expect(jsonData.Setts[0]).to.have.property('id');;",
 							"    pm.expect(jsonData.Setts[0]).to.have.property('gridRef');",
 							"    pm.expect(jsonData.Setts[0]).to.have.property('entrances');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new Sett",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {",
+							"    pm.response.to.have.status(201);",
+							"    pm.response.to.have.status('Created');",
+							"});",
+							"",
+							"pm.test('Location is present', function () {",
+							"    pm.response.to.have.header('Location');",
+							"    ",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(",
+							"        `http://localhost:3003/standard-forestry-operations-api/v1/applications/`",
+							"    );",
+							"});",
+							"",
+							"pm.collectionVariables.set(\"SFO_NEW_SETT_ID\", pm.response.headers.get('Location').split('/').pop());",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \t\t\"sett\": \"123456\",\r\n  \t\t\"gridReference\": \"NH63044379\",\r\n  \t\t\"entrances\": 6,\r\n        \"createdByLicensingOfficer\": \"939123\"\r\n  \t}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}/setts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}",
+						"setts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Application With New Sett",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Returned object matches posted object', function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData).to.have.property('convictions');",
+							"    pm.expect(jsonData).to.have.property('complyWithTerms');",
+							"    ",
+							"    pm.expect(jsonData).to.have.property('fullName');",
+							"    pm.expect(jsonData).to.have.property('companyOrganisation');",
+							"    pm.expect(jsonData).to.have.property('addressLine1');",
+							"    pm.expect(jsonData).to.have.property('addressLine2');",
+							"    pm.expect(jsonData).to.have.property('addressTown');",
+							"    pm.expect(jsonData).to.have.property('addressCounty');",
+							"    pm.expect(jsonData).to.have.property('addressPostcode');",
+							"    pm.expect(jsonData).to.have.property('phoneNumber');",
+							"    pm.expect(jsonData).to.have.property('emailAddress');",
+							"    pm.expect(jsonData).to.have.property('Setts');",
+							"",
+							"    pm.expect(jsonData.Setts.length).to.eql(3);",
+							"",
+							"    pm.expect(jsonData.Setts[2]).to.have.property('id');",
+							"    pm.expect(jsonData.Setts[2]).to.have.property('gridRef');",
+							"    pm.expect(jsonData.Setts[2]).to.have.property('entrances');",
+							"    pm.expect(jsonData.Setts[2]).to.have.property('createdByLicensingOfficer');",
+							"    pm.expect(jsonData.Setts[2].createdByLicensingOfficer).to.eql('939123');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -910,6 +1038,10 @@
 		},
 		{
 			"key": "SFO_NEW_APP_RETURN_ID",
+			"value": ""
+		},
+		{
+			"key": "SFO_NEW_SETT_ID",
 			"value": ""
 		}
 	]
