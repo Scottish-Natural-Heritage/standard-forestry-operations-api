@@ -32,6 +32,9 @@ const SettModel = (sequelize) => {
         validate: {
           notEmpty: true
         }
+      },
+      createdByLicensingOfficer: {
+        type: Sequelize.STRING
       }
     },
     {
