@@ -1,8 +1,6 @@
 import express from 'express';
 import config from './config/app.js';
 
-import logger, {unErrorJson} from './logger.js';
-
 const v2router = express.Router();
 
 import Application from './controllers/v2/application.js';
@@ -20,7 +18,7 @@ v2router.get('/applications', async (request, response) => {
 /**
  * READs a single application.
  */
- v2router.get('/applications/:id', async (request, response) => {
+v2router.get('/applications/:id', async (request, response) => {
   return response.status(501).send({message: 'Not implemented.'});
 });
 
@@ -195,7 +193,7 @@ v2router.post('/apply-other', async (request, response) => {
 /**
  * GET all setts endpoint.
  */
- v2router.get('/setts', async (request, response) => {
+v2router.get('/setts', async (request, response) => {
   try {
     const setts = await Sett.findAll();
 
@@ -209,4 +207,4 @@ v2router.post('/apply-other', async (request, response) => {
   }
 });
 
-export {router as default};
+export {v2router as default};

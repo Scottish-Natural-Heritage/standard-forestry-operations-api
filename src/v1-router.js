@@ -32,7 +32,7 @@ v1router.get('/applications', async (request, response) => {
 /**
  * READs a single application.
  */
- v1router.get('/applications/:id', async (request, response) => {
+v1router.get('/applications/:id', async (request, response) => {
   try {
     const existingId = Number(request.params.id);
     if (Number.isNaN(existingId)) {
@@ -347,7 +347,7 @@ v1router.post('/apply-other', async (request, response) => {
 /**
  * GET all setts endpoint.
  */
- v1router.get('/setts', async (request, response) => {
+v1router.get('/setts', async (request, response) => {
   try {
     const setts = await Sett.findAll();
 

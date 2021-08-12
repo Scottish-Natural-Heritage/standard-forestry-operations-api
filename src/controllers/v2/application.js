@@ -4,12 +4,10 @@ import database from '../../models/index.js';
 
 const {Application, Returns, Sett, Revocation} = database;
 
-
 /**
  * An object to perform 'persistence' operations on our application objects.
  */
 const ApplicationController = {
-
   /**
    * Retrieve the specified application from the database.
    *
