@@ -3,18 +3,18 @@ import config from './config/app.js';
 
 import logger, {unErrorJson} from './logger.js';
 
-const router = express.Router();
+const v1router = express.Router();
 
-import Application from './controllers/application.js';
-import ApplyOther from './controllers/apply-other.js';
-import Sett from './controllers/sett.js';
-import Returns from './controllers/returns.js';
+import Application from './controllers/v1/application.js';
+import ApplyOther from './controllers/v1/apply-other.js';
+import Sett from './controllers/v1/sett.js';
+import Returns from './controllers/v1/returns.js';
 
-router.get('/health', async (request, response) => {
+v1router.get('/health', async (request, response) => {
   response.status(200).send({message: 'OK'});
 });
 
-router.get('/applications', async (request, response) => {
+v1router.get('/applications', async (request, response) => {
   try {
     const applications = await Application.findAll();
 
@@ -32,7 +32,7 @@ router.get('/applications', async (request, response) => {
 /**
  * READs a single application.
  */
-router.get('/applications/:id', async (request, response) => {
+ v1router.get('/applications/:id', async (request, response) => {
   try {
     const existingId = Number(request.params.id);
     if (Number.isNaN(existingId)) {
@@ -53,7 +53,7 @@ router.get('/applications/:id', async (request, response) => {
 });
 
 // Allow an API consumer to allocate a new application number.
-router.post('/applications', async (request, response) => {
+v1router.post('/applications', async (request, response) => {
   const baseUrl = new URL(
     `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
       request.originalUrl.endsWith('/') ? '' : '/'
@@ -91,7 +91,7 @@ const cleanSettInput = (existingId, body) => {
 };
 
 // Allow the API consumer to submit a sett against a application.
-router.post('/applications/:id/setts', async (request, response) => {
+v1router.post('/applications/:id/setts', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
@@ -145,7 +145,7 @@ const cleanReturnInput = (existingId, body) => {
 };
 
 // Allow the API consumer to submit a return against a application.
-router.post('/applications/:id/returns', async (request, response) => {
+v1router.post('/applications/:id/returns', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
@@ -220,7 +220,7 @@ const cleanInput = (body) => {
 };
 
 // Allow an API consumer to save a application against an allocated but un-assigned application number.
-router.put('/applications/:id', async (request, response) => {
+v1router.put('/applications/:id', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
@@ -283,7 +283,7 @@ const cleanRevokeInput = (existingId, body) => {
 };
 
 // Allow an API consumer to delete a application.
-router.delete('/applications/:id', async (request, response) => {
+v1router.delete('/applications/:id', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
@@ -325,7 +325,7 @@ const cleanApplyOther = (body) => {
 
 // Save an incoming email address so we can email them later once the apply on
 // behalf of others service is up and running.
-router.post('/apply-other', async (request, response) => {
+v1router.post('/apply-other', async (request, response) => {
   const baseUrl = new URL(
     `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
       request.originalUrl.endsWith('/') ? '' : '/'
@@ -347,7 +347,7 @@ router.post('/apply-other', async (request, response) => {
 /**
  * GET all setts endpoint.
  */
-router.get('/setts', async (request, response) => {
+ v1router.get('/setts', async (request, response) => {
   try {
     const setts = await Sett.findAll();
 
@@ -361,4 +361,4 @@ router.get('/setts', async (request, response) => {
   }
 });
 
-export {router as default};
+export {v1router as default};
