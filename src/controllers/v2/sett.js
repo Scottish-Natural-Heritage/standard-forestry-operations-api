@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize';
 // eslint-disable-next-line unicorn/import-index, import/no-useless-path-segments
-import database from '../models/index.js';
+import database from '../../models/index.js';
 
 const {Sett, Application} = database;
 
@@ -44,24 +44,6 @@ const SettController = {
    */
   findAll: async () => {
     return Sett.findAll();
-  },
-
-  /**
-   * Soft delete a application in the database.
-   *
-   * @param {number} id A possible ID of a sett.
-   * @returns {boolean} True if the record is deleted, otherwise false.
-   */
-  delete: async (id) => {
-    try {
-      await database.sequelize.transaction(async (t) => {
-        await Sett.findByPk(id, {transaction: t, rejectOnEmpty: true});
-        await Sett.destroy({where: {id}, transaction: t});
-        return true;
-      });
-    } catch {
-      return false;
-    }
   }
 };
 

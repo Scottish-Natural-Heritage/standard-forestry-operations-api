@@ -1,9 +1,9 @@
 import Sequelize from 'sequelize';
 import NotifyClient from 'notifications-node-client';
 // eslint-disable-next-line unicorn/import-index, import/no-useless-path-segments
-import database from '../models/index.js';
-import config from '../config/app.js';
-import logger, {unErrorJson} from '../logger.js';
+import database from '../../models/index.js';
+import config from '../../config/app.js';
+import logger, {unErrorJson} from '../../logger.js';
 
 const {Application, Returns, Sett, Revocation} = database;
 
