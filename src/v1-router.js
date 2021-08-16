@@ -121,6 +121,35 @@ v1router.post('/applications/:id/setts', async (request, response) => {
   }
 });
 
+// Allow an API consumer to delete a sett against a application.
+router.delete('/applications/:id/setts/:settId', async (request, response) => {
+  try {
+    // Try to parse the incoming ID to make sure it's really a number.
+    const existingId = Number(request.params.id);
+    if (isNaN(existingId)) {
+      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+    }
+
+    // Try to parse the incoming ID to make sure it's really a number.
+    const existingSettId = Number(request.params.settId);
+    if (isNaN(existingSettId)) {
+      return response.status(404).send({message: `Sett ${request.params.settId} not valid.`});
+    }
+
+    const deleteSett = await Sett.delete(existingSettId);
+
+    if (deleteSett === false) {
+      return response.status(500).send({message: `Could not delete Sett ${existingSettId}.`});
+    }
+
+    // If they are, send back true.
+    return response.status(200).send();
+  } catch (error) {
+    // If anything goes wrong (such as a validation error), tell the client.
+    return response.status(500).send({error});
+  }
+});
+
 /**
  * Clean the incoming POST request body to make it more compatible with the
  * database and its validation rules.

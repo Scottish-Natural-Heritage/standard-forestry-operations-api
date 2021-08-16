@@ -44,6 +44,24 @@ const SettController = {
    */
   findAll: async () => {
     return Sett.findAll();
+  },
+
+  /**
+   * Soft delete a application in the database.
+   *
+   * @param {number} id A possible ID of a sett.
+   * @returns {boolean} True if the record is deleted, otherwise false.
+   */
+  delete: async (id) => {
+    try {
+      await database.sequelize.transaction(async (t) => {
+        await Sett.findByPk(id, {transaction: t, rejectOnEmpty: true});
+        await Sett.destroy({where: {id}, transaction: t});
+        return true;
+      });
+    } catch {
+      return false;
+    }
   }
 };
 
