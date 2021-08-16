@@ -122,7 +122,7 @@ v1router.post('/applications/:id/setts', async (request, response) => {
 });
 
 // Allow an API consumer to delete a sett against a application.
-router.delete('/applications/:id/setts/:settId', async (request, response) => {
+v1router.delete('/applications/:id/setts/:settId', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);

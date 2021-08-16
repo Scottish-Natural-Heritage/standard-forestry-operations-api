@@ -190,6 +190,11 @@ v2router.post('/apply-other', async (request, response) => {
   return response.status(501).send({message: 'Not implemented.'});
 });
 
+// Allow an API consumer to delete a sett against a application.
+v2router.delete('/applications/:id/setts/:settId', async (request, response) => {
+  return response.status(501).send({message: 'Not implemented.'});
+});
+
 /**
  * GET all setts endpoint.
  */
