@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === 'production') {
 
   module.exports = {
     up: (queryInterface, Sequelize) => {
-      return queryInterface.sequelize.query('create role rosfo with noinherit login password :trapsPassword;', {
+      return queryInterface.sequelize.query('create role rosfo with noinherit login password :roSfoPassword;', {
         type: Sequelize.QueryTypes.RAW,
         replacements: {
           trapsPassword: config.password
