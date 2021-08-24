@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'production') {
       return queryInterface.sequelize.query('create role rosfo with noinherit login password :roSfoPassword;', {
         type: Sequelize.QueryTypes.RAW,
         replacements: {
-          trapsPassword: config.password
+          roSfoPassword: config.password
         }
       });
     },
