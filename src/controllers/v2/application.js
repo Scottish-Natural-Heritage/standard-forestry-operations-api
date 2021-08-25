@@ -5,6 +5,67 @@ import database from '../../models/index.js';
 const {Application, Returns, Sett, Revocation} = database;
 
 /**
+ * Clean an incoming PATCH request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} body the incoming request's body
+ * @returns {any} cleanedBody a json object that's just got our cleaned up fields on it
+ */
+ const cleanPatchInput = (body) => {
+  const cleanedBody = {};
+
+   // Check for the existence of each field and if found clean it if required and add to the cleanedBody object.
+   if (body.fullName) {
+     cleanedBody.fullName = body.fullName.trim();
+   }
+
+   if (body.companyOrganisation) {
+     cleanedBody.companyOrganisation = body.companyOrganisation.trim();
+   }
+
+   if (body.emailAddress) {
+     cleanedBody.emailAddress = utils.recipients.validateAndFormatEmailAddress(body.emailAddress);
+   }
+
+   if (body.addressLine1) {
+     cleanedBody.addressLine1 = body.addressLine1.trim();
+   }
+
+   if (body.addressLine2) {
+     cleanedBody.addressLine2 = body.addressLine2.trim();
+   }
+
+   if (body.addressTown) {
+     cleanedBody.addressTown = body.addressTown.trim();
+   }
+
+   if (body.addressCounty) {
+     cleanedBody.addressCounty = body.addressCounty.trim();
+   }
+
+   if (body.addressPostcode) {
+     cleanedBody.addressPostcode = utils.postalAddress.formatPostcodeForPrinting(body.addressPostcode);
+     if (!utils.postalAddress.isaRealUkPostcode(cleanedBody.addressPostcode)) {
+       throw new Error('Invalid postcode.');
+     }
+   }
+
+   if (body.phoneNumber) {
+     cleanedBody.phoneNumber = body.phoneNumber.trim();
+   }
+
+   if (body.convictions) {
+     cleanedBody.convictions = body.convictions;
+   }
+
+   if (body.createdByLicensingOfficer) {
+     cleanedBody.createdByLicensingOfficer = body.createdByLicensingOfficer();
+   }
+
+   return cleanedBody;
+ };
+
+/**
  * An object to perform 'persistence' operations on our application objects.
  */
 const ApplicationController = {
@@ -48,4 +109,4 @@ const ApplicationController = {
   }
 };
 
-export {ApplicationController as default};
+export {ApplicationController as default, cleanPatchInput};

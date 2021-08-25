@@ -237,6 +237,59 @@
 			},
 			"response": []
 		},
+    {
+			"name": "Edit Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							"\r",
+							"pm.test('Response contains edited field', function () {\r",
+							"    var reqJsonData = JSON.parse(pm.request.body.raw);\r",
+							"    var resJsonData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(reqJsonData.fullName).to.eql(resJsonData.fullName);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fullName\": \"Test Edit Works With Partial Object\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/standard-forestry-operations-api/v2/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"standard-forestry-operations-api",
+						"v2",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
 		{
 			"name": "Update an Application",
 			"event": [
