@@ -26,7 +26,7 @@ if (process.env.NODE_ENV === 'production') {
       database: 'licensing',
       host: config.databaseHost,
       dialect: 'postgres',
-      schema: 'traps',
+      schema: 'sfo',
       logging: false
     }
   };
