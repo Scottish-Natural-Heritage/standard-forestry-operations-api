@@ -10,5 +10,6 @@ module.exports = Object.freeze({
   databaseHost: process.env.LICENSING_DB_HOST || 'localhost',
   licensingPassword: process.env.LICENSING_DB_PASS || 'override_this_value',
   sfoPassword: process.env.SFO_DB_PASS || 'override_this_value',
-  notifyApiKey: process.env.SFO_NOTIFY_API_KEY
+  notifyApiKey: process.env.SFO_NOTIFY_API_KEY,
+  roSfoPassword: process.env.RO_SFO_DB_PASS || 'override_this_value'
 });
