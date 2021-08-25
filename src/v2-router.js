@@ -3,7 +3,7 @@ import config from './config/app.js';
 
 const v2router = express.Router();
 
-import Application from './controllers/v2/application.js';
+import Application, {cleanPatchInput} from './controllers/v2/application.js';
 import Sett from './controllers/v2/sett.js';
 import Returns from './controllers/v2/returns.js';
 
@@ -157,6 +157,47 @@ const cleanRevokeInput = (existingId, body) => {
     isRevoked: body.isRevoked
   };
 };
+
+/**
+ * UPDATEs part of a single application.
+ */
+v2router.patch('/applications/:id', async (request, response) => {
+  try {
+    // Try to parse the incoming ID to make sure it's really a number.
+    const existingId = Number(request.params.id);
+    if (Number.isNaN(existingId)) {
+      return response.status(404).send({message: `application ${request.params.id} not valid.`});
+    }
+
+    // Check if there's a application allocated at the specified ID.
+    const existingApplication = await Application.findOne(existingId);
+    if (existingApplication === undefined || existingApplication === null) {
+      return response.status(404).send({message: `application ${existingId} not allocated.`});
+    }
+
+    // Clean up the user's input before we store it in the database.
+    let cleanObject;
+    try {
+      cleanObject = cleanPatchInput(request.body);
+    } catch (error) {
+      return response.status(400).send({message: `Could not update application ${existingId}. ${error.message}`});
+    }
+
+    // Update the application in the database with our client's values.
+    const updatedApplication = await Application.update(existingId, cleanObject);
+
+    // If they're not successful, send a 500 error.
+    if (updatedApplication === undefined) {
+      return response.status(500).send({message: `Could not update application ${existingId}.`});
+    }
+
+    // If they are, send back the updated fields.
+    return response.status(200).send(updatedApplication);
+  } catch (error) {
+    // When anything else goes wrong send the error to the client.
+    return response.status(500).send({error});
+  }
+});
 
 // Allow an API consumer to delete a application.
 v2router.delete('/applications/:id', async (request, response) => {
