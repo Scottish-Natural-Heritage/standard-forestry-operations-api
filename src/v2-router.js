@@ -161,7 +161,7 @@ const cleanRevokeInput = (existingId, body) => {
 /**
  * UPDATEs part of a single application.
  */
- v2router.patch('/application/:id', async (request, response) => {
+v2router.patch('/applications/:id', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
@@ -170,7 +170,7 @@ const cleanRevokeInput = (existingId, body) => {
     }
 
     // Check if there's a application allocated at the specified ID.
-    const existingApplication = await application.findOne(existingId);
+    const existingApplication = await Application.findOne(existingId);
     if (existingApplication === undefined || existingApplication === null) {
       return response.status(404).send({message: `application ${existingId} not allocated.`});
     }
@@ -184,7 +184,7 @@ const cleanRevokeInput = (existingId, body) => {
     }
 
     // Update the application in the database with our client's values.
-    const updatedApplication = await application.update(existingId, cleanObject);
+    const updatedApplication = await Application.update(existingId, cleanObject);
 
     // If they're not successful, send a 500 error.
     if (updatedApplication === undefined) {
