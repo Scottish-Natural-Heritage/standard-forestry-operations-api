@@ -3,44 +3,44 @@
 if (process.env.NODE_ENV === 'production') {
   module.exports = {
     up: async (queryInterface, Sequelize) => {
-      await queryInterface.sequelize.query('CREATE VIEW applications_sfo_v AS SELECT * FROM sfo."Applications";', {
+      await queryInterface.sequelize.query('CREATE VIEW sfo_Applications AS SELECT * FROM sfo."Applications";', {
         type: Sequelize.QueryTypes.RAW
       });
 
-      await queryInterface.sequelize.query('CREATE VIEW apply_others_sfo_v AS SELECT * FROM sfo."ApplyOthers";', {
+      await queryInterface.sequelize.query('CREATE VIEW sfo_ApplyOthers AS SELECT * FROM sfo."ApplyOthers";', {
         type: Sequelize.QueryTypes.RAW
       });
 
-      await queryInterface.sequelize.query('CREATE VIEW returns_sfo_v AS SELECT * FROM sfo."Returns";', {
+      await queryInterface.sequelize.query('CREATE VIEW sfo_Returns AS SELECT * FROM sfo."Returns";', {
         type: Sequelize.QueryTypes.RAW
       });
 
-      await queryInterface.sequelize.query('CREATE VIEW revocations_sfo_v AS SELECT * FROM sfo."Revocations";', {
+      await queryInterface.sequelize.query('CREATE VIEW sfo_Revocations AS SELECT * FROM sfo."Revocations";', {
         type: Sequelize.QueryTypes.RAW
       });
 
-      await queryInterface.sequelize.query('CREATE VIEW setts_sfo_v AS SELECT * FROM sfo."Setts";', {
+      await queryInterface.sequelize.query('CREATE VIEW sfo_Setts AS SELECT * FROM sfo."Setts";', {
         type: Sequelize.QueryTypes.RAW
       });
     },
     down: async (queryInterface, Sequelize) => {
-      await queryInterface.sequelize.query('DROP VIEW setts_sfo_v;', {
+      await queryInterface.sequelize.query('DROP VIEW sfo_Setts;', {
         type: Sequelize.QueryTypes.RAW
       });
 
-      await queryInterface.sequelize.query('DROP VIEW revocations_sfo_v;', {
+      await queryInterface.sequelize.query('DROP VIEW sfo_Revocations;', {
         type: Sequelize.QueryTypes.RAW
       });
 
-      await queryInterface.sequelize.query('DROP VIEW returns_sfo_v;', {
+      await queryInterface.sequelize.query('DROP VIEW sfo_Returns;', {
         type: Sequelize.QueryTypes.RAW
       });
 
-      await queryInterface.sequelize.query('DROP VIEW apply_others_sfo_v;', {
+      await queryInterface.sequelize.query('DROP VIEW sfo_ApplyOthers;', {
         type: Sequelize.QueryTypes.RAW
       });
 
-      await queryInterface.sequelize.query('DROP VIEW applications_sfo_v;', {
+      await queryInterface.sequelize.query('DROP VIEW sfo_Applications;', {
         type: Sequelize.QueryTypes.RAW
       });
     }
