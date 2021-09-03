@@ -10,15 +10,14 @@
     "premigrations": "npx sequelize-cli db:migrate --env preMigrations --migrations-path util/db/pre-migrations",
     "migrations": "npx sequelize-cli db:migrate --env database",
     "prestart": "npm run migrations",
-    "start": "node --experimental-modules src/server.js",
+    "start": "node src/server.js",
     "dev": "SFO_API_PORT=3999 nodemon --exec \"npm run lint && npm run start\" -e js",
     "nm:run": "newman run tests/standard-forestry-operations-api.postman_collection.json",
     "pretest": "rm .development.db || true",
     "test": "start-server-and-test start http://localhost:3003/standard-forestry-operations-api/v1/health nm:run"
   },
   "engines": {
-    "node": "12.14.1",
-    "npm": "6.13.4"
+    "node": "^14.13.1 || >=16.0.0"
   },
   "license": "MIT",
   "dependencies": {
