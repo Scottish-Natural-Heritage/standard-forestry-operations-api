@@ -3,7 +3,7 @@ import Application from './controllers/v1/application.js';
 import ApplyOther from './controllers/v1/apply-other.js';
 import Sett from './controllers/v1/sett.js';
 import Returns from './controllers/v1/returns.js';
-import logger, {unErrorJson} from './logger.js';
+import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
 
 const v1router = express.Router();
@@ -23,7 +23,7 @@ v1router.get('/applications', async (request, response) => {
 
     return response.status(200).send(applications);
   } catch (error) {
-    logger.error(unErrorJson(error));
+    jsonConsoleLogger.error(unErrorJson(error));
     return response.status(500).send({error});
   }
 });
@@ -47,7 +47,7 @@ v1router.get('/applications/:id', async (request, response) => {
 
     return response.status(200).send(applications);
   } catch (error) {
-    logger.error(unErrorJson(error));
+    jsonConsoleLogger.error(unErrorJson(error));
     return response.status(500).send({error});
   }
 });
@@ -65,7 +65,7 @@ v1router.post('/applications', async (request, response) => {
     const newApplication = await Application.create();
     response.status(201).location(new URL(newApplication.id, baseUrl)).send();
   } catch (error) {
-    logger.error(unErrorJson(error));
+    jsonConsoleLogger.error(unErrorJson(error));
     response.status(500).send({error});
   }
 });
@@ -287,7 +287,7 @@ v1router.put('/applications/:id', async (request, response) => {
     response.status(200).send(updatedApp);
   } catch (error) {
     // If anything goes wrong (such as a validation error), tell the client.
-    logger.error(unErrorJson(error));
+    jsonConsoleLogger.error(unErrorJson(error));
     response.status(500).send({error});
   }
 });
@@ -370,7 +370,7 @@ v1router.post('/apply-other', async (request, response) => {
     const newApplyOther = await ApplyOther.create(cleanObject);
     response.status(201).location(new URL(newApplyOther.id, baseUrl)).send();
   } catch (error) {
-    logger.error(unErrorJson(error));
+    jsonConsoleLogger.error(unErrorJson(error));
     response.status(500).send({error});
   }
 });

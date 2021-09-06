@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 import NotifyClient from 'notifications-node-client';
 import database from '../../models/index.js';
 import config from '../../config/app.js';
-import logger, {unErrorJson} from '../../logger.js';
+import jsonConsoleLogger, {unErrorJson} from '../../json-console-logger.js';
 
 const {Application, Returns, Sett, Revocation} = database;
 
@@ -27,7 +27,7 @@ const tryCreate = async () => {
     // new model.
     return newApp;
   } catch (error) {
-    logger.error(unErrorJson(error));
+    jsonConsoleLogger.error(unErrorJson(error));
     // There are two possible error conditions here...
 
     // The first is if we try to create a duplicate ID, which we manually check
@@ -67,7 +67,7 @@ const sendSuccessEmail = async (notifyApiKey, application) => {
         emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
       });
     } catch (error) {
-      logger.error(unErrorJson(error));
+      jsonConsoleLogger.error(unErrorJson(error));
       throw error;
     }
   }
