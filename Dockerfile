@@ -35,4 +35,4 @@ ENV RO_SFO_DB_PASS override_this_value
 EXPOSE $SFO_API_PORT
 
 # run the default start script, which kicks off a few pre-start things too
-CMD ["npm", "start"]
+CMD ["npm", "start", "--silent"]
