@@ -1,7 +1,5 @@
-import Sequelize from 'sequelize';
-// eslint-disable-next-line unicorn/import-index, import/no-useless-path-segments
-import database from '../../models/index.js';
 import utils from 'naturescot-utils';
+import database from '../../models/index.js';
 
 const {Application, Returns, Sett, Revocation} = database;
 
@@ -69,6 +67,7 @@ const cleanPatchInput = (body) => {
 /**
  * An object to perform 'persistence' operations on our application objects.
  */
+// eslint-disable-next-line unicorn/prevent-abbreviations
 const ApplicationController = {
   /**
    * Retrieve the specified application from the database.
@@ -115,6 +114,7 @@ const ApplicationController = {
    * @param {any} application A JSON version of the model containing only the fields to be updated.
    * @returns {boolean} True if the record is updated, otherwise false.
    */
+  // eslint-disable-next-line unicorn/prevent-abbreviations
   update: async (id, application) => {
     // Save the new values to the database.
     const result = await Application.update(application, {where: {id}});
