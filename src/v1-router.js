@@ -241,9 +241,11 @@ const cleanInput = (body) => {
               // The number is just copied across.
               entrances: sett.entrances,
 
-              // The two strings are trimmed then copied.
+              // The three strings are trimmed then copied.
               id: sett.id === undefined ? undefined : sett.id.trim(),
-              gridReference: sett.gridReference === undefined ? undefined : sett.gridReference.trim()
+              gridReference: sett.gridReference === undefined ? undefined : sett.gridReference.trim(),
+              createdByLicensingOfficer:
+                sett.createdByLicensingOfficer === undefined ? undefined : sett.createdByLicensingOfficer.trim()
             };
           })
   };

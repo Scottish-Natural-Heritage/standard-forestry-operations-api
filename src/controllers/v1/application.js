@@ -154,7 +154,8 @@ const ApplicationController = {
         const sett = await Sett.create({
           sett: jsonSett.id,
           gridRef: jsonSett.gridReference,
-          entrances: jsonSett.entrances
+          entrances: jsonSett.entrances,
+          createdByLicensingOfficer: jsonSett.createdByLicensingOfficer
         });
 
         // Associate the sett to the application.
