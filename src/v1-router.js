@@ -1,14 +1,12 @@
 import express from 'express';
-import config from './config/app.js';
-
-import logger, {unErrorJson} from './logger.js';
-
-const v1router = express.Router();
-
 import Application from './controllers/v1/application.js';
 import ApplyOther from './controllers/v1/apply-other.js';
 import Sett from './controllers/v1/sett.js';
 import Returns from './controllers/v1/returns.js';
+import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
+import config from './config/app.js';
+
+const v1router = express.Router();
 
 v1router.get('/health', async (request, response) => {
   response.status(200).send({message: 'OK'});
@@ -16,6 +14,7 @@ v1router.get('/health', async (request, response) => {
 
 v1router.get('/applications', async (request, response) => {
   try {
+    // eslint-disable-next-line unicorn/prevent-abbreviations
     const applications = await Application.findAll();
 
     if (applications === undefined || applications === null) {
@@ -24,7 +23,7 @@ v1router.get('/applications', async (request, response) => {
 
     return response.status(200).send(applications);
   } catch (error) {
-    logger.error(unErrorJson(error));
+    jsonConsoleLogger.error(unErrorJson(error));
     return response.status(500).send({error});
   }
 });
@@ -39,6 +38,7 @@ v1router.get('/applications/:id', async (request, response) => {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
     }
 
+    // eslint-disable-next-line unicorn/prevent-abbreviations
     const applications = await Application.findOne(existingId);
 
     if (applications === undefined || applications === null) {
@@ -47,7 +47,7 @@ v1router.get('/applications/:id', async (request, response) => {
 
     return response.status(200).send(applications);
   } catch (error) {
-    logger.error(unErrorJson(error));
+    jsonConsoleLogger.error(unErrorJson(error));
     return response.status(500).send({error});
   }
 });
@@ -61,10 +61,11 @@ v1router.post('/applications', async (request, response) => {
   );
 
   try {
+    // eslint-disable-next-line unicorn/prevent-abbreviations
     const newApplication = await Application.create();
     response.status(201).location(new URL(newApplication.id, baseUrl)).send();
   } catch (error) {
-    logger.error(unErrorJson(error));
+    jsonConsoleLogger.error(unErrorJson(error));
     response.status(500).send({error});
   }
 });
@@ -126,13 +127,13 @@ v1router.delete('/applications/:id/setts/:settId', async (request, response) => 
   try {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
-    if (isNaN(existingId)) {
+    if (Number.isNaN(existingId)) {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
     }
 
     // Try to parse the incoming ID to make sure it's really a number.
     const existingSettId = Number(request.params.settId);
-    if (isNaN(existingSettId)) {
+    if (Number.isNaN(existingSettId)) {
       return response.status(404).send({message: `Sett ${request.params.settId} not valid.`});
     }
 
@@ -240,9 +241,11 @@ const cleanInput = (body) => {
               // The number is just copied across.
               entrances: sett.entrances,
 
-              // The two strings are trimmed then copied.
+              // The three strings are trimmed then copied.
               id: sett.id === undefined ? undefined : sett.id.trim(),
-              gridReference: sett.gridReference === undefined ? undefined : sett.gridReference.trim()
+              gridReference: sett.gridReference === undefined ? undefined : sett.gridReference.trim(),
+              createdByLicensingOfficer:
+                sett.createdByLicensingOfficer === undefined ? undefined : sett.createdByLicensingOfficer.trim()
             };
           })
   };
@@ -253,7 +256,7 @@ v1router.put('/applications/:id', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
-    if (isNaN(existingId)) {
+    if (Number.isNaN(existingId)) {
       response.status(404).send({message: `Application ${request.params.id} not valid.`});
       return;
     }
@@ -286,7 +289,7 @@ v1router.put('/applications/:id', async (request, response) => {
     response.status(200).send(updatedApp);
   } catch (error) {
     // If anything goes wrong (such as a validation error), tell the client.
-    logger.error(unErrorJson(error));
+    jsonConsoleLogger.error(unErrorJson(error));
     response.status(500).send({error});
   }
 });
@@ -316,13 +319,14 @@ v1router.delete('/applications/:id', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
-    if (isNaN(existingId)) {
+    if (Number.isNaN(existingId)) {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
     }
 
     // Clean up the user's input before we store it in the database.
     const cleanObject = cleanRevokeInput(existingId, request.body);
 
+    // eslint-disable-next-line unicorn/prevent-abbreviations
     const deleteApplication = await Application.delete(existingId, cleanObject);
 
     if (deleteApplication === false) {
@@ -368,7 +372,7 @@ v1router.post('/apply-other', async (request, response) => {
     const newApplyOther = await ApplyOther.create(cleanObject);
     response.status(201).location(new URL(newApplyOther.id, baseUrl)).send();
   } catch (error) {
-    logger.error(unErrorJson(error));
+    jsonConsoleLogger.error(unErrorJson(error));
     response.status(500).send({error});
   }
 });

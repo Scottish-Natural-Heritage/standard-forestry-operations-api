@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prevent-abbreviations */
 'use strict';
 
 import Sequelize from 'sequelize';

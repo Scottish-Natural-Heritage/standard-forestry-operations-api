@@ -1,4 +1,3 @@
-// eslint-disable-next-line unicorn/import-index, import/no-useless-path-segments
 import database from '../../models/index.js';
 const {Application, Returns} = database;
 
