@@ -13,6 +13,7 @@ module.exports = {
 
       // The getForeignKeyReferencesForTable method isn't 'queryable' so we run
       // the filter in JS instead.
+      // eslint-disable-next-line unicorn/prefer-array-find
       const ourConstraints = references.filter((constraint) => {
         return (
           constraint.tableName === 'Setts' &&

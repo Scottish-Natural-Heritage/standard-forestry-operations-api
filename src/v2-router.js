@@ -1,11 +1,12 @@
 import express from 'express';
-import config from './config/app.js';
-
-const v2router = express.Router();
 
 import Application, {cleanPatchInput} from './controllers/v2/application.js';
 import Sett from './controllers/v2/sett.js';
 import Returns from './controllers/v2/returns.js';
+
+import config from './config/app.js';
+
+const v2router = express.Router();
 
 v2router.get('/health', async (request, response) => {
   response.status(200).send({message: 'OK'});
@@ -170,6 +171,7 @@ v2router.patch('/applications/:id', async (request, response) => {
     }
 
     // Check if there's a application allocated at the specified ID.
+    // eslint-disable-next-line unicorn/prevent-abbreviations
     const existingApplication = await Application.findOne(existingId);
     if (existingApplication === undefined || existingApplication === null) {
       return response.status(404).send({message: `application ${existingId} not allocated.`});
@@ -184,6 +186,7 @@ v2router.patch('/applications/:id', async (request, response) => {
     }
 
     // Update the application in the database with our client's values.
+    // eslint-disable-next-line unicorn/prevent-abbreviations
     const updatedApplication = await Application.update(existingId, cleanObject);
 
     // If they're not successful, send a 500 error.
@@ -204,13 +207,13 @@ v2router.delete('/applications/:id', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
-    if (isNaN(existingId)) {
+    if (Number.isNaN(existingId)) {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
     }
 
     // Clean up the user's input before we store it in the database.
     const cleanObject = cleanRevokeInput(existingId, request.body);
-
+    // eslint-disable-next-line unicorn/prevent-abbreviations
     const deleteApplication = await Application.delete(existingId, cleanObject);
 
     if (deleteApplication === false) {

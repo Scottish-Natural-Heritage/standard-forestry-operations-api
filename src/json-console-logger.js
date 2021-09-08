@@ -1,15 +1,15 @@
 import winston from 'winston';
 
-const logger = winston.createLogger({
-  level: 'info',
+const jsonConsoleLogger = winston.createLogger({
+  level: 'debug',
   format: winston.format.json(),
   defaultMeta: {service: 'standard-forestry-operations-api'},
   transports: [new winston.transports.Console({colorize: true})]
 });
 
-logger.stream = {
+jsonConsoleLogger.stream = {
   write: (message) => {
-    logger.info(message);
+    jsonConsoleLogger.info(message);
   }
 };
 
@@ -35,4 +35,4 @@ const unErrorJson = (json) => {
   return json;
 };
 
-export {logger as default, unErrorJson};
+export {jsonConsoleLogger as default, unErrorJson};
