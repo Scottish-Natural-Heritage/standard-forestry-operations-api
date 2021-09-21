@@ -2,10 +2,9 @@
 if (process.env.NODE_ENV === 'production') {
   module.exports = {
     up: async (queryInterface, Sequelize) => {
-
       await queryInterface.sequelize.query(
         `
-        UPDATE sfo."Setts" SET "deletedAt" = CURRENT_TIMESTAMP WHERE "deletedAt" IS NULL AND "ApplicationId" IN (SELECT id FROM sfo."Applications" WHERE "deletedAt" IS NOT NULL)";`,
+        UPDATE sfo."Setts" SET "deletedAt" = CURRENT_TIMESTAMP WHERE "deletedAt" IS NULL AND "ApplicationId" IN (SELECT id FROM sfo."Applications" WHERE "deletedAt" IS NOT NULL)`,
         {
           type: Sequelize.QueryTypes.UPDATE
         }
@@ -13,14 +12,14 @@ if (process.env.NODE_ENV === 'production') {
 
       await queryInterface.sequelize.query(
         `
-        UPDATE sfo."Returns" SET "deletedAt" = CURRENT_TIMESTAMP WHERE "deletedAt" IS NULL AND "ApplicationId" IN (SELECT id FROM sfo."Applications" WHERE "deletedAt" IS NOT NULL)";`,
+        UPDATE sfo."Returns" SET "deletedAt" = CURRENT_TIMESTAMP WHERE "deletedAt" IS NULL AND "ApplicationId" IN (SELECT id FROM sfo."Applications" WHERE "deletedAt" IS NOT NULL)`,
         {
           type: Sequelize.QueryTypes.UPDATE
         }
       );
     },
 
-    down: async (queryInterface, Sequelize) => {
+    down: () => {
       return Promise.resolve();
     }
   };
@@ -29,7 +28,7 @@ if (process.env.NODE_ENV === 'production') {
     up: async (queryInterface, Sequelize) => {
       await queryInterface.sequelize.query(
         `
-        UPDATE "Setts" SET "deletedAt" = CURRENT_TIMESTAMP WHERE "deletedAt" IS NULL AND "ApplicationId" IN (SELECT id FROM "Applications" WHERE "deletedAt" IS NOT NULL)";`,
+        UPDATE "Setts" SET "deletedAt" = CURRENT_TIMESTAMP WHERE "deletedAt" IS NULL AND "ApplicationId" IN (SELECT id FROM "Applications" WHERE "deletedAt" IS NOT NULL)`,
         {
           type: Sequelize.QueryTypes.UPDATE
         }
@@ -37,14 +36,14 @@ if (process.env.NODE_ENV === 'production') {
 
       await queryInterface.sequelize.query(
         `
-        UPDATE "Returns" SET "deletedAt" = CURRENT_TIMESTAMP WHERE "deletedAt" IS NULL AND "ApplicationId" IN (SELECT id FROM "Applications" WHERE "deletedAt" IS NOT NULL)";`,
+        UPDATE "Returns" SET "deletedAt" = CURRENT_TIMESTAMP WHERE "deletedAt" IS NULL AND "ApplicationId" IN (SELECT id FROM "Applications" WHERE "deletedAt" IS NOT NULL)`,
         {
           type: Sequelize.QueryTypes.UPDATE
         }
       );
     },
 
-    down: async (queryInterface, Sequelize) => {
+    down: () => {
       return Promise.resolve();
     }
   };
