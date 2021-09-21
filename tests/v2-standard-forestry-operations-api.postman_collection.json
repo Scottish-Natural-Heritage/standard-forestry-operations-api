@@ -1,0 +1,226 @@
+{
+	"info": {
+		"_postman_id": "4da18f41-3297-4ba6-a64d-ac1d78488171",
+		"name": "v2-standard-forestry-operations-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "404 Error",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 404 Not Found', function () {",
+							"    pm.response.to.have.status(404);",
+							"    pm.response.to.have.status('Not Found');",
+							"});",
+							"",
+							"pm.test('Message is \"Not found.\"', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql('Not found.');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Message is \"OK\"', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql('OK');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v2/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v2",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Applications",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('JSON response length is greater than 1', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.be.above(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"for (let i = 0; i < 3; i++) {\r",
+							"  pm.sendRequest({\r",
+							"    url:`http://localhost:3003/standard-forestry-operations-api/v1/applications`,\r",
+							"    method:'POST'\r",
+							"  });\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v2/applications",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v2",
+						"applications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Setts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							"\r",
+							"pm.test('JSON response length is greater than 1', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.length).to.be.above(1);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v2/setts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v2",
+						"setts"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "SFO_API_PORT",
+			"value": "3003"
+		},
+		{
+			"key": "SFO_API_PATH_PREFIX",
+			"value": "standard-forestry-operations-api"
+		},
+		{
+			"key": "SFO_NEW_APP_ID",
+			"value": ""
+		},
+		{
+			"key": "SFO_NEW_APP_RETURN_ID",
+			"value": ""
+		},
+		{
+			"key": "SFO_NEW_SETT_ID",
+			"value": ""
+		}
+	]
+}
