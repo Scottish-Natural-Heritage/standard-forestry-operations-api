@@ -272,7 +272,7 @@ v2router.delete('/applications/:id/setts/:settId', async (request, response) => 
 });
 
 /**
- * GET all setts endpoint.
+ * READs all setts.
  */
 v2router.get('/setts', async (request, response) => {
   try {
@@ -284,6 +284,7 @@ v2router.get('/setts', async (request, response) => {
 
     return response.status(200).send(setts);
   } catch (error) {
+    jsonConsoleLogger.error(unErrorJson(error));
     return response.status(500).send({error});
   }
 });
