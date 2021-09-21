@@ -3,7 +3,7 @@ import express from 'express';
 import Application, {cleanPatchInput} from './controllers/v2/application.js';
 import Sett from './controllers/v2/sett.js';
 import Returns from './controllers/v2/returns.js';
-
+import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
 
 const v2router = express.Router();
@@ -12,8 +12,23 @@ v2router.get('/health', async (request, response) => {
   response.status(200).send({message: 'OK'});
 });
 
+/**
+ * READs all applications.
+ */
 v2router.get('/applications', async (request, response) => {
-  return response.status(501).send({message: 'Not implemented.'});
+  try {
+    // eslint-disable-next-line unicorn/prevent-abbreviations
+    const applications = await Application.findAll();
+
+    if (applications === undefined || applications === null) {
+      return response.status(404).send({message: `No applications found.`});
+    }
+
+    return response.status(200).send(applications);
+  } catch (error) {
+    jsonConsoleLogger.error(unErrorJson(error));
+    return response.status(500).send({error});
+  }
 });
 
 /**
