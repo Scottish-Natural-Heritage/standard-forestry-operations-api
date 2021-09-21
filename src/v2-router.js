@@ -35,7 +35,24 @@ v2router.get('/applications', async (request, response) => {
  * READs a single application.
  */
 v2router.get('/applications/:id', async (request, response) => {
-  return response.status(501).send({message: 'Not implemented.'});
+  try {
+    const existingId = Number(request.params.id);
+    if (Number.isNaN(existingId)) {
+      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+    }
+
+    // eslint-disable-next-line unicorn/prevent-abbreviations
+    const application = await Application.findOne(existingId);
+
+    if (application === undefined || application === null) {
+      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+    }
+
+    return response.status(200).send(application);
+  } catch (error) {
+    jsonConsoleLogger.error(unErrorJson(error));
+    return response.status(500).send({error});
+  }
 });
 
 // Allow an API consumer to allocate a new application number.
