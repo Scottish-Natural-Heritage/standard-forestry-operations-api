@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'production') {
     },
 
     down: async (queryInterface, Sequelize) => {
-      // Do something here
+      return Promise.resolve();
     }
   };
 } else {
@@ -45,7 +45,7 @@ if (process.env.NODE_ENV === 'production') {
     },
 
     down: async (queryInterface, Sequelize) => {
-      // Do something here
+      return Promise.resolve();
     }
   };
 }
