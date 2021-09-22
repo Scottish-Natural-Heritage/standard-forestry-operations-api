@@ -89,6 +89,84 @@ const ApplicationController = {
   },
 
   /**
+   * Create a new randomly allocated Application wrapped in a database transaction.
+   *
+   * Transaction completes all requests and returns the new Application id.
+   *
+   * @param {any} cleanObject A new Application object to be added to the database.
+   * @returns {number} The newly created Application id.
+   */
+  create: async (cleanObject) => {
+    // Take the cleanObject that has been passed in and split the application and
+    // the setts into 2 separate variables.
+    const {setts, ...app} = cleanObject;
+
+    let newApp;
+    let remainingAttempts = 10;
+    // Loop until we have a suitable random ID for a new application or we run out of attempts,
+    // whichever happens first.
+    while (newApp === undefined && remainingAttempts > 0) {
+      try {
+        // Generate a random 5 digit ID
+        const appId = Math.floor(Math.random() * 99_999);
+        // Begin the database transaction.
+        // eslint-disable-next-line no-await-in-loop
+        await database.sequelize.transaction(async (t) => {
+          // See if you can find an application in the database with the random 5 digit ID
+          newApp = await Application.findByPk(appId, {transaction: t});
+          // If we found one then we need to set newApp to undefined as it cant be used
+          // (this will also meets the conditions of our while loop).
+          if (newApp !== null) {
+            newApp = undefined;
+          }
+
+          // If we did not find one then we need to set the id of our new application in the app variable with the
+          // random 5 digit ID and then create a new application.
+          if (!newApp) {
+            app.id = appId;
+            newApp = await Application.create(app, {transaction: t});
+
+            // After creating the new application we need to create the setts that are associated with the application.
+            // Because there can be many setts that come in with the application we use promise all which basically sends off
+            // all the setts that need to be created and assuming they all create successfully then we can carry on however if
+            // any of them fail to create then the database transaction will roll back any changes it has made.
+            await Promise.all(
+              setts.map(async (jsonSett) => {
+                await Sett.create(
+                  {
+                    ApplicationId: app.id,
+                    sett: jsonSett.id,
+                    gridRef: jsonSett.gridReference,
+                    entrances: jsonSett.entrances,
+                    createdByLicensingOfficer: jsonSett.createdByLicensingOfficer
+                  },
+                  {transaction: t}
+                );
+              })
+            );
+          }
+        });
+        // We did not manage to find a suitable ID for the new application so we decrement
+        // the number of attempts left in the while loop.
+        remainingAttempts--;
+      } catch {
+        // If the try failed then we need to set newApp to undefined as we were unable to create a new application
+        // (this will also meets the conditions of our while loop).
+        newApp = undefined;
+      }
+    }
+
+    // If we run out of attempts or we were unable to create a new application then we need to let the
+    // calling code know by raising an error.
+    if (newApp === undefined) {
+      throw new Error('Unable to create new application.');
+    }
+
+    // On success, return the new application's ID.
+    return newApp.id;
+  },
+
+  /**
    * Soft delete a application in the database.
    *
    * @param {number} id A possible ID of a application.
