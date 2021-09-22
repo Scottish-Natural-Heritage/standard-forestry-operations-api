@@ -13,9 +13,9 @@ if (process.env.NODE_ENV === 'production') {
         // Get the date the application was created on.
         result.expiryDate = new Date(result.createdAt);
         // Add 4 years.
-        result.expiryDate.setFullYear(result.expiryDate.getFullYear() + 4);
-        // Set the month to December and the date to the 31st.
-        result.expiryDate.setMonth(11, 31);
+        result.expiryDate.setFullYear(result.expiryDate.getFullYear());
+        // Set the month to November and the date to the 30th.
+        result.expiryDate.setMonth(10, 30);
       }
 
       const updateQueries = [];
@@ -51,9 +51,9 @@ if (process.env.NODE_ENV === 'production') {
         // Get the date the application was created on.
         result.expiryDate = new Date(result.createdAt);
         // Add 4 years.
-        result.expiryDate.setFullYear(result.expiryDate.getFullYear() + 4);
+        result.expiryDate.setFullYear(result.expiryDate.getFullYear());
         // Set the month to December and the date to the 31st.
-        result.expiryDate.setMonth(11, 31);
+        result.expiryDate.setMonth(10, 30);
       }
 
       const updateQueries = [];
