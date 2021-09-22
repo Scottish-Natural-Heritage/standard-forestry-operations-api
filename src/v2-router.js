@@ -55,9 +55,81 @@ v2router.get('/applications/:id', async (request, response) => {
   }
 });
 
-// Allow an API consumer to allocate a new application number.
+/**
+ * Clean the incoming POST request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} newAppId The ID we deemed suitable for the application.
+ * @param {any} body The incoming request's body.
+ * @returns {any} A json object that's just got our cleaned up fields on it.
+ */
+const cleanAppInput = (body) => {
+  return {
+    // The booleans are just copied across.
+    convictions: body.convictions,
+    complyWithTerms: body.complyWithTerms,
+
+    // The strings are trimmed for leading and trailing whitespace and then
+    // copied across if they're in the POST body or are set to undefined if
+    // they're missing.
+    fullName: body.fullName === undefined ? undefined : body.fullName.trim(),
+    companyOrganisation: body.companyOrganisation === undefined ? undefined : body.companyOrganisation.trim(),
+    addressLine1: body.addressLine1 === undefined ? undefined : body.addressLine1.trim(),
+    addressLine2: body.addressLine2 === undefined ? undefined : body.addressLine2.trim(),
+    addressTown: body.addressTown === undefined ? undefined : body.addressTown.trim(),
+    addressCounty: body.addressCounty === undefined ? undefined : body.addressCounty.trim(),
+    addressPostcode: body.addressPostcode === undefined ? undefined : body.addressPostcode.trim(),
+    phoneNumber: body.phoneNumber === undefined ? undefined : body.phoneNumber.trim(),
+    emailAddress: body.emailAddress === undefined ? undefined : body.emailAddress.trim(),
+    createdByLicensingOfficer: body.createdByLicensingOfficer,
+
+    // We copy across the setts, cleaning them as we go.
+    setts:
+      body.setts === undefined
+        ? undefined
+        : body.setts.map((sett) => {
+            return {
+              // The number is just copied across.
+              entrances: sett.entrances,
+
+              // The three strings are trimmed then copied.
+              id: sett.id === undefined ? undefined : sett.id.trim(),
+              gridReference: sett.gridReference === undefined ? undefined : sett.gridReference.trim(),
+              createdByLicensingOfficer:
+                sett.createdByLicensingOfficer === undefined ? undefined : sett.createdByLicensingOfficer.trim()
+            };
+          })
+  };
+};
+
+/**
+ * Creates a new application.
+ */
 v2router.post('/applications', async (request, response) => {
-  return response.status(501).send({message: 'Not implemented.'});
+  try {
+    // Create baseUrl.
+    const baseUrl = new URL(
+      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
+        request.originalUrl.endsWith('/') ? '' : '/'
+      }`
+    );
+
+    // Clean up the user's input before we store it in the database.
+    const cleanObject = cleanAppInput(request.body);
+
+    // Create a new id wrapped in a database transaction
+    const newId = await Application.create(cleanObject);
+
+    // If we were not able to create the new application then we need to respond with a 500 error.
+    if (newId === undefined) {
+      return response.status(500).send({message: `Could not create application.`});
+    }
+
+    // Return the new location of the newly created application.
+    return response.status(201).location(new URL(newId, baseUrl)).send();
+  } catch (error) {
+    return response.status(500).send({message: `Could not create application. in final catch ${error.message}`});
+  }
 });
 
 /**
