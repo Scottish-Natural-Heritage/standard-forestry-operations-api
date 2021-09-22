@@ -206,6 +206,22 @@ v1router.post('/applications/:id/returns', async (request, response) => {
 });
 
 /**
+ * Every registration has a 5 year expiry, tied to the issue date of that
+ * year's General Licenses. General Licenses are always issued on January 1st,
+ * so registrations last for four whole years, plus the rest of the issued
+ * year.
+ * @returns {Date} the calculated expiry date
+ */
+const calculateExpiryDate = () => {
+  // Get the current date.
+  const expiryDate = new Date();
+  // Add 4 years.
+  expiryDate.setFullYear(expiryDate.getFullYear() + 4);
+  // Set the month to December and the day to the 31st and return the updated date.
+  return expiryDate.setMonth(11, 31);
+};
+
+/**
  * Clean the incoming POST request body to make it more compatible with the
  * database and its validation rules.
  *
@@ -231,7 +247,7 @@ const cleanInput = (body) => {
     phoneNumber: body.phoneNumber === undefined ? undefined : body.phoneNumber.trim(),
     emailAddress: body.emailAddress === undefined ? undefined : body.emailAddress.trim(),
     createdByLicensingOfficer: body.createdByLicensingOfficer,
-    expiryDate: `30/11/${new Date().getFullYear()}`,
+    expiryDate: calculateExpiryDate(),
 
     // We copy across the setts, cleaning them as we go.
     setts:
