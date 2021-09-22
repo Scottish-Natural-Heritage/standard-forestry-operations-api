@@ -70,6 +70,9 @@ const ApplicationModel = (sequelize) => {
       },
       createdByLicensingOfficer: {
         type: Sequelize.STRING
+      },
+      expiryDate: {
+        type: Sequelize.DATE
       }
     },
     {
