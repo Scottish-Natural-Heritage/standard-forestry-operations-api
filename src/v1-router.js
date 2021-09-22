@@ -206,9 +206,9 @@ v1router.post('/applications/:id/returns', async (request, response) => {
 });
 
 /**
- * Every registration has a 5 year expiry, tied to the issue date of that
+ * Every application has a 5 year expiry, tied to the issue date of that
  * year's General Licenses. General Licenses are always issued on January 1st,
- * so registrations last for four whole years, plus the rest of the issued
+ * so applications last for four whole years, plus the rest of the issued
  * year.
  * @returns {Date} the calculated expiry date
  */
