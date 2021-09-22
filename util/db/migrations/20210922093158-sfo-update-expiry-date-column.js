@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === 'production') {
       for (const result of resultsArray) {
         // Get the date the application was created on.
         result.expiryDate = new Date(result.createdAt);
-        // Add 4 years.
+        // Add year.
         result.expiryDate.setFullYear(result.expiryDate.getFullYear());
         // Set the month to November and the date to the 30th.
         result.expiryDate.setMonth(10, 30);

@@ -215,10 +215,10 @@ v1router.post('/applications/:id/returns', async (request, response) => {
 const calculateExpiryDate = () => {
   // Get the current date.
   const expiryDate = new Date();
-  // Add 4 years.
-  expiryDate.setFullYear(expiryDate.getFullYear() + 4);
-  // Set the month to December and the day to the 31st and return the updated date.
-  return expiryDate.setMonth(11, 31);
+  // Add year.
+  expiryDate.setFullYear(expiryDate.getFullYear());
+  // Set the month to November and the day to the 30th and return the updated date.
+  return expiryDate.setMonth(10, 30);
 };
 
 /**
