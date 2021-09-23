@@ -173,16 +173,27 @@ const ApplicationController = {
    */
   delete: async (id, cleanObject) => {
     try {
+      // Start the transaction.
       await database.sequelize.transaction(async (t) => {
+        // Check the application/license exists.
         await Application.findByPk(id, {transaction: t, rejectOnEmpty: true});
+        // Create the revocation entry.
         await Revocation.create(cleanObject, {transaction: t});
+        // Soft Delete any setts attached to the application/license.
+        await Sett.destroy({where: {ApplicationId: id}, transaction: t});
+        // Soft Delete any returns attached to the application/license.
+        await Returns.destroy({where: {ApplicationId: id}, transaction: t});
+        // Soft Delete the Application/License.
         await Application.destroy({where: {id}, transaction: t});
+        // If everything worked then return true.
         return true;
       });
     } catch {
+      // If something went wrong during the transaction return false.
       return false;
     }
   },
+
   /**
    * Update a application in the database with partial JSON model.
    *
