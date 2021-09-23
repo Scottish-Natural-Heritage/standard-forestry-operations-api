@@ -207,7 +207,9 @@ const cleanReturnInput = (existingId, body) => {
   };
 };
 
-// Allow the API consumer to submit a return against a application.
+/**
+ * Creates a new application return.
+ */
 v2router.post('/applications/:id/returns', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
@@ -216,6 +218,7 @@ v2router.post('/applications/:id/returns', async (request, response) => {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
     }
 
+    // Create baseUrl.
     const baseUrl = new URL(
       `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
         request.originalUrl.endsWith('/') ? '' : '/'
@@ -225,9 +228,10 @@ v2router.post('/applications/:id/returns', async (request, response) => {
     // Clean up the user's input before we store it in the database.
     const cleanObject = cleanReturnInput(existingId, request.body);
 
-    // Create a new id wrapped in a database transaction
+    // Create a new return wrapped in a database transaction that will return the ID of the new return.
     const newId = await Returns.create(existingId, cleanObject);
 
+    // If we were unable to create the new return then we need to send back a suitable response.
     if (newId === undefined) {
       return response.status(500).send({message: `Could not create return for license ${existingId}.`});
     }
