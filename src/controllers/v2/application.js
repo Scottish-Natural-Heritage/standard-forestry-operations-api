@@ -114,15 +114,9 @@ const ApplicationController = {
         await database.sequelize.transaction(async (t) => {
           // See if you can find an application in the database with the random 5 digit ID
           newApp = await Application.findByPk(appId, {transaction: t});
-          // If we found one then we need to set newApp to undefined as it cant be used
-          // (this will also meets the conditions of our while loop).
-          if (newApp !== null) {
-            newApp = undefined;
-          }
-
           // If we did not find one then we need to set the id of our new application in the app variable with the
           // random 5 digit ID and then create a new application.
-          if (!newApp) {
+          if (newApp === null) {
             app.id = appId;
             newApp = await Application.create(app, {transaction: t});
 
@@ -144,6 +138,10 @@ const ApplicationController = {
                 );
               })
             );
+          } else {
+            // Else if we found one then we need to set newApp to undefined as it cant be used
+            // (this will also meets the conditions of our while loop).
+            newApp = undefined;
           }
         });
         // We did not manage to find a suitable ID for the new application so we decrement
