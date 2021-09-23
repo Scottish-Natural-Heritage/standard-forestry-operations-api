@@ -1,7 +1,45 @@
 import utils from 'naturescot-utils';
+import NotifyClient from 'notifications-node-client';
 import database from '../../models/index.js';
+import config from '../../config/app.js';
+import jsonConsoleLogger, {unErrorJson} from '../../json-console-logger.js';
 
 const {Application, Returns, Sett, Revocation} = database;
+
+/**
+ * Send emails to the applicant to let them know it was successful.
+ *
+ * @param {string} notifyApiKey API key for sending emails.
+ * @param {any} application An enhanced JSON version of the model.
+ */
+// eslint-disable-next-line unicorn/prevent-abbreviations
+const sendSuccessEmail = async (notifyApiKey, application) => {
+  if (notifyApiKey) {
+    try {
+      const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
+
+      // If the month is december then we need to add 1 to the current year as this would say that the licence is
+      // already expired.
+      const yearOfExpiry = new Date().getMonth() === 11 ? new Date().getFullYear() + 1 : new Date().getFullYear();
+      // Send the email via notify.
+      await notifyClient.sendEmail('843889da-5a85-470c-a9e5-38f68cdb9ae1', application.emailAddress, {
+        personalisation: {
+          licenceNo: `NS-SFO-${application.id}`,
+          convictions: application.convictions ? 'yes' : 'no',
+          noConvictions: application.convictions ? 'no' : 'yes',
+          comply: application.complyWithTerms ? 'yes' : 'no',
+          noComply: application.complyWithTerms ? 'no' : 'yes',
+          expiryDate: `30/11/${yearOfExpiry}`
+        },
+        reference: `NS-SFO-${application.id}`,
+        emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
+      });
+    } catch (error) {
+      jsonConsoleLogger.error(unErrorJson(error));
+      throw error;
+    }
+  }
+};
 
 /**
  * Clean an incoming PATCH request body to make it more compatible with the
@@ -160,6 +198,8 @@ const ApplicationController = {
       throw new Error('Unable to create new application.');
     }
 
+    // Send the applicant their confirmation email.
+    await sendSuccessEmail(config.notifyApiKey, app);
     // On success, return the new application's ID.
     return newApp.id;
   },
