@@ -1,0 +1,1166 @@
+{
+	"info": {
+		"_postman_id": "651e5ee8-0a18-4f11-91c7-28e23e8a2fca",
+		"name": "standard-forestry-operations-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "404 Error",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 404 Not Found', function () {",
+							"    pm.response.to.have.status(404);",
+							"    pm.response.to.have.status('Not Found');",
+							"});",
+							"",
+							"pm.test('Message is \"Not found.\"', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql('Not found.');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Message is \"OK\"', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql('OK');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Applications",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('JSON response length is greater than 1', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.be.above(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"for (let i = 0; i < 3; i++) {\r",
+							"  pm.sendRequest({\r",
+							"    url:`http://localhost:3003/standard-forestry-operations-api/v1/applications`,\r",
+							"    method:'POST'\r",
+							"  });\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new ApplyOther",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {",
+							"    pm.response.to.have.status(201);",
+							"    pm.response.to.have.status('Created');",
+							"});",
+							"",
+							"pm.test('Location is present', function () {",
+							"    pm.response.to.have.header('Location');",
+							"    ",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(",
+							"        `http://localhost:3003/standard-forestry-operations-api/v1/apply-other/`",
+							"    );",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"emailAddress\": \"licensing@nature.scot\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/apply-other",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"apply-other"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {",
+							"    pm.response.to.have.status(201);",
+							"    pm.response.to.have.status('Created');",
+							"});",
+							"",
+							"pm.test('Location is present', function () {",
+							"    pm.response.to.have.header('Location');",
+							"    ",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(",
+							"        `http://localhost:3003/standard-forestry-operations-api/v1/applications/`",
+							"    );",
+							"});",
+							"",
+							"pm.collectionVariables.set(\"SFO_NEW_APP_ID\", pm.response.headers.get('Location').split('/').pop());",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Returned object matches posted object', function () {",
+							"    ",
+							"    var reqJsonData = JSON.parse(pm.request.body.raw);",
+							"    var resJsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(reqJsonData.convictions).to.eql(resJsonData.convictions);",
+							"    pm.expect(reqJsonData.complyWithTerms).to.eql(resJsonData.complyWithTerms);",
+							"    ",
+							"    pm.expect(reqJsonData.fullName).to.eql(resJsonData.fullName);",
+							"    pm.expect(reqJsonData.companyOrganisation).to.eql(resJsonData.companyOrganisation);",
+							"    pm.expect(reqJsonData.addressLine1).to.eql(resJsonData.addressLine1);",
+							"    pm.expect(reqJsonData.addressLine2).to.eql(resJsonData.addressLine2);",
+							"    pm.expect(reqJsonData.addressTown).to.eql(resJsonData.addressTown);",
+							"    pm.expect(reqJsonData.addressCounty).to.eql(resJsonData.addressCounty);",
+							"    pm.expect(reqJsonData.addressPostcode).to.eql(resJsonData.addressPostcode);",
+							"    pm.expect(reqJsonData.phoneNumber).to.eql(resJsonData.phoneNumber);",
+							"    pm.expect(reqJsonData.emailAddress).to.eql(resJsonData.emailAddress);",
+							"    ",
+							"    pm.expect(reqJsonData.setts.length).to.eql(resJsonData.Setts.length);",
+							"    ",
+							"    pm.expect(reqJsonData.setts[0].id).to.eql(resJsonData.Setts[0].sett);",
+							"    pm.expect(reqJsonData.setts[0].gridReference).to.eql(resJsonData.Setts[0].gridRef);",
+							"    pm.expect(reqJsonData.setts[0].entrances).to.eql(resJsonData.Setts[0].entrances);",
+							"    ",
+							"    pm.expect(reqJsonData.setts[1].id).to.eql(resJsonData.Setts[1].sett);",
+							"    pm.expect(reqJsonData.setts[1].gridReference).to.eql(resJsonData.Setts[1].gridRef);",
+							"    pm.expect(reqJsonData.setts[1].entrances).to.eql(resJsonData.Setts[1].entrances);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"convictions\": false,\n  \"complyWithTerms\": true,\n  \"fullName\": \"Nature Scot\",\n  \"companyOrganisation\": \"NatureScot\",\n  \"addressLine1\": \"Great Glen House\",\n  \"addressLine2\": \"\",\n  \"addressTown\": \"Inverness\",\n  \"addressCounty\": \"\",\n  \"addressPostcode\": \"IV3 8NW\",\n  \"phoneNumber\": \"01463 725 000\",\n  \"emailAddress\": \"licensing@nature.scot\",\n  \"setts\": [\n  \t{\n  \t\t\"id\": \"ABC123\",\n  \t\t\"gridReference\": \"NH63054372\",\n  \t\t\"entrances\": 5\n  \t},\n  \t{\n  \t\t\"id\": \"DEF456\",\n  \t\t\"gridReference\": \"NH63044379\",\n  \t\t\"entrances\": 2\n  \t}\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Returned object matches posted object', function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData).to.have.property('convictions');",
+							"    pm.expect(jsonData).to.have.property('complyWithTerms');",
+							"    ",
+							"    pm.expect(jsonData).to.have.property('fullName');",
+							"    pm.expect(jsonData).to.have.property('companyOrganisation');",
+							"    pm.expect(jsonData).to.have.property('addressLine1');",
+							"    pm.expect(jsonData).to.have.property('addressLine2');",
+							"    pm.expect(jsonData).to.have.property('addressTown');",
+							"    pm.expect(jsonData).to.have.property('addressCounty');",
+							"    pm.expect(jsonData).to.have.property('addressPostcode');",
+							"    pm.expect(jsonData).to.have.property('phoneNumber');",
+							"    pm.expect(jsonData).to.have.property('emailAddress');",
+							"    pm.expect(jsonData).to.have.property('expiryDate');",
+							"    pm.expect(jsonData).to.have.property('Setts');",
+							"",
+							"    pm.expect(jsonData.Setts.length).to.eql(2);",
+							"",
+							"    pm.expect(jsonData.Setts[0]).to.have.property('id');;",
+							"    pm.expect(jsonData.Setts[0]).to.have.property('gridRef');",
+							"    pm.expect(jsonData.Setts[0]).to.have.property('entrances');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new Sett",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {",
+							"    pm.response.to.have.status(201);",
+							"    pm.response.to.have.status('Created');",
+							"});",
+							"",
+							"pm.test('Location is present', function () {",
+							"    pm.response.to.have.header('Location');",
+							"    ",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(",
+							"        `http://localhost:3003/standard-forestry-operations-api/v1/applications/`",
+							"    );",
+							"});",
+							"",
+							"pm.collectionVariables.set(\"SFO_NEW_SETT_ID\", pm.response.headers.get('Location').split('/').pop());",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \t\t\"sett\": \"123456\",\r\n  \t\t\"gridReference\": \"NH63044379\",\r\n  \t\t\"entrances\": 6,\r\n        \"createdByLicensingOfficer\": \"939123\"\r\n  \t}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}/setts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}",
+						"setts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Application With New Sett",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Returned object matches posted object', function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData).to.have.property('convictions');",
+							"    pm.expect(jsonData).to.have.property('complyWithTerms');",
+							"    ",
+							"    pm.expect(jsonData).to.have.property('fullName');",
+							"    pm.expect(jsonData).to.have.property('companyOrganisation');",
+							"    pm.expect(jsonData).to.have.property('addressLine1');",
+							"    pm.expect(jsonData).to.have.property('addressLine2');",
+							"    pm.expect(jsonData).to.have.property('addressTown');",
+							"    pm.expect(jsonData).to.have.property('addressCounty');",
+							"    pm.expect(jsonData).to.have.property('addressPostcode');",
+							"    pm.expect(jsonData).to.have.property('phoneNumber');",
+							"    pm.expect(jsonData).to.have.property('emailAddress');",
+							"    pm.expect(jsonData).to.have.property('expiryDate');",
+							"    pm.expect(jsonData).to.have.property('Setts');",
+							"",
+							"    pm.expect(jsonData.Setts.length).to.eql(3);",
+							"",
+							"    pm.expect(jsonData.Setts[2]).to.have.property('id');",
+							"    pm.expect(jsonData.Setts[2]).to.have.property('gridRef');",
+							"    pm.expect(jsonData.Setts[2]).to.have.property('entrances');",
+							"    pm.expect(jsonData.Setts[2]).to.have.property('createdByLicensingOfficer');",
+							"    pm.expect(jsonData.Setts[2].createdByLicensingOfficer).to.eql('939123');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Sett",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reason\": \"Nature Scot Reason\",\r\n    \"createdBy\": \"989745\",\r\n    \"isRevoked\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}/setts/{{SFO_NEW_SETT_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}",
+						"setts",
+						"{{SFO_NEW_SETT_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Application With no New Sett",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Returned object matches posted object', function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData).to.have.property('convictions');",
+							"    pm.expect(jsonData).to.have.property('complyWithTerms');",
+							"    ",
+							"    pm.expect(jsonData).to.have.property('fullName');",
+							"    pm.expect(jsonData).to.have.property('companyOrganisation');",
+							"    pm.expect(jsonData).to.have.property('addressLine1');",
+							"    pm.expect(jsonData).to.have.property('addressLine2');",
+							"    pm.expect(jsonData).to.have.property('addressTown');",
+							"    pm.expect(jsonData).to.have.property('addressCounty');",
+							"    pm.expect(jsonData).to.have.property('addressPostcode');",
+							"    pm.expect(jsonData).to.have.property('phoneNumber');",
+							"    pm.expect(jsonData).to.have.property('emailAddress');",
+							"    pm.expect(jsonData).to.have.property('expiryDate');",
+							"    pm.expect(jsonData).to.have.property('Setts');",
+							"",
+							"    pm.expect(jsonData.Setts.length).to.eql(2);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Setts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							"\r",
+							"pm.test('JSON response length is greater than 1', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.length).to.be.above(1);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/setts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"setts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new Application By LO",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {",
+							"    pm.response.to.have.status(201);",
+							"    pm.response.to.have.status('Created');",
+							"});",
+							"",
+							"pm.test('Location is present', function () {",
+							"    pm.response.to.have.header('Location');",
+							"",
+							"    ",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(",
+							"        `http://localhost:3003/standard-forestry-operations-api/v1/applications/`",
+							"    );",
+							"});",
+							"",
+							"pm.collectionVariables.set(\"SFO_NEW_APP_ID\", pm.response.headers.get('Location').split('/').pop());",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an Application Created by an LO",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Returned object matches posted object', function () {",
+							"    ",
+							"    var reqJsonData = JSON.parse(pm.request.body.raw);",
+							"    var resJsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(reqJsonData.convictions).to.eql(resJsonData.convictions);",
+							"    pm.expect(reqJsonData.complyWithTerms).to.eql(resJsonData.complyWithTerms);",
+							"    ",
+							"    pm.expect(reqJsonData.fullName).to.eql(resJsonData.fullName);",
+							"    pm.expect(reqJsonData.companyOrganisation).to.eql(resJsonData.companyOrganisation);",
+							"    pm.expect(reqJsonData.addressLine1).to.eql(resJsonData.addressLine1);",
+							"    pm.expect(reqJsonData.addressLine2).to.eql(resJsonData.addressLine2);",
+							"    pm.expect(reqJsonData.addressTown).to.eql(resJsonData.addressTown);",
+							"    pm.expect(reqJsonData.addressCounty).to.eql(resJsonData.addressCounty);",
+							"    pm.expect(reqJsonData.addressPostcode).to.eql(resJsonData.addressPostcode);",
+							"    pm.expect(reqJsonData.phoneNumber).to.eql(resJsonData.phoneNumber);",
+							"    pm.expect(reqJsonData.emailAddress).to.eql(resJsonData.emailAddress);",
+							"    pm.expect(reqJsonData.createdByLicensingOfficer).to.eql(resJsonData.createdByLicensingOfficer);",
+							"",
+							"    ",
+							"    pm.expect(reqJsonData.setts.length).to.eql(resJsonData.Setts.length);",
+							"    ",
+							"    pm.expect(reqJsonData.setts[0].id).to.eql(resJsonData.Setts[0].sett);",
+							"    pm.expect(reqJsonData.setts[0].gridReference).to.eql(resJsonData.Setts[0].gridRef);",
+							"    pm.expect(reqJsonData.setts[0].entrances).to.eql(resJsonData.Setts[0].entrances);",
+							"    ",
+							"    pm.expect(reqJsonData.setts[1].id).to.eql(resJsonData.Setts[1].sett);",
+							"    pm.expect(reqJsonData.setts[1].gridReference).to.eql(resJsonData.Setts[1].gridRef);",
+							"    pm.expect(reqJsonData.setts[1].entrances).to.eql(resJsonData.Setts[1].entrances);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"convictions\": false,\n    \"complyWithTerms\": true,\n    \"fullName\": \"Nature Scot\",\n    \"companyOrganisation\": \"NatureScot\",\n    \"addressLine1\": \"Great Glen House\",\n    \"addressLine2\": \"\",\n    \"addressTown\": \"Inverness\",\n    \"addressCounty\": \"\",\n    \"addressPostcode\": \"IV3 8NW\",\n    \"phoneNumber\": \"01463 725 000\",\n    \"emailAddress\": \"licensing@nature.scot\",\n    \"createdByLicensingOfficer\": \"939123\",\n    \"setts\": [\n        {\n            \"id\": \"ABC123\",\n            \"gridReference\": \"NH63054372\",\n            \"entrances\": 5\n        },\n        {\n            \"id\": \"DEF456\",\n            \"gridReference\": \"NH63044379\",\n            \"entrances\": 2\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Application Created By LO",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Returned object matches posted object', function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData).to.have.property('convictions');",
+							"    pm.expect(jsonData).to.have.property('complyWithTerms');",
+							"    ",
+							"    pm.expect(jsonData).to.have.property('fullName');",
+							"    pm.expect(jsonData).to.have.property('companyOrganisation');",
+							"    pm.expect(jsonData).to.have.property('addressLine1');",
+							"    pm.expect(jsonData).to.have.property('addressLine2');",
+							"    pm.expect(jsonData).to.have.property('addressTown');",
+							"    pm.expect(jsonData).to.have.property('addressCounty');",
+							"    pm.expect(jsonData).to.have.property('addressPostcode');",
+							"    pm.expect(jsonData).to.have.property('phoneNumber');",
+							"    pm.expect(jsonData).to.have.property('emailAddress');",
+							"    pm.expect(jsonData).to.have.property('expiryDate');",
+							"    pm.expect(jsonData).to.have.property('createdByLicensingOfficer');",
+							"    pm.expect(jsonData).to.have.property('Setts');",
+							"",
+							"    pm.expect(jsonData.Setts.length).to.eql(2);",
+							"",
+							"    pm.expect(jsonData.Setts[0]).to.have.property('id');;",
+							"    pm.expect(jsonData.Setts[0]).to.have.property('gridRef');",
+							"    pm.expect(jsonData.Setts[0]).to.have.property('entrances');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a non-existent Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 404 Not Found', function () {",
+							"    pm.response.to.have.status(404);",
+							"    pm.response.to.have.status('Not Found');",
+							"});",
+							"",
+							"pm.test('Message is \"Application -1 not allocated.\"', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql('Application -1 not allocated.');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/-1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"-1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new Return",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {",
+							"    pm.response.to.have.status(201);",
+							"    pm.response.to.have.status('Created');",
+							"});",
+							"",
+							"pm.test('Location is present', function () {",
+							"    pm.response.to.have.header('Location');",
+							"    ",
+							"    ",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(",
+							"        `http://localhost:3003/standard-forestry-operations-api/v1/applications/`",
+							"    );",
+							"});",
+							"",
+							"pm.collectionVariables.set(\"SFO_NEW_APP_RETURN_ID\", pm.response.headers.get('Location').split('/').pop());",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"beforeObjectiveRef\": \"A12345\",\n    \"afterObjectiveRef\": \"A123456\",\n    \"fromDate\": \"2021-07-18T13:39:49.598Z\",\n    \"toDate\": \"2021-07-18T13:39:49.598Z\",\n    \"comment\": \"Tests\",\n    \"createdByLicensingOfficer\": \"9391234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}/returns",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}",
+						"returns"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Application With Returns",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Returned object matches posted object', function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData).to.have.property('convictions');",
+							"    pm.expect(jsonData).to.have.property('complyWithTerms');",
+							"    ",
+							"    pm.expect(jsonData).to.have.property('fullName');",
+							"    pm.expect(jsonData).to.have.property('companyOrganisation');",
+							"    pm.expect(jsonData).to.have.property('addressLine1');",
+							"    pm.expect(jsonData).to.have.property('addressLine2');",
+							"    pm.expect(jsonData).to.have.property('addressTown');",
+							"    pm.expect(jsonData).to.have.property('addressCounty');",
+							"    pm.expect(jsonData).to.have.property('addressPostcode');",
+							"    pm.expect(jsonData).to.have.property('phoneNumber');",
+							"    pm.expect(jsonData).to.have.property('emailAddress');",
+							"    pm.expect(jsonData).to.have.property('expiryDate');",
+							"    pm.expect(jsonData).to.have.property('Setts');",
+							"    pm.expect(jsonData).to.have.property('Returns');",
+							"",
+							"    pm.expect(jsonData.Setts.length).to.eql(2);",
+							"",
+							"    pm.expect(jsonData.Setts[0]).to.have.property('id');;",
+							"    pm.expect(jsonData.Setts[0]).to.have.property('gridRef');",
+							"    pm.expect(jsonData.Setts[0]).to.have.property('entrances');",
+							"",
+							"    pm.expect(jsonData.Returns.length).to.eql(1);",
+							"    ",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('beforeObjectiveRef');;",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('afterObjectiveRef');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('fromDate');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('toDate');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Revoke Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reason\": \"Nature Scot Reason\",\r\n    \"createdBy\": \"989745\",\r\n    \"isRevoked\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET revoked application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 404 Not Found', function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"    pm.response.to.have.status('Not Found');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v1/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v1",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "SFO_API_PORT",
+			"value": "3003"
+		},
+		{
+			"key": "SFO_API_PATH_PREFIX",
+			"value": "standard-forestry-operations-api"
+		},
+		{
+			"key": "SFO_NEW_APP_ID",
+			"value": ""
+		},
+		{
+			"key": "SFO_NEW_APP_RETURN_ID",
+			"value": ""
+		},
+		{
+			"key": "SFO_NEW_SETT_ID",
+			"value": ""
+		}
+	]
+}

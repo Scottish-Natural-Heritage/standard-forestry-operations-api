@@ -1,7 +1,45 @@
 import utils from 'naturescot-utils';
+import NotifyClient from 'notifications-node-client';
 import database from '../../models/index.js';
+import config from '../../config/app.js';
+import jsonConsoleLogger, {unErrorJson} from '../../json-console-logger.js';
 
 const {Application, Returns, Sett, Revocation} = database;
+
+/**
+ * Send emails to the applicant to let them know it was successful.
+ *
+ * @param {string} notifyApiKey API key for sending emails.
+ * @param {any} application An enhanced JSON version of the model.
+ */
+// eslint-disable-next-line unicorn/prevent-abbreviations
+const sendSuccessEmail = async (notifyApiKey, application) => {
+  if (notifyApiKey) {
+    try {
+      const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
+
+      // If the month is december then we need to add 1 to the current year as this would say that the licence is
+      // already expired.
+      const yearOfExpiry = new Date().getMonth() === 11 ? new Date().getFullYear() + 1 : new Date().getFullYear();
+      // Send the email via notify.
+      await notifyClient.sendEmail('843889da-5a85-470c-a9e5-38f68cdb9ae1', application.emailAddress, {
+        personalisation: {
+          licenceNo: `NS-SFO-${application.id}`,
+          convictions: application.convictions ? 'yes' : 'no',
+          noConvictions: application.convictions ? 'no' : 'yes',
+          comply: application.complyWithTerms ? 'yes' : 'no',
+          noComply: application.complyWithTerms ? 'no' : 'yes',
+          expiryDate: `30/11/${yearOfExpiry}`
+        },
+        reference: `NS-SFO-${application.id}`,
+        emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
+      });
+    } catch (error) {
+      jsonConsoleLogger.error(unErrorJson(error));
+      throw error;
+    }
+  }
+};
 
 /**
  * Clean an incoming PATCH request body to make it more compatible with the
@@ -89,6 +127,84 @@ const ApplicationController = {
   },
 
   /**
+   * Create a new randomly allocated Application wrapped in a database transaction.
+   *
+   * Transaction completes all requests and returns the new Application id.
+   *
+   * @param {any} cleanObject A new Application object to be added to the database.
+   * @returns {number} The newly created Application id.
+   */
+  create: async (cleanObject) => {
+    // Take the cleanObject that has been passed in and split the application and
+    // the setts into 2 separate variables.
+    const {setts, ...app} = cleanObject;
+
+    let newApp;
+    let remainingAttempts = 10;
+    // Loop until we have a suitable random ID for a new application or we run out of attempts,
+    // whichever happens first.
+    while (newApp === undefined && remainingAttempts > 0) {
+      try {
+        // Generate a random 5 digit ID
+        const appId = Math.floor(Math.random() * 99_999);
+        // Begin the database transaction.
+        // eslint-disable-next-line no-await-in-loop
+        await database.sequelize.transaction(async (t) => {
+          // See if you can find an application in the database with the random 5 digit ID
+          newApp = await Application.findByPk(appId, {transaction: t});
+          // If we did not find one then we need to set the id of our new application in the app variable with the
+          // random 5 digit ID and then create a new application.
+          if (newApp === null) {
+            app.id = appId;
+            newApp = await Application.create(app, {transaction: t});
+
+            // After creating the new application we need to create the setts that are associated with the application.
+            // Because there can be many setts that come in with the application we use promise all which basically sends off
+            // all the setts that need to be created and assuming they all create successfully then we can carry on however if
+            // any of them fail to create then the database transaction will roll back any changes it has made.
+            await Promise.all(
+              setts.map(async (jsonSett) => {
+                await Sett.create(
+                  {
+                    ApplicationId: app.id,
+                    sett: jsonSett.id,
+                    gridRef: jsonSett.gridReference,
+                    entrances: jsonSett.entrances,
+                    createdByLicensingOfficer: jsonSett.createdByLicensingOfficer
+                  },
+                  {transaction: t}
+                );
+              })
+            );
+          } else {
+            // Else if we found one then we need to set newApp to undefined as it cant be used
+            // (this will also meets the conditions of our while loop).
+            newApp = undefined;
+          }
+        });
+        // We did not manage to find a suitable ID for the new application so we decrement
+        // the number of attempts left in the while loop.
+        remainingAttempts--;
+      } catch {
+        // If the try failed then we need to set newApp to undefined as we were unable to create a new application
+        // (this will also meets the conditions of our while loop).
+        newApp = undefined;
+      }
+    }
+
+    // If we run out of attempts or we were unable to create a new application then we need to let the
+    // calling code know by raising an error.
+    if (newApp === undefined) {
+      throw new Error('Unable to create new application.');
+    }
+
+    // Send the applicant their confirmation email.
+    await sendSuccessEmail(config.notifyApiKey, app);
+    // On success, return the new application's ID.
+    return newApp.id;
+  },
+
+  /**
    * Soft delete a application in the database.
    *
    * @param {number} id A possible ID of a application.
@@ -97,16 +213,27 @@ const ApplicationController = {
    */
   delete: async (id, cleanObject) => {
     try {
+      // Start the transaction.
       await database.sequelize.transaction(async (t) => {
+        // Check the application/license exists.
         await Application.findByPk(id, {transaction: t, rejectOnEmpty: true});
+        // Create the revocation entry.
         await Revocation.create(cleanObject, {transaction: t});
+        // Soft Delete any setts attached to the application/license.
+        await Sett.destroy({where: {ApplicationId: id}, transaction: t});
+        // Soft Delete any returns attached to the application/license.
+        await Returns.destroy({where: {ApplicationId: id}, transaction: t});
+        // Soft Delete the Application/License.
         await Application.destroy({where: {id}, transaction: t});
+        // If everything worked then return true.
         return true;
       });
     } catch {
+      // If something went wrong during the transaction return false.
       return false;
     }
   },
+
   /**
    * Update a application in the database with partial JSON model.
    *
