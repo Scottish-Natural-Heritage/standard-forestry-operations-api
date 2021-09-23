@@ -486,6 +486,118 @@
 			"response": []
 		},
 		{
+			"name": "Delete Sett",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v2/applications/{{SFO_NEW_APP_ID}}/setts/{{SFO_NEW_SETT_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v2",
+						"applications",
+						"{{SFO_NEW_APP_ID}}",
+						"setts",
+						"{{SFO_NEW_SETT_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Application With no New Sett",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Returned object matches posted object', function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData).to.have.property('convictions');",
+							"    pm.expect(jsonData).to.have.property('complyWithTerms');",
+							"    ",
+							"    pm.expect(jsonData).to.have.property('fullName');",
+							"    pm.expect(jsonData).to.have.property('companyOrganisation');",
+							"    pm.expect(jsonData).to.have.property('addressLine1');",
+							"    pm.expect(jsonData).to.have.property('addressLine2');",
+							"    pm.expect(jsonData).to.have.property('addressTown');",
+							"    pm.expect(jsonData).to.have.property('addressCounty');",
+							"    pm.expect(jsonData).to.have.property('addressPostcode');",
+							"    pm.expect(jsonData).to.have.property('phoneNumber');",
+							"    pm.expect(jsonData).to.have.property('emailAddress');",
+							"    pm.expect(jsonData).to.have.property('Setts');",
+							"",
+							"    pm.expect(jsonData.Setts.length).to.eql(2);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v2/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v2",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create new Application By LO",
 			"event": [
 				{
@@ -719,6 +831,88 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v2/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v2",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Revoke Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reason\": \"Nature Scot Reason\",\r\n    \"createdBy\": \"989745\",\r\n    \"isRevoked\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v2/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v2",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET revoked application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 404 Not Found', function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"    pm.response.to.have.status('Not Found');\r",
+							"});\r",
 							""
 						],
 						"type": "text/javascript"
