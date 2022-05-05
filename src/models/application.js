@@ -73,6 +73,9 @@ const ApplicationModel = (sequelize) => {
       },
       expiryDate: {
         type: Sequelize.DATE
+      },
+      uprn: {
+        type: Sequelize.STRING
       }
     },
     {
