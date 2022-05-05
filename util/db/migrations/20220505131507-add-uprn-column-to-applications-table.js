@@ -9,7 +9,7 @@ module.exports = {
         tableName: 'Applications'
       },
       'uprn',
-      Sequelize.DATE
+      Sequelize.STRING
     );
   },
   down: async (queryInterface) => {
