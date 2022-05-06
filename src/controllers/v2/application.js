@@ -7,6 +7,25 @@ import jsonConsoleLogger, {unErrorJson} from '../../json-console-logger.js';
 const {Application, Returns, Sett, Revocation} = database;
 
 /**
+ * This function returns a summary address built from the address fields of an application object.
+ *
+ * @param {any} application The application to use to build the summary address from.
+ * @returns {string} Returns a string containing the summary address.
+ */
+ const createSummaryAddress = (application) => {
+  const address = [];
+  address.push(application.addressLine1.trim());
+  // As addressLine2 is optional we need to check if it exists.
+  if (application.addressLine2) {
+    address.push(application.addressLine2.trim());
+  }
+
+  address.push(application.addressTown.trim(), application.addressCounty.trim(), application.postcode.trim());
+
+  return address.join(', ');
+};
+
+/**
  * Send emails to the applicant to let them know it was successful.
  *
  * @param {string} notifyApiKey API key for sending emails.
@@ -22,14 +41,13 @@ const sendSuccessEmail = async (notifyApiKey, application) => {
       // already expired.
       const yearOfExpiry = new Date().getMonth() === 11 ? new Date().getFullYear() + 1 : new Date().getFullYear();
       // Send the email via notify.
-      await notifyClient.sendEmail('843889da-5a85-470c-a9e5-38f68cdb9ae1', application.emailAddress, {
+      await notifyClient.sendEmail('09ba502f-c4fe-4c69-948f-dbe1fc42ecf0', application.emailAddress, {
         personalisation: {
           licenceNo: `NS-SFO-${application.id}`,
-          convictions: application.convictions ? 'yes' : 'no',
-          noConvictions: application.convictions ? 'no' : 'yes',
-          comply: application.complyWithTerms ? 'yes' : 'no',
-          noComply: application.complyWithTerms ? 'no' : 'yes',
-          expiryDate: `30/11/${yearOfExpiry}`
+          validFrom: `01/07/${yearOfExpiry}`,
+          expiryDate: `30/11/${yearOfExpiry}`,
+          fullName: application.fullName,
+          lhAddress: createSummaryAddress(application)
         },
         reference: `NS-SFO-${application.id}`,
         emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
