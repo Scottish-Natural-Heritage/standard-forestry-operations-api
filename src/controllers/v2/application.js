@@ -25,6 +25,17 @@ const {Application, Returns, Sett, Revocation} = database;
   return address.join(', ');
 };
 
+const createDisplayableSetts = (setts) => {
+  const settList = [];
+
+  for (sett of setts) {
+    const badgerHouse = `* Setts from application (${sett.id}, at grid reference ${sett.gridReference}, with ${sett.entrances} entrances)`;
+    settList.push(badgerHouse);
+  }
+
+  return settList.join('\n');
+}
+
 /**
  * Send emails to the applicant to let them know it was successful.
  *
@@ -47,7 +58,8 @@ const sendSuccessEmail = async (notifyApiKey, application) => {
           validFrom: `01/07/${yearOfExpiry}`,
           expiryDate: `30/11/${yearOfExpiry}`,
           fullName: application.fullName,
-          lhAddress: createSummaryAddress(application)
+          lhAddress: createSummaryAddress(application),
+          setts: createDisplayableSetts(application.setts)
         },
         reference: `NS-SFO-${application.id}`,
         emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
