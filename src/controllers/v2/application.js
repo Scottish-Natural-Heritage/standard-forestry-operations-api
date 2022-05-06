@@ -12,7 +12,7 @@ const {Application, Returns, Sett, Revocation} = database;
  * @param {any} application The application to use to build the summary address from.
  * @returns {string} Returns a string containing the summary address.
  */
- const createSummaryAddress = (application) => {
+const createSummaryAddress = (application) => {
   const address = [];
   address.push(application.addressLine1.trim());
   // As addressLine2 is optional we need to check if it exists.
@@ -40,7 +40,7 @@ const createDisplayableSetts = (setts) => {
   }
 
   return settList.join('\n');
-}
+};
 
 /**
  * Send emails to the applicant to let them know it was successful.
@@ -60,15 +60,15 @@ const sendSuccessEmail = async (notifyApiKey, application, emailAddress) => {
       let endDate;
 
       // Calculate the start and end dates.
-      if (new Date(createdDate).getMonth() < 7) {
-        startDate = `01/07/${currentYear}`
-        endDate = `30/11/${currentYear}`
-      } else if (new Date(createdDate).getMonth < 12) {
-        startDate = new Date(createdDate).toLocaleDateString('en-GB');
-        endDate = `30/11/${currentYear}`
+      if (new Date(application.createdAt).getMonth() + 1 < 7) {
+        startDate = `01/07/${currentYear}`;
+        endDate = `30/11/${currentYear}`;
+      } else if (new Date(application.createdAt).getMonth() + 1 < 12) {
+        startDate = new Date(application.createdAt).toLocaleDateString('en-GB');
+        endDate = `30/11/${currentYear}`;
       } else {
-        startDate = `01/07/${new Date().getFullYear() + 1}`
-        endDate = `30/11/${new Date().getFullYear() + 1}`
+        startDate = `01/07/${new Date().getFullYear() + 1}`;
+        endDate = `30/11/${new Date().getFullYear() + 1}`;
       }
 
       // Send the email via notify.
