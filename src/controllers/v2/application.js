@@ -54,15 +54,29 @@ const sendSuccessEmail = async (notifyApiKey, application, emailAddress) => {
     try {
       const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
 
-      // If the month is december then we need to add 1 to the current year as this would say that the licence is
-      // already expired.
-      const yearOfExpiry = new Date().getMonth() === 11 ? new Date().getFullYear() + 1 : new Date().getFullYear();
+      const currentYear = new Date().getFullYear();
+
+      let startDate;
+      let endDate;
+
+      // Calculate the start and end dates.
+      if (new Date(createdDate).getMonth() < 7) {
+        startDate = `01/07/${currentYear}`
+        endDate = `30/11/${currentYear}`
+      } else if (new Date(createdDate).getMonth < 12) {
+        startDate = new Date(createdDate).toLocaleDateString('en-GB');
+        endDate = `30/11/${currentYear}`
+      } else {
+        startDate = `01/07/${new Date().getFullYear() + 1}`
+        endDate = `30/11/${new Date().getFullYear() + 1}`
+      }
+
       // Send the email via notify.
       await notifyClient.sendEmail('09ba502f-c4fe-4c69-948f-dbe1fc42ecf0', emailAddress, {
         personalisation: {
           licenceNo: application.id,
-          validFrom: `01/07/${yearOfExpiry}`,
-          expiryDate: `30/11/${yearOfExpiry}`,
+          validFrom: startDate,
+          expiryDate: endDate,
           fullName: application.fullName,
           lhAddress: createSummaryAddress(application),
           setts: createDisplayableSetts(application.setts)
@@ -236,6 +250,9 @@ const ApplicationController = {
 
     // Add the application ID to the object used to create the email.
     cleanObject.id = newApp.id;
+
+    // We also need the createdAt date to calculate the start and expiry dates.
+    cleanObject.createdAt = newApp.createdAt;
 
     // Send the applicant their confirmation email.
     await sendSuccessEmail(config.notifyApiKey, cleanObject, cleanObject.emailAddress);
