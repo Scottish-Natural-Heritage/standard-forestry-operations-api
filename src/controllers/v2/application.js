@@ -20,16 +20,22 @@ const {Application, Returns, Sett, Revocation} = database;
     address.push(application.addressLine2.trim());
   }
 
-  address.push(application.addressTown.trim(), application.addressCounty.trim(), application.postcode.trim());
+  address.push(application.addressTown.trim(), application.addressCounty.trim(), application.addressPostcode.trim());
 
   return address.join(', ');
 };
 
+/**
+ * Creates a string with a formatted list of the sett details, used by the Notify API in email creation.
+ *
+ * @param {any} setts The array of setts to use to create the formatted string.
+ * @returns {string} Returns a formatted string of all setts to which the application pertains.
+ */
 const createDisplayableSetts = (setts) => {
   const settList = [];
 
-  for (sett of setts) {
-    const badgerHouse = `* Setts from application (${sett.id}, at grid reference ${sett.gridReference}, with ${sett.entrances} entrances)`;
+  for (const sett of setts) {
+    const badgerHouse = `* Sett: ${sett.id}, at grid reference ${sett.gridReference}, with ${sett.entrances} entrances`;
     settList.push(badgerHouse);
   }
 
@@ -43,7 +49,7 @@ const createDisplayableSetts = (setts) => {
  * @param {any} application An enhanced JSON version of the model.
  */
 // eslint-disable-next-line unicorn/prevent-abbreviations
-const sendSuccessEmail = async (notifyApiKey, application) => {
+const sendSuccessEmail = async (notifyApiKey, application, emailAddress) => {
   if (notifyApiKey) {
     try {
       const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
@@ -52,9 +58,9 @@ const sendSuccessEmail = async (notifyApiKey, application) => {
       // already expired.
       const yearOfExpiry = new Date().getMonth() === 11 ? new Date().getFullYear() + 1 : new Date().getFullYear();
       // Send the email via notify.
-      await notifyClient.sendEmail('09ba502f-c4fe-4c69-948f-dbe1fc42ecf0', application.emailAddress, {
+      await notifyClient.sendEmail('09ba502f-c4fe-4c69-948f-dbe1fc42ecf0', emailAddress, {
         personalisation: {
-          licenceNo: `NS-SFO-${application.id}`,
+          licenceNo: application.id,
           validFrom: `01/07/${yearOfExpiry}`,
           expiryDate: `30/11/${yearOfExpiry}`,
           fullName: application.fullName,
@@ -228,8 +234,15 @@ const ApplicationController = {
       throw new Error('Unable to create new application.');
     }
 
+    // Add the application ID to the object used to create the email.
+    cleanObject.id = newApp.id;
+
     // Send the applicant their confirmation email.
-    await sendSuccessEmail(config.notifyApiKey, app);
+    await sendSuccessEmail(config.notifyApiKey, cleanObject, cleanObject.emailAddress);
+
+    // Send a copy of the licence to the licensing team too.
+    await sendSuccessEmail(config.notifyApiKey, cleanObject, 'issuedlicence@nature.scot');
+
     // On success, return the new application's ID.
     return newApp.id;
   },
