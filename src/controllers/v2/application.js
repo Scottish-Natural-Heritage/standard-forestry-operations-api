@@ -6,6 +6,9 @@ import jsonConsoleLogger, {unErrorJson} from '../../json-console-logger.js';
 
 const {Application, Returns, Sett, Revocation} = database;
 
+// Disabling as linter wants us to use "app" instead of "application".
+/* eslint-disable  unicorn/prevent-abbreviations */
+
 /**
  * This function returns a summary address built from the address fields of an application object.
  *
@@ -24,6 +27,8 @@ const createSummaryAddress = (application) => {
 
   return address.join(', ');
 };
+
+/* eslint-enable unicorn/prevent-abbreviations */
 
 /**
  * Creates a string with a formatted list of the sett details, used by the Notify API in email creation.
