@@ -82,6 +82,7 @@ const cleanAppInput = (body) => {
     phoneNumber: body.phoneNumber === undefined ? undefined : body.phoneNumber.trim(),
     emailAddress: body.emailAddress === undefined ? undefined : body.emailAddress.trim(),
     createdByLicensingOfficer: body.createdByLicensingOfficer,
+    uprn: body.uprn === undefined ? undefined : body.uprn,
 
     // We copy across the setts, cleaning them as we go.
     setts:
