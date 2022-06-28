@@ -3,6 +3,7 @@ import express from 'express';
 import Application, {cleanPatchInput} from './controllers/v2/application.js';
 import Sett from './controllers/v2/sett.js';
 import Returns from './controllers/v2/returns.js';
+import Note from './controllers/v2/note.js';
 import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
 
@@ -184,6 +185,79 @@ v2router.post('/applications/:id/setts', async (request, response) => {
     return response.status(500).send({error});
   }
 });
+
+/**************************************************************
+ *
+ *
+ *
+ *
+ *
+ *
+
+/**
+ * Clean the incoming POST request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} existingId The ID of the license that the note belongs to.
+ * @param {any} body The incoming request's body.
+ * @returns {any} A json object that's just got our cleaned up fields on it.
+ */
+const cleanNoteInput = (existingId, body) => {
+  return {
+    ApplicationId: existingId,
+    // The strings are trimmed for leading and trailing whitespace and then
+    // copied across if they're in the POST body or are set to undefined if
+    // they're missing.
+    Note: body.note.trim(),
+    createdBy: body.createdBy
+  };
+};
+
+// Allow the API consumer to submit a note against a application.
+v2router.post('/applications/:id/note', async (request, response) => {
+  try {
+    // Try to parse the incoming ID to make sure it's really a number.
+    const existingId = Number(request.params.id);
+    if (Number.isNaN(existingId)) {
+      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+    }
+
+    const baseUrl = new URL(
+      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
+        request.originalUrl.endsWith('/') ? '' : '/'
+      }`
+    );
+
+    // Check if there's a application allocated at the specified ID.
+    // eslint-disable-next-line unicorn/prevent-abbreviations
+    const existingApplication = await Application.findOne(existingId);
+    if (existingApplication === undefined || existingApplication === null) {
+      return response.status(404).send({message: `application ${existingId} not allocated.`});
+    }
+
+    // Clean up the user's input before we store it in the database.
+    const cleanObject = cleanNoteInput(existingId, request.body);
+
+    // Create a new id wrapped in a database transaction
+    const newNote = await Note.create(existingId, cleanObject);
+
+    if (newNote === undefined) {
+      return response.status(500).send({message: `Could not create note for license ${existingId}.`});
+    }
+
+    return response.status(201).location(new URL(newNote, baseUrl)).send();
+  } catch (error) {
+    return response.status(500).send({error});
+  }
+});
+
+
+
+
+/**************************************************************
+ *
+ *
+ *
 
 /**
  * Clean the incoming POST request body to make it more compatible with the
