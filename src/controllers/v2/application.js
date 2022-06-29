@@ -224,7 +224,7 @@ const ApplicationController = {
    * @param {number} id An existing application's ID.
    * @returns {Sequelize.Model} An existing application.
    */
-  findOne: async (id) => {
+  async findOne(id) {
     return Application.findByPk(id, {include: [Sett, Returns]});
   },
 
@@ -233,7 +233,7 @@ const ApplicationController = {
    *
    * @returns  {Sequelize.Model} All existing applications.
    */
-  findAll: async () => {
+  async findAll() {
     return Application.findAll({include: Sett});
   },
 
@@ -245,7 +245,7 @@ const ApplicationController = {
    * @param {any} cleanObject A new Application object to be added to the database.
    * @returns {number} The newly created Application id.
    */
-  create: async (cleanObject) => {
+  async create(cleanObject) {
     // Take the cleanObject that has been passed in and split the application and
     // the setts into 2 separate variables.
     const {setts, ...app} = cleanObject;
@@ -332,7 +332,7 @@ const ApplicationController = {
    * @param {object} cleanObject A new revocation object to be added to the database.
    * @returns {boolean} True if the record is deleted, otherwise false.
    */
-  delete: async (id, cleanObject) => {
+  async delete(id, cleanObject) {
     try {
       // Start the transaction.
       await database.sequelize.transaction(async (t) => {
@@ -362,7 +362,7 @@ const ApplicationController = {
    * @param {any} application A JSON version of the model containing only the fields to be updated.
    * @returns {boolean} True if the record is updated, otherwise false.
    */
-  update: async (id, application) => {
+  async update(id, application) {
     // Save the new values to the database.
     const result = await Application.update(application, {where: {id}});
 
@@ -384,7 +384,7 @@ const ApplicationController = {
    * @param {any} application The licence application details to use to recreate and resend the licence.
    * @returns {any} Returns the result of the attempted resend of licence.
    */
-  resend: async (id, application) => {
+  async resend(id, application) {
     // Set the licence number of the licence application.
     application.id = id;
 
