@@ -85,7 +85,7 @@ const ApplicationController = {
    *
    * @returns {Sequelize.Model} The new application.
    */
-  create: async () => {
+  async create() {
     let newApp;
     let remainingAttempts = 10;
     // Loop until we have a new empty application or we run out of attempts,
@@ -110,7 +110,7 @@ const ApplicationController = {
    * @param {number} id An existing application's ID.
    * @returns {Sequelize.Model} An existing application.
    */
-  findOne: async (id) => {
+  async findOne(id) {
     return Application.findByPk(id, {include: [Sett, Returns]});
   },
 
@@ -119,7 +119,7 @@ const ApplicationController = {
    *
    * @returns  {Sequelize.Model} All existing applications.
    */
-  findAll: async () => {
+  async findAll() {
     return Application.findAll({include: Sett});
   },
 
@@ -130,7 +130,7 @@ const ApplicationController = {
    * @param {any} jsonApp A JSON version of the model to replace the database's copy.
    * @returns {Sequelize.Model} The updated application.
    */
-  update: async (id, jsonApp) => {
+  async update(id, jsonApp) {
     // Grab the already existing object from the database.
     const existingApp = await Application.findByPk(id);
 
@@ -177,7 +177,7 @@ const ApplicationController = {
    * @param {object} cleanObject A new revocation object to be added to the database.
    * @returns {boolean} True if the record is deleted, otherwise false.
    */
-  delete: async (id, cleanObject) => {
+  async delete(id, cleanObject) {
     try {
       // Start the transaction.
       await database.sequelize.transaction(async (t) => {

@@ -1,4 +1,5 @@
 import database from '../../models/index.js';
+
 const {Application, Returns} = database;
 
 /**
@@ -14,7 +15,7 @@ const ReturnsController = {
    * @param {any} cleanObject A new return object to be added to the database.
    * @returns {number} The newly created returns id.
    */
-  create: async (id, cleanObject) => {
+  async create(id, cleanObject) {
     try {
       const newReturnTransaction = await database.sequelize.transaction(async (t) => {
         await Application.findByPk(id, {transaction: t, rejectOnEmpty: true});

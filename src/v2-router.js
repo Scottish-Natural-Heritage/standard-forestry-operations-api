@@ -399,4 +399,33 @@ v2router.get('/setts', async (request, response) => {
   }
 });
 
+/**
+ * Resend a licence.
+ */
+v2router.post('/applications/:id/resend', async (request, response) => {
+  try {
+    // Try to parse the incoming ID to make sure it's really a number.
+    const existingId = Number(request.params.id);
+    if (Number.isNaN(existingId)) {
+      return response.status(404).send({message: `application ${request.params.id} not valid.`});
+    }
+
+    // Check if there's a application allocated at the specified ID.
+    // eslint-disable-next-line unicorn/prevent-abbreviations
+    const existingApplication = await Application.findOne(existingId);
+    if (existingApplication === undefined || existingApplication === null) {
+      return response.status(404).send({message: `application ${existingId} not allocated.`});
+    }
+
+    // Call the application's resend function to resend the licence email.
+    const result = await Application.resend(existingId, existingApplication);
+
+    // Return success response.
+    return response.status(200).send(result);
+  } catch (error) {
+    jsonConsoleLogger.error(unErrorJson(error));
+    return response.status(500).send({error});
+  }
+});
+
 export {v2router as default};

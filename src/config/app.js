@@ -1,4 +1,5 @@
 const assert = require('assert');
+const process = require('process');
 
 assert(process.env.SFO_NOTIFY_API_KEY !== undefined, 'An API Key for GOV.UK Notify (SFO_NOTIFY_API_KEY) is required.');
 

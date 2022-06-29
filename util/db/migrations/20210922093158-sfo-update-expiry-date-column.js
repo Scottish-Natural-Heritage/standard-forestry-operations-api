@@ -1,8 +1,9 @@
 'use strict';
+const process = require('process');
 
 if (process.env.NODE_ENV === 'production') {
   module.exports = {
-    up: async (queryInterface, Sequelize) => {
+    async up(queryInterface, Sequelize) {
       // Grab the applications as an array of objects.
       const resultsArray = await queryInterface.sequelize.query('SELECT * FROM sfo."Applications";', {
         type: Sequelize.QueryTypes.SELECT
@@ -31,7 +32,7 @@ if (process.env.NODE_ENV === 'production') {
 
       await Promise.all(updateQueries);
     },
-    down: async (queryInterface, Sequelize) => {
+    async down(queryInterface, Sequelize) {
       // For the opposite set all expiry date values to null.
       await queryInterface.sequelize.query(`UPDATE sfo."Applications" SET "expiryDate" = null;`, {
         type: Sequelize.QueryTypes.UPDATE
@@ -40,7 +41,7 @@ if (process.env.NODE_ENV === 'production') {
   };
 } else {
   module.exports = {
-    up: async (queryInterface, Sequelize) => {
+    async up(queryInterface, Sequelize) {
       // Grab the applications as an array of objects.
       const resultsArray = await queryInterface.sequelize.query('SELECT * FROM Applications;', {
         type: Sequelize.QueryTypes.SELECT
@@ -69,7 +70,7 @@ if (process.env.NODE_ENV === 'production') {
 
       await Promise.all(updateQueries);
     },
-    down: async (queryInterface, Sequelize) => {
+    async down(queryInterface, Sequelize) {
       // For the opposite set all expiry date values to null.
       await queryInterface.sequelize.query(`UPDATE Applications SET expiryDate = null;`, {
         type: Sequelize.QueryTypes.UPDATE
