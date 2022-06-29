@@ -3,7 +3,7 @@
 const databaseConfig = require('../../../src/config/database.js');
 
 module.exports = {
-  up: async (queryInterface) => {
+  async up(queryInterface) {
     // We're doing a fetch then delete operation, so wrap the whole process in a
     // transaction.
     const transaction = await queryInterface.sequelize.transaction();
@@ -49,7 +49,7 @@ module.exports = {
     }
   },
 
-  down: async (queryInterface, Sequelize) => {
+  async down(queryInterface, Sequelize) {
     const transaction = await queryInterface.sequelize.transaction();
     try {
       await queryInterface.addColumn(

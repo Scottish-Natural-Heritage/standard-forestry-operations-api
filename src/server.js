@@ -9,6 +9,8 @@ import jsonConsoleLogger from './json-console-logger.js';
 // Load the app.
 import app from './app.js';
 
+const process = require('process');
+
 // Run it.
 app.listen(config.port, () => {
   if (process.env.NODE_ENV !== 'production') {

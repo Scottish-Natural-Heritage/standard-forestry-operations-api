@@ -1,10 +1,11 @@
 'use strict';
+const process = require('process');
 
 // The pre-migrations only make sense when running inside the production docker
 // environment. They are not required for the development SQLite DB.
 if (process.env.NODE_ENV === 'production') {
   module.exports = {
-    up: async (queryInterface, Sequelize) => {
+    async up(queryInterface, Sequelize) {
       await queryInterface.sequelize.query('grant connect on database licensing to rosfo;', {
         type: Sequelize.QueryTypes.RAW
       });
@@ -24,7 +25,7 @@ if (process.env.NODE_ENV === 'production') {
         }
       );
     },
-    down: async (queryInterface, Sequelize) => {
+    async down(queryInterface, Sequelize) {
       await queryInterface.sequelize.query(
         'alter default privileges for role licensing, sfo in schema sfo revoke select on tables to rosfo;',
         {
@@ -47,10 +48,10 @@ if (process.env.NODE_ENV === 'production') {
   };
 } else {
   module.exports = {
-    up: () => {
+    up() {
       return Promise.resolve();
     },
-    down: () => {
+    down() {
       return Promise.resolve();
     }
   };

@@ -1,8 +1,9 @@
 'use strict';
+const process = require('process');
 
 if (process.env.NODE_ENV === 'production') {
   module.exports = {
-    up: async (queryInterface, Sequelize) => {
+    async up(queryInterface, Sequelize) {
       await queryInterface.sequelize.query('CREATE VIEW sfo_Applications AS SELECT * FROM sfo."Applications";', {
         type: Sequelize.QueryTypes.RAW
       });
@@ -23,7 +24,7 @@ if (process.env.NODE_ENV === 'production') {
         type: Sequelize.QueryTypes.RAW
       });
     },
-    down: async (queryInterface, Sequelize) => {
+    async down(queryInterface, Sequelize) {
       await queryInterface.sequelize.query('DROP VIEW sfo_Setts;', {
         type: Sequelize.QueryTypes.RAW
       });
@@ -47,10 +48,10 @@ if (process.env.NODE_ENV === 'production') {
   };
 } else {
   module.exports = {
-    up: () => {
+    up() {
       return Promise.resolve();
     },
-    down: () => {
+    down() {
       return Promise.resolve();
     }
   };
