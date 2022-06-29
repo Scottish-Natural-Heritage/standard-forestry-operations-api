@@ -47,6 +47,17 @@ const createDisplayableSetts = (setts) => {
   return settList.join('\n');
 };
 
+const createSettsFromApplication = (setts) => {
+  const settList = [];
+
+  for (const sett of setts) {
+    const badgerHouse = `* Sett: ${sett.sett}, at grid reference ${sett.gridRef}, with ${sett.entrances} entrances`;
+    settList.push(badgerHouse);
+  }
+
+  return settList.join('\n');
+}
+
 /**
  * Send emails to the applicant to let them know it was successful.
  *
@@ -85,6 +96,48 @@ const sendSuccessEmail = async (notifyApiKey, application, emailAddress) => {
           fullName: application.fullName,
           lhAddress: createSummaryAddress(application),
           setts: createDisplayableSetts(application.setts)
+        },
+        reference: `NS-SFO-${application.id}`,
+        emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
+      });
+    } catch (error) {
+      jsonConsoleLogger.error(unErrorJson(error));
+      throw error;
+    }
+  }
+};
+
+const resendLicenceEmail = async (notifyApiKey, application, emailAddress) => {
+  if (notifyApiKey) {
+    try {
+      const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
+
+      const currentYear = new Date(application.createdAt).getFullYear();
+
+      let startDate;
+      let endDate;
+
+      // Calculate the start and end dates.
+      if (new Date(application.createdAt).getMonth() + 1 < 7) {
+        startDate = `01/07/${currentYear}`;
+        endDate = `30/11/${currentYear}`;
+      } else if (new Date(application.createdAt).getMonth() + 1 < 12) {
+        startDate = new Date(application.createdAt).toLocaleDateString('en-GB');
+        endDate = `30/11/${currentYear}`;
+      } else {
+        startDate = `01/07/${new Date(application.createdAt).getFullYear() + 1}`;
+        endDate = `30/11/${new Date(application.createdAt).getFullYear() + 1}`;
+      }
+
+      // Send the email via notify.
+      await notifyClient.sendEmail('09ba502f-c4fe-4c69-948f-dbe1fc42ecf0', emailAddress, {
+        personalisation: {
+          licenceNo: application.id,
+          validFrom: startDate,
+          expiryDate: endDate,
+          fullName: application.fullName,
+          lhAddress: createSummaryAddress(application),
+          setts: createSettsFromApplication(application.Setts)
         },
         reference: `NS-SFO-${application.id}`,
         emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
@@ -320,6 +373,16 @@ const ApplicationController = {
 
     // If something went wrong, return undefined to signify this.
     return undefined;
+  },
+
+  resend: async (id, application) => {
+    // Set the licence number of the cleaned licence application.
+    application.id = id;
+
+    // Resend the applicant their licence email.
+    const result = await resendLicenceEmail(config.notifyApiKey, application, application.emailAddress);
+
+    return result;
   }
 };
 
