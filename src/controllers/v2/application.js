@@ -28,8 +28,6 @@ const createSummaryAddress = (application) => {
   return address.join(', ');
 };
 
-/* eslint-enable unicorn/prevent-abbreviations */
-
 /**
  * Creates a string with a formatted list of the sett details, used by the Notify API in email creation.
  *
@@ -47,6 +45,13 @@ const createDisplayableSetts = (setts) => {
   return settList.join('\n');
 };
 
+/**
+ * Creates a string with a formatted list of the sett details, used by the Notify API in email creation
+ * when resending a licence.
+ *
+ * @param {any} setts The array of setts to use to create the formatted string.
+ * @returns {string} Returns a formatted string of all setts to which the application pertains.
+ */
 const createSettsFromApplication = (setts) => {
   const settList = [];
 
@@ -56,7 +61,7 @@ const createSettsFromApplication = (setts) => {
   }
 
   return settList.join('\n');
-}
+};
 
 /**
  * Send emails to the applicant to let them know it was successful.
@@ -64,7 +69,6 @@ const createSettsFromApplication = (setts) => {
  * @param {string} notifyApiKey API key for sending emails.
  * @param {any} application An enhanced JSON version of the model.
  */
-// eslint-disable-next-line unicorn/prevent-abbreviations
 const sendSuccessEmail = async (notifyApiKey, application, emailAddress) => {
   if (notifyApiKey) {
     try {
@@ -213,7 +217,6 @@ const cleanPatchInput = (body) => {
 /**
  * An object to perform 'persistence' operations on our application objects.
  */
-// eslint-disable-next-line unicorn/prevent-abbreviations
 const ApplicationController = {
   /**
    * Retrieve the specified application from the database.
@@ -359,7 +362,6 @@ const ApplicationController = {
    * @param {any} application A JSON version of the model containing only the fields to be updated.
    * @returns {boolean} True if the record is updated, otherwise false.
    */
-  // eslint-disable-next-line unicorn/prevent-abbreviations
   update: async (id, application) => {
     // Save the new values to the database.
     const result = await Application.update(application, {where: {id}});
@@ -375,8 +377,15 @@ const ApplicationController = {
     return undefined;
   },
 
+  /**
+   *  Resend a licence to the applicant.
+   *
+   * @param {number} id The licence number of the licence to be resent.
+   * @param {any} application The licence application details to use to recreate and resend the licence.
+   * @returns {any} Returns the result of the attempted resend of licence.
+   */
   resend: async (id, application) => {
-    // Set the licence number of the cleaned licence application.
+    // Set the licence number of the licence application.
     application.id = id;
 
     // Resend the applicant their licence email.
@@ -385,5 +394,7 @@ const ApplicationController = {
     return result;
   }
 };
+
+/* eslint-enable unicorn/prevent-abbreviations */
 
 export {ApplicationController as default, cleanPatchInput};
