@@ -1,5 +1,7 @@
 'use strict';
 
+import process from 'process';
+
 // Load the config.
 import config from './config/app.js';
 
@@ -8,8 +10,6 @@ import jsonConsoleLogger from './json-console-logger.js';
 
 // Load the app.
 import app from './app.js';
-
-const process = require('process');
 
 // Run it.
 app.listen(config.port, () => {
