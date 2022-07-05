@@ -5,7 +5,7 @@ import Application from './application.js';
 import Sett from './sett.js';
 import ApplyOther from './apply-other.js';
 import Revocation from './revocation.js';
-import Note from './note';
+import Note from './note.js';
 import Returns from './returns.js';
 
 const sequelize = new Sequelize(databaseConfig.database);
