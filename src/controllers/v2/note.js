@@ -6,16 +6,16 @@ const NoteController = {
   /**
    * The create function writes the incoming Note to the appropriate database tables.
    *
-   * @param {any } applicationId The application that the Note will be based on.
+   * @param {any } appId The application that the Note will be based on.
    * @param {any | undefined} incomingNote The Note details.
    * @returns {any} Returns newNote, the newly created Note.
    */
-  // eslint-disable-next-line unicorn/prevent-abbreviations
-  create: async (applicationId, incomingNote) => {
+  // prettier-ignore
+  async create (appId, incomingNote) {
     let newNote;
     // Start a transaction.
     await database.sequelize.transaction(async (t) => {
-      incomingNote.ApplicationId = applicationId;
+      incomingNote.ApplicationId = appId;
 
       // Add the Note to the DB.
       newNote = await Note.create(incomingNote, {transaction: t});
@@ -36,15 +36,18 @@ const NoteController = {
    * @param {number} id An existing sett's ID.
    * @returns {Sequelize.Model} An existing sett.
    */
-  findOne: async (id) => {
+  // prettier-ignore
+  async findOne (id) {
     return Note.findByPk(id);
   },
 
-  findAll: async () => {
+  // prettier-ignore
+  async findAll () {
     return Note.findAll();
   },
 
-  findAllApplicationNotes: async (id) => {
+  // prettier-ignore
+  async findAllApplicationNotes (id) {
     return Note.findAll({where: {ApplicationId: id}});
   }
 };

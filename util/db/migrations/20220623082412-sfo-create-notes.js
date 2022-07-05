@@ -1,5 +1,6 @@
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  // prettier-ignore
+  async up (queryInterface, Sequelize) {
     await queryInterface.createTable('Notes', {
       id: {
         allowNull: false,
@@ -33,8 +34,8 @@ module.exports = {
       }
     });
   },
-
-  down: async (queryInterface) => {
+  // prettier-ignore
+  async down (queryInterface) {
     await queryInterface.dropTable('Notes');
   }
 };
