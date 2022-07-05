@@ -16,18 +16,18 @@ const NoteModel = (sequelize) => {
   Note.init(
     {
       note: {
-        type: Sequelize.TEXT,
+        type: Sequelize.TEXT
       },
       createdBy: {
-        type: Sequelize.STRING,
-      },
+        type: Sequelize.STRING
+      }
     },
     {
       sequelize,
       modelName: 'Note',
       timestamps: true,
-      paranoid: true,
-    },
+      paranoid: true
+    }
   );
 
   return Note;

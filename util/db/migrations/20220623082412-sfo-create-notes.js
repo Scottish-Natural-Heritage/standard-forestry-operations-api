@@ -1,5 +1,3 @@
-/* eslint-disable unicorn/prefer-module */
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Notes', {
@@ -7,36 +5,36 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.INTEGER,
-        autoIncrement: true,
+        autoIncrement: true
       },
       ApplicationId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Applications',
-          key: 'id',
-        },
+          key: 'id'
+        }
       },
       note: {
-        type: Sequelize.TEXT,
+        type: Sequelize.TEXT
       },
       createdBy: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       deletedAt: {
-        type: Sequelize.DATE,
-      },
+        type: Sequelize.DATE
+      }
     });
   },
 
   down: async (queryInterface) => {
     await queryInterface.dropTable('Notes');
-  },
+  }
 };

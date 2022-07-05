@@ -10,6 +10,7 @@ const NoteController = {
    * @param {any | undefined} incomingNote The Note details.
    * @returns {any} Returns newNote, the newly created Note.
    */
+  // eslint-disable-next-line unicorn/prevent-abbreviations
   create: async (applicationId, incomingNote) => {
     let newNote;
     // Start a transaction.
@@ -45,7 +46,7 @@ const NoteController = {
 
   findAllApplicationNotes: async (id) => {
     return Note.findAll({where: {ApplicationId: id}});
-  },
+  }
 };
 
 export {NoteController as default};
