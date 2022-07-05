@@ -12,7 +12,7 @@ const SettController = {
    * @param {any} cleanObject A new Sett object to be added to the database.
    * @returns {number} The newly created sett id.
    */
-  create: async (id, cleanObject) => {
+  async create(id, cleanObject) {
     try {
       const newSettTransaction = await database.sequelize.transaction(async (t) => {
         await Application.findByPk(id, {transaction: t, rejectOnEmpty: true});
@@ -31,7 +31,7 @@ const SettController = {
    * @param {number} id An existing sett's ID.
    * @returns {Sequelize.Model} An existing sett.
    */
-  findOne: async (id) => {
+  async findOne(id) {
     return Sett.findByPk(id);
   },
 
@@ -40,7 +40,7 @@ const SettController = {
    *
    * @returns  {Sequelize.Model} All existing setts.
    */
-  findAll: async () => {
+  async findAll() {
     return Sett.findAll();
   },
 
@@ -50,7 +50,7 @@ const SettController = {
    * @param {number} id A possible ID of a sett.
    * @returns {boolean} True if the record is deleted, otherwise false.
    */
-  delete: async (id) => {
+  async delete(id) {
     try {
       // Start the transaction.
       await database.sequelize.transaction(async (t) => {

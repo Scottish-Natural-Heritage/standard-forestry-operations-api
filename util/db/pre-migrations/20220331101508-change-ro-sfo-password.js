@@ -1,10 +1,11 @@
 'use strict';
+const process = require('process');
 
 const config = require('../../../src/config/database.js').ssDatabase;
 
 if (process.env.NODE_ENV === 'production') {
   module.exports = {
-    up: async (queryInterface, Sequelize) => {
+    async up(queryInterface, Sequelize) {
       return queryInterface.sequelize.query('ALTER ROLE rosfo WITH PASSWORD :roSfoPassword;', {
         type: Sequelize.QueryTypes.RAW,
         replacements: {
@@ -13,7 +14,7 @@ if (process.env.NODE_ENV === 'production') {
       });
     },
 
-    down: async (queryInterface, Sequelize) => {
+    async down(queryInterface, Sequelize) {
       return queryInterface.sequelize.query("ALTER ROLE rosfo WITH PASSWORD 'override_this_value';", {
         type: Sequelize.QueryTypes.RAW
       });
@@ -21,10 +22,10 @@ if (process.env.NODE_ENV === 'production') {
   };
 } else {
   module.exports = {
-    up: () => {
+    up() {
       return Promise.resolve();
     },
-    down: () => {
+    down() {
       return Promise.resolve();
     }
   };

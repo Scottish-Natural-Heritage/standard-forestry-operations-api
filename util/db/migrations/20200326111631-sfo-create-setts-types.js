@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  async up(queryInterface, Sequelize) {
     // Create the SettTypes meta-table
     await queryInterface.createTable('SettTypes', {
       id: {
@@ -56,7 +56,7 @@ module.exports = {
     ]);
   },
 
-  down: async (queryInterface) => {
+  async down(queryInterface) {
     await queryInterface.bulkDelete('SettTypes', {}, {truncate: true});
     await queryInterface.dropTable('SettTypes');
   }
