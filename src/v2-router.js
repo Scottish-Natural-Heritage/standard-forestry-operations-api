@@ -186,14 +186,6 @@ v2router.post('/applications/:id/setts', async (request, response) => {
   }
 });
 
-/**************************************************************
- *
- *
- *
- *
- *
- *
-
 /**
  * Clean the incoming POST request body to make it more compatible with the
  * database and its validation rules.
@@ -214,7 +206,7 @@ const cleanNoteInput = (existingId, body) => {
 };
 
 // Allow the API consumer to submit a note against a application.
-v2router.post('/applications/:id/note', async (request, response) => {
+v2router.post('/applications/:id/notes', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
@@ -242,7 +234,7 @@ v2router.post('/applications/:id/note', async (request, response) => {
     const newNote = await Note.create(existingId, cleanObject);
 
     if (newNote === undefined) {
-      return response.status(500).send({message: `Could not create note for license ${existingId}.`});
+      return response.status(500).send({message: `Could not create note for licence ${existingId}.`});
     }
 
     return response.status(201).location(new URL(newNote, baseUrl)).send();
@@ -250,14 +242,6 @@ v2router.post('/applications/:id/note', async (request, response) => {
     return response.status(500).send({error});
   }
 });
-
-
-
-
-/**************************************************************
- *
- *
- *
 
 /**
  * Clean the incoming POST request body to make it more compatible with the

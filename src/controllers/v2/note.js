@@ -49,4 +49,3 @@ const NoteController = {
 };
 
 export {NoteController as default};
-export {NoteInterface};
