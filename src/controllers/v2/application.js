@@ -4,7 +4,7 @@ import database from '../../models/index.js';
 import config from '../../config/app.js';
 import jsonConsoleLogger, {unErrorJson} from '../../json-console-logger.js';
 
-const {Application, Returns, Sett, Revocation} = database;
+const {Application, Note, Returns, Sett, Revocation} = database;
 
 // Disabling as linter wants us to use "app" instead of "application".
 /* eslint-disable  unicorn/prevent-abbreviations */
@@ -225,7 +225,7 @@ const ApplicationController = {
    * @returns {Sequelize.Model} An existing application.
    */
   async findOne(id) {
-    return Application.findByPk(id, {include: [Sett, Returns]});
+    return Application.findByPk(id, {include: [Sett, Returns, Note]});
   },
 
   /**
@@ -234,7 +234,7 @@ const ApplicationController = {
    * @returns  {Sequelize.Model} All existing applications.
    */
   async findAll() {
-    return Application.findAll({include: Sett});
+    return Application.findAll({include: Sett, Note});
   },
 
   /**
