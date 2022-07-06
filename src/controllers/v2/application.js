@@ -4,7 +4,7 @@ import database from '../../models/index.js';
 import config from '../../config/app.js';
 import jsonConsoleLogger, {unErrorJson} from '../../json-console-logger.js';
 
-const {Application, Returns, Sett, Revocation} = database;
+const {Application, Note, Returns, Sett, Revocation} = database;
 
 // Disabling as linter wants us to use "app" instead of "application".
 /* eslint-disable  unicorn/prevent-abbreviations */
@@ -28,8 +28,6 @@ const createSummaryAddress = (application) => {
   return address.join(', ');
 };
 
-/* eslint-enable unicorn/prevent-abbreviations */
-
 /**
  * Creates a string with a formatted list of the sett details, used by the Notify API in email creation.
  *
@@ -48,12 +46,29 @@ const createDisplayableSetts = (setts) => {
 };
 
 /**
+ * Creates a string with a formatted list of the sett details, used by the Notify API in email creation
+ * when resending a licence.
+ *
+ * @param {any} setts The array of setts to use to create the formatted string.
+ * @returns {string} Returns a formatted string of all setts to which the application pertains.
+ */
+const createSettsFromApplication = (setts) => {
+  const settList = [];
+
+  for (const sett of setts) {
+    const badgerHouse = `* Sett: ${sett.sett}, at grid reference ${sett.gridRef}, with ${sett.entrances} entrances`;
+    settList.push(badgerHouse);
+  }
+
+  return settList.join('\n');
+};
+
+/**
  * Send emails to the applicant to let them know it was successful.
  *
  * @param {string} notifyApiKey API key for sending emails.
  * @param {any} application An enhanced JSON version of the model.
  */
-// eslint-disable-next-line unicorn/prevent-abbreviations
 const sendSuccessEmail = async (notifyApiKey, application, emailAddress) => {
   if (notifyApiKey) {
     try {
@@ -85,6 +100,48 @@ const sendSuccessEmail = async (notifyApiKey, application, emailAddress) => {
           fullName: application.fullName,
           lhAddress: createSummaryAddress(application),
           setts: createDisplayableSetts(application.setts)
+        },
+        reference: `NS-SFO-${application.id}`,
+        emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
+      });
+    } catch (error) {
+      jsonConsoleLogger.error(unErrorJson(error));
+      throw error;
+    }
+  }
+};
+
+const resendLicenceEmail = async (notifyApiKey, application, emailAddress) => {
+  if (notifyApiKey) {
+    try {
+      const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
+
+      const currentYear = new Date(application.createdAt).getFullYear();
+
+      let startDate;
+      let endDate;
+
+      // Calculate the start and end dates.
+      if (new Date(application.createdAt).getMonth() + 1 < 7) {
+        startDate = `01/07/${currentYear}`;
+        endDate = `30/11/${currentYear}`;
+      } else if (new Date(application.createdAt).getMonth() + 1 < 12) {
+        startDate = new Date(application.createdAt).toLocaleDateString('en-GB');
+        endDate = `30/11/${currentYear}`;
+      } else {
+        startDate = `01/07/${new Date(application.createdAt).getFullYear() + 1}`;
+        endDate = `30/11/${new Date(application.createdAt).getFullYear() + 1}`;
+      }
+
+      // Send the email via notify.
+      await notifyClient.sendEmail('09ba502f-c4fe-4c69-948f-dbe1fc42ecf0', emailAddress, {
+        personalisation: {
+          licenceNo: application.id,
+          validFrom: startDate,
+          expiryDate: endDate,
+          fullName: application.fullName,
+          lhAddress: createSummaryAddress(application),
+          setts: createSettsFromApplication(application.Setts)
         },
         reference: `NS-SFO-${application.id}`,
         emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
@@ -160,7 +217,6 @@ const cleanPatchInput = (body) => {
 /**
  * An object to perform 'persistence' operations on our application objects.
  */
-// eslint-disable-next-line unicorn/prevent-abbreviations
 const ApplicationController = {
   /**
    * Retrieve the specified application from the database.
@@ -168,8 +224,8 @@ const ApplicationController = {
    * @param {number} id An existing application's ID.
    * @returns {Sequelize.Model} An existing application.
    */
-  findOne: async (id) => {
-    return Application.findByPk(id, {include: [Sett, Returns]});
+  async findOne(id) {
+    return Application.findByPk(id, {include: [Sett, Returns, Note]});
   },
 
   /**
@@ -177,8 +233,8 @@ const ApplicationController = {
    *
    * @returns  {Sequelize.Model} All existing applications.
    */
-  findAll: async () => {
-    return Application.findAll({include: Sett});
+  async findAll() {
+    return Application.findAll({include: Sett, Note});
   },
 
   /**
@@ -189,7 +245,7 @@ const ApplicationController = {
    * @param {any} cleanObject A new Application object to be added to the database.
    * @returns {number} The newly created Application id.
    */
-  create: async (cleanObject) => {
+  async create(cleanObject) {
     // Take the cleanObject that has been passed in and split the application and
     // the setts into 2 separate variables.
     const {setts, ...app} = cleanObject;
@@ -276,7 +332,7 @@ const ApplicationController = {
    * @param {object} cleanObject A new revocation object to be added to the database.
    * @returns {boolean} True if the record is deleted, otherwise false.
    */
-  delete: async (id, cleanObject) => {
+  async delete(id, cleanObject) {
     try {
       // Start the transaction.
       await database.sequelize.transaction(async (t) => {
@@ -306,8 +362,7 @@ const ApplicationController = {
    * @param {any} application A JSON version of the model containing only the fields to be updated.
    * @returns {boolean} True if the record is updated, otherwise false.
    */
-  // eslint-disable-next-line unicorn/prevent-abbreviations
-  update: async (id, application) => {
+  async update(id, application) {
     // Save the new values to the database.
     const result = await Application.update(application, {where: {id}});
 
@@ -320,7 +375,26 @@ const ApplicationController = {
 
     // If something went wrong, return undefined to signify this.
     return undefined;
+  },
+
+  /**
+   *  Resend a licence to the applicant.
+   *
+   * @param {number} id The licence number of the licence to be resent.
+   * @param {any} application The licence application details to use to recreate and resend the licence.
+   * @returns {any} Returns the result of the attempted resend of licence.
+   */
+  async resend(id, application) {
+    // Set the licence number of the licence application.
+    application.id = id;
+
+    // Resend the applicant their licence email.
+    const result = await resendLicenceEmail(config.notifyApiKey, application, application.emailAddress);
+
+    return result;
   }
 };
+
+/* eslint-enable unicorn/prevent-abbreviations */
 
 export {ApplicationController as default, cleanPatchInput};

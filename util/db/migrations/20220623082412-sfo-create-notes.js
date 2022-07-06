@@ -1,13 +1,23 @@
-'use strict';
-
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('ApplyOthers', {
+    await queryInterface.createTable('Notes', {
       id: {
+        allowNull: false,
+        primaryKey: true,
         type: Sequelize.INTEGER,
         autoIncrement: true
       },
-      emailAddress: {
+      ApplicationId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Applications',
+          key: 'id'
+        }
+      },
+      note: {
+        type: Sequelize.TEXT
+      },
+      createdBy: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -23,8 +33,7 @@ module.exports = {
       }
     });
   },
-
   async down(queryInterface) {
-    await queryInterface.dropTable('ApplyOthers');
+    await queryInterface.dropTable('Notes');
   }
 };

@@ -1,5 +1,7 @@
 'use strict';
 
+import process from 'process';
+
 // Load the config.
 import config from './config/app.js';
 

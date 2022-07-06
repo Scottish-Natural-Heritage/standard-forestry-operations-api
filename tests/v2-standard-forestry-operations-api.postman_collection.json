@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "4da18f41-3297-4ba6-a64d-ac1d78488171",
+		"_postman_id": "642885c1-c930-40d6-92f7-c1a95a7aadb8",
 		"name": "v2-standard-forestry-operations-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -450,6 +450,131 @@
 							"    pm.expect(jsonData.Setts[2]).to.have.property('entrances');",
 							"    pm.expect(jsonData.Setts[2]).to.have.property('createdByLicensingOfficer');",
 							"    pm.expect(jsonData.Setts[2].createdByLicensingOfficer).to.eql('939123');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v2/applications/{{SFO_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v2",
+						"applications",
+						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new Note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {",
+							"    pm.response.to.have.status(201);",
+							"    pm.response.to.have.status('Created');",
+							"});",
+							"",
+							"pm.test('Location is present', function () {",
+							"    pm.response.to.have.header('Location');",
+							"    ",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(",
+							"        `http://localhost:3003/standard-forestry-operations-api/v2/applications/`",
+							"    );",
+							"});",
+							"",
+							"pm.collectionVariables.set(\"SFO_NEW_NOTE_ID\", pm.response.headers.get('Location').split('/').pop());",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \t\t\"note\": \"THis is a test\",\r\n  \t\t\"createdBy\": \"939123\"\r\n  \t}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v2/applications/{{SFO_NEW_APP_ID}}/notes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v2",
+						"applications",
+						"{{SFO_NEW_APP_ID}}",
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Application with New Note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status('OK');",
+							"});",
+							"",
+							"pm.test('Returned object matches posted object', function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData).to.have.property('convictions');",
+							"    pm.expect(jsonData).to.have.property('complyWithTerms');",
+							"    ",
+							"    pm.expect(jsonData).to.have.property('fullName');",
+							"    pm.expect(jsonData).to.have.property('companyOrganisation');",
+							"    pm.expect(jsonData).to.have.property('addressLine1');",
+							"    pm.expect(jsonData).to.have.property('addressLine2');",
+							"    pm.expect(jsonData).to.have.property('addressTown');",
+							"    pm.expect(jsonData).to.have.property('addressCounty');",
+							"    pm.expect(jsonData).to.have.property('addressPostcode');",
+							"    pm.expect(jsonData).to.have.property('phoneNumber');",
+							"    pm.expect(jsonData).to.have.property('emailAddress');",
+							"    pm.expect(jsonData).to.have.property('Notes');",
+							"",
+							"    pm.expect(jsonData.Notes.length).to.eql(1);",
+							"",
+							"    pm.expect(jsonData.Notes[0]).to.have.property('note');;",
+							"    pm.expect(jsonData.Notes[0]).to.have.property('createdBy');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -979,6 +1104,10 @@
 		},
 		{
 			"key": "SFO_NEW_SETT_ID",
+			"value": ""
+		},
+		{
+			"key": "SFO_NEW_NOTE_ID",
 			"value": ""
 		}
 	]
