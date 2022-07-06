@@ -200,7 +200,7 @@ const cleanNoteInput = (existingId, body) => {
     // The strings are trimmed for leading and trailing whitespace and then
     // copied across if they're in the POST body or are set to undefined if
     // they're missing.
-    Note: body.note.trim(),
+    note: body.note.trim(),
     createdBy: body.createdBy
   };
 };

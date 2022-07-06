@@ -1,53 +1,50 @@
 import database from '../../models/index.js';
 
-const {Note} = database;
+const {Note, Application} = database;
 
 const NoteController = {
   /**
-   * The create function writes the incoming Note to the appropriate database tables.
+   * Create a new randomly allocated Note wrapped in a database transaction.
    *
-   * @param {any } appId The application that the Note will be based on.
-   * @param {any | undefined} incomingNote The Note details.
-   * @returns {any} Returns newNote, the newly created Note.
+   * Transaction completes all requests and returns the new Note transaction id.
+   *
+   * @param {number | undefined} id An existing application/license ID.
+   * @param {any} cleanObject A new return object to be added to the database.
+   * @returns {number} The newly created notes id.
    */
-  // prettier-ignore
-  async create (appId, incomingNote) {
-    let newNote;
-    // Start a transaction.
-    await database.sequelize.transaction(async (t) => {
-      incomingNote.ApplicationId = appId;
-
-      // Add the Note to the DB.
-      newNote = await Note.create(incomingNote, {transaction: t});
-    });
-
-    // If all went well and we have a new application return it.
-    if (newNote) {
-      return newNote;
+  async create(id, cleanObject) {
+    try {
+      const newNotesTransaction = await database.sequelize.transaction(async (t) => {
+        await Application.findByPk(id, {transaction: t, rejectOnEmpty: true});
+        const newNotes = await Note.create(cleanObject, {transaction: t});
+        return newNotes;
+      });
+      return newNotesTransaction.id;
+    } catch {
+      return undefined;
     }
-
-    // If no new application was added to the DB return undefined.
-    return undefined;
   },
 
   /**
    * Retrieve the notes from the database.
    *
-   * @param {number} id An existing sett's ID.
-   * @returns {Sequelize.Model} An existing sett.
+   * @param {number} id An existing note's ID.
+   * @returns {Sequelize.Model} An existing note.
    */
-  // prettier-ignore
-  async findOne (id) {
+  async findOne(id) {
     return Note.findByPk(id);
   },
 
-  // prettier-ignore
-  async findAll () {
+  /**
+   * Retrieve all notes from the database.
+   *
+   * @returns  {Sequelize.Model} All existing notes.
+   */
+  async findAll() {
     return Note.findAll();
   },
 
-  // prettier-ignore
-  async findAllApplicationNotes (id) {
+  async findAllApplicationNotes(id) {
     return Note.findAll({where: {ApplicationId: id}});
   }
 };
