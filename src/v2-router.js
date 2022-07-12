@@ -57,6 +57,26 @@ v2router.get('/applications/:id', async (request, response) => {
 });
 
 /**
+ * Calculates the licence expiry date.
+ *
+ * @returns {Date} the calculated expiry date
+ */
+ const calculateExpiryDate = () => {
+  let expiryDate;
+  const currentYear = new Date().getFullYear();
+
+  if (new Date().getMonth() + 1 < 7) {
+    expiryDate = new Date(currentYear, 6, 1)
+  } else if (new Date().getMonth() + 1 < 12) {
+    expiryDate = new Date(currentYear, 10, 30)
+  } else {
+    expiryDate = new Date(currentYear + 1, 10, 30)
+  }
+
+  return expiryDate;
+};
+
+/**
  * Clean the incoming POST request body to make it more compatible with the
  * database and its validation rules.
  *
@@ -83,6 +103,7 @@ const cleanAppInput = (body) => {
     phoneNumber: body.phoneNumber === undefined ? undefined : body.phoneNumber.trim(),
     emailAddress: body.emailAddress === undefined ? undefined : body.emailAddress.trim(),
     createdByLicensingOfficer: body.createdByLicensingOfficer,
+    expiryDate: calculateExpiryDate(),
     uprn: body.uprn === undefined ? undefined : body.uprn,
 
     // We copy across the setts, cleaning them as we go.
