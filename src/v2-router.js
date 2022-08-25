@@ -567,4 +567,41 @@ v2router.get('/applications/:id/login'), async (request, response) => {
 
 }
 
+// Allow an API consumer to retrieve the public half of our ECDSA key to
+// validate our signed JWTs.
+v2router.get('/public-key', async (request, response) => response.status(200).send(jwk.getPublicKey()));
+
+/**
+ * Build a JWT to allow a visitor to log in to the supply a return flow.
+ *
+ * @param {string} jwtPrivateKey
+ * @param {string} id
+ * @returns {string} a signed JWT
+ */
+const buildToken = (jwtPrivateKey, id) =>
+  jwt.sign({}, jwtPrivateKey, {subject: `${id}`, algorithm: 'ES256', expiresIn: '30m', noTimestamp: true});
+
+/**
+ * Send an email to the visitor that contains a link which allows them to log in
+ * to the rest of the meat bait return system.
+ *
+ * @param {string} notifyApiKey API key for sending emails
+ * @param {string} emailAddress where to send the log in email
+ * @param {string} loginLink link to log in via
+ * @param {string} regNo trap registration number for notify's records
+ */
+const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, regNo) => {
+  if (notifyApiKey) {
+    const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
+
+    await notifyClient.sendEmail('a5901745-e01c-4e42-a726-ece91b63e593', emailAddress, {
+      personalisation: {
+        loginLink
+      },
+      reference: `${regNo}`,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
+    });
+  }
+};
+
 export {v2router as default};
