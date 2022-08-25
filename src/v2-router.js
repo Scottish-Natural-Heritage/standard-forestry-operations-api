@@ -7,6 +7,10 @@ import Note from './controllers/v2/note.js';
 import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
 
+import jwt from 'jsonwebtoken';
+import jwk from './config/jwk.js';
+import NotifyClient from 'notifications-node-client';
+
 const v2router = express.Router();
 
 v2router.get('/health', async (request, response) => {
