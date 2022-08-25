@@ -507,4 +507,64 @@ v2router.post('/applications/:id/resend', async (request, response) => {
   }
 });
 
+v2router.get('/applications/:id/login'), async (request, response) => {
+  // Try to parse the incoming ID to make sure it's really a number.
+  const existingId = Number(request.params.id);
+  const idInvalid = Number.isNaN(existingId);
+
+  // Check if there's an application allocated at the specified ID.
+  const existingApplication = await Application.findOne(existingId);
+  const idNotFound = existingApplication === undefined || existingApplication === null;
+
+  // Check that the visitor's given us a postcode.
+  const {postcode} = request.query;
+  const postcodeInvalid = postcode === undefined;
+
+  // Check that the visitor's supplied postcode matches their stored one.
+  const postcodeIncorrect =
+  existingApplication !== undefined && existingApplication !== null && !postcodesMatch(existingApplication.addressPostcode, postcode);
+
+  // Check that the visitor's given us a base url.
+  const {redirectBaseUrl} = request.query;
+  const urlInvalid = redirectBaseUrl === undefined || redirectBaseUrl === null;
+
+  // As long as we're happy that the visitor's provided use with valid
+  // information, build them a token for logging in with.
+  let token;
+  if (!idInvalid && !idNotFound && !postcodeInvalid && !postcodeIncorrect) {
+    token = buildToken(jwk.getPrivateKey(), existingId);
+  }
+
+  // If the visitor has give us enough information, build them a link that will
+  // allow them to click-to-log-in.
+  let loginLink;
+  if (!urlInvalid && token !== undefined) {
+    loginLink = `${redirectBaseUrl}${token}`;
+  }
+
+  // As long as we've managed to build a login link, send the visitor an email
+  // with that link included.
+  if (loginLink !== undefined) {
+    await sendLoginEmail(config.notifyApiKey, existingReg.emailAddress, loginLink, existingId);
+  }
+
+  // If we're in production, no matter what, tell the API consumer that everything went well.
+  if (process.env.NODE_ENV === 'production') {
+    return response.status(200).send();
+  }
+
+  // If we're in development mode, send back a debug message, with the link for
+  // the developer, to avoid sending unnecessary emails.
+  return response.status(200).send({
+    idInvalid,
+    idNotFound,
+    postcodeInvalid,
+    postcodeIncorrect,
+    urlInvalid,
+    token,
+    loginLink
+  });
+
+}
+
 export {v2router as default};
