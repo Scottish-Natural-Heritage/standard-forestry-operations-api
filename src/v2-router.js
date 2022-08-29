@@ -1,3 +1,4 @@
+import process from 'process';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import NotifyClient from 'notifications-node-client';
@@ -10,8 +11,6 @@ import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
 
 import jwk from './config/jwk.js';
-
-const process = require('process');
 
 const v2router = express.Router();
 
