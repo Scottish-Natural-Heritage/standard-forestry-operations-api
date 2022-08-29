@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "642885c1-c930-40d6-92f7-c1a95a7aadb8",
+		"_postman_id": "9a97a14c-cbde-4103-b4a1-ba17dc1e1145",
 		"name": "v2-standard-forestry-operations-api",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5746803"
 	},
 	"item": [
 		{
@@ -242,6 +243,66 @@
 						"v2",
 						"applications",
 						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log in to supply return",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							"\r",
+							"pm.test('Debug response is valid', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.idInvalid).to.eql(false);\r",
+							"    pm.expect(jsonData.idNotFound).to.eql(false);\r",
+							"    pm.expect(jsonData.postcodeInvalid).to.eql(false);\r",
+							"    pm.expect(jsonData.postcodeIncorrect).to.eql(false);\r",
+							"    pm.expect(jsonData.urlInvalid).to.eql(false);\r",
+							"    pm.expect(jsonData.token).to.not.eql(undefined);\r",
+							"    pm.expect(jsonData.loginLink.startsWith('https://example.org/login?token=')).to.eql(true);\r",
+							"    pm.expect(jsonData.loginLink.endsWith(jsonData.token)).to.eql(true);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v2/applications/{{SFO_NEW_APP_ID}}/login?postcode=IV3 8NW&redirectBaseUrl=https://example.org/login?token=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v2",
+						"applications",
+						"{{SFO_NEW_APP_ID}}",
+						"login"
+					],
+					"query": [
+						{
+							"key": "postcode",
+							"value": "IV3 8NW"
+						},
+						{
+							"key": "redirectBaseUrl",
+							"value": "https://example.org/login?token="
+						}
 					]
 				}
 			},
