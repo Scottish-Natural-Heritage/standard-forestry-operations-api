@@ -511,7 +511,7 @@ v2router.post('/applications/:id/resend', async (request, response) => {
   }
 });
 
-v2router.get('/applications/:id/login'), async (request, response) => {
+v2router.get('/applications/:id/login', async (request, response) => {
   // Try to parse the incoming ID to make sure it's really a number.
   const existingId = Number(request.params.id);
   const idInvalid = Number.isNaN(existingId);
@@ -549,7 +549,7 @@ v2router.get('/applications/:id/login'), async (request, response) => {
   // As long as we've managed to build a login link, send the visitor an email
   // with that link included.
   if (loginLink !== undefined) {
-    await sendLoginEmail(config.notifyApiKey, existingReg.emailAddress, loginLink, existingId);
+    await sendLoginEmail(config.notifyApiKey, existingApplication.emailAddress, loginLink, existingId);
   }
 
   // If we're in production, no matter what, tell the API consumer that everything went well.
@@ -568,8 +568,9 @@ v2router.get('/applications/:id/login'), async (request, response) => {
     token,
     loginLink
   });
+});
 
-}
+
 
 // Allow an API consumer to retrieve the public half of our ECDSA key to
 // validate our signed JWTs.
@@ -606,6 +607,30 @@ const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, regNo) => {
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
     });
   }
+};
+
+/**
+ * Test if two postcodes match.
+ *
+ * A match is when the alphanumeric characters in the supplied strings equal
+ * each other once all other characters have been removed and everything's been
+ * transformed to lower-case. It's extreme, but ' !"£IV3$%^8NW&*( ' should match
+ * 'iv3 8nw'.
+ *
+ * @param {string} postcode1 a postcode to check
+ * @param {string} postcode2 the other postcode to check
+ * @returns {boolean} true if they kinda match, false otherwise
+ */
+ const postcodesMatch = (postcode1, postcode2) => {
+  // Regex that matches any and all non alpha-num characters.
+  const notAlphaNumber = /[^a-z\d]/gi;
+
+  // Clean our two strings to the 'same' representation.
+  const cleanPostcode1 = postcode1.replace(notAlphaNumber, '').toLocaleLowerCase();
+  const cleanPostcode2 = postcode2.replace(notAlphaNumber, '').toLocaleLowerCase();
+
+  // Check if they match, now that they're clean.
+  return cleanPostcode1 === cleanPostcode2;
 };
 
 export {v2router as default};
