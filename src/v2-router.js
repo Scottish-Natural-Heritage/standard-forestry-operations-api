@@ -1,4 +1,6 @@
 import express from 'express';
+import jwt from 'jsonwebtoken';
+import NotifyClient from 'notifications-node-client';
 
 import Application, {cleanPatchInput} from './controllers/v2/application.js';
 import Sett from './controllers/v2/sett.js';
@@ -7,9 +9,9 @@ import Note from './controllers/v2/note.js';
 import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
 
-import jwt from 'jsonwebtoken';
 import jwk from './config/jwk.js';
-import NotifyClient from 'notifications-node-client';
+
+const process = require('process');
 
 const v2router = express.Router();
 
@@ -511,6 +513,8 @@ v2router.post('/applications/:id/resend', async (request, response) => {
   }
 });
 
+// Disabling as I'd rather not abbreviate application to app.
+/* eslint-disable unicorn/prevent-abbreviations */
 v2router.get('/applications/:id/login', async (request, response) => {
   // Try to parse the incoming ID to make sure it's really a number.
   const existingId = Number(request.params.id);
@@ -526,7 +530,9 @@ v2router.get('/applications/:id/login', async (request, response) => {
 
   // Check that the visitor's supplied postcode matches their stored one.
   const postcodeIncorrect =
-  existingApplication !== undefined && existingApplication !== null && !postcodesMatch(existingApplication.addressPostcode, postcode);
+    existingApplication !== undefined &&
+    existingApplication !== null &&
+    !postcodesMatch(existingApplication.addressPostcode, postcode);
 
   // Check that the visitor's given us a base url.
   const {redirectBaseUrl} = request.query;
@@ -569,8 +575,7 @@ v2router.get('/applications/:id/login', async (request, response) => {
     loginLink
   });
 });
-
-
+/* eslint-enable unicorn/prevent-abbreviations */
 
 // Allow an API consumer to retrieve the public half of our ECDSA key to
 // validate our signed JWTs.
@@ -621,7 +626,7 @@ const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, regNo) => {
  * @param {string} postcode2 the other postcode to check
  * @returns {boolean} true if they kinda match, false otherwise
  */
- const postcodesMatch = (postcode1, postcode2) => {
+const postcodesMatch = (postcode1, postcode2) => {
   // Regex that matches any and all non alpha-num characters.
   const notAlphaNumber = /[^a-z\d]/gi;
 

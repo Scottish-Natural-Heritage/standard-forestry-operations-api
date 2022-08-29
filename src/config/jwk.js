@@ -1,4 +1,5 @@
 const fs = require('fs');
+const process = require('process');
 
 /**
  * An EC public+private keypair used to sign links during our automated
