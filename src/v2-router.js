@@ -1,4 +1,7 @@
+import process from 'process';
 import express from 'express';
+import jwt from 'jsonwebtoken';
+import NotifyClient from 'notifications-node-client';
 
 import Application, {cleanPatchInput} from './controllers/v2/application.js';
 import Sett from './controllers/v2/sett.js';
@@ -6,6 +9,8 @@ import Returns from './controllers/v2/returns.js';
 import Note from './controllers/v2/note.js';
 import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
+
+import jwk from './config/jwk.js';
 
 const v2router = express.Router();
 
@@ -506,5 +511,130 @@ v2router.post('/applications/:id/resend', async (request, response) => {
     return response.status(500).send({error});
   }
 });
+
+// Disabling as I'd rather not abbreviate application to app.
+/* eslint-disable unicorn/prevent-abbreviations */
+v2router.get('/applications/:id/login', async (request, response) => {
+  // Try to parse the incoming ID to make sure it's really a number.
+  const existingId = Number(request.params.id);
+  const idInvalid = Number.isNaN(existingId);
+
+  // Check if there's an application allocated at the specified ID.
+  const existingApplication = await Application.findOne(existingId);
+  const idNotFound = existingApplication === undefined || existingApplication === null;
+
+  // Check that the visitor's given us a postcode.
+  const {postcode} = request.query;
+  const postcodeInvalid = postcode === undefined;
+
+  // Check that the visitor's supplied postcode matches their stored one.
+  const postcodeIncorrect =
+    existingApplication !== undefined &&
+    existingApplication !== null &&
+    !postcodesMatch(existingApplication.addressPostcode, postcode);
+
+  // Check that the visitor's given us a base url.
+  const {redirectBaseUrl} = request.query;
+  const urlInvalid = redirectBaseUrl === undefined || redirectBaseUrl === null;
+
+  // As long as we're happy that the visitor's provided use with valid
+  // information, build them a token for logging in with.
+  let token;
+  if (!idInvalid && !idNotFound && !postcodeInvalid && !postcodeIncorrect) {
+    token = buildToken(jwk.getPrivateKey(), existingId);
+  }
+
+  // If the visitor has give us enough information, build them a link that will
+  // allow them to click-to-log-in.
+  let loginLink;
+  if (!urlInvalid && token !== undefined) {
+    loginLink = `${redirectBaseUrl}${token}`;
+  }
+
+  // As long as we've managed to build a login link, send the visitor an email
+  // with that link included.
+  if (loginLink !== undefined) {
+    await sendLoginEmail(config.notifyApiKey, existingApplication.emailAddress, loginLink, existingId);
+  }
+
+  // If we're in production, no matter what, tell the API consumer that everything went well.
+  if (process.env.NODE_ENV === 'production') {
+    return response.status(200).send();
+  }
+
+  // If we're in development mode, send back a debug message, with the link for
+  // the developer, to avoid sending unnecessary emails.
+  return response.status(200).send({
+    idInvalid,
+    idNotFound,
+    postcodeInvalid,
+    postcodeIncorrect,
+    urlInvalid,
+    token,
+    loginLink
+  });
+});
+/* eslint-enable unicorn/prevent-abbreviations */
+
+// Allow an API consumer to retrieve the public half of our ECDSA key to
+// validate our signed JWTs.
+v2router.get('/public-key', async (request, response) => response.status(200).send(jwk.getPublicKey()));
+
+/**
+ * Build a JWT to allow a visitor to log in to the supply a return flow.
+ *
+ * @param {string} jwtPrivateKey
+ * @param {string} id
+ * @returns {string} a signed JWT
+ */
+const buildToken = (jwtPrivateKey, id) =>
+  jwt.sign({}, jwtPrivateKey, {subject: `${id}`, algorithm: 'ES256', expiresIn: '30m', noTimestamp: true});
+
+/**
+ * Send an email to the visitor that contains a link which allows them to log in
+ * to the rest of the meat bait return system.
+ *
+ * @param {string} notifyApiKey API key for sending emails
+ * @param {string} emailAddress where to send the log in email
+ * @param {string} loginLink link to log in via
+ * @param {string} regNo trap registration number for notify's records
+ */
+const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, regNo) => {
+  if (notifyApiKey) {
+    const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
+
+    await notifyClient.sendEmail('f727cb31-6259-4ee3-a593-6838d1399618', emailAddress, {
+      personalisation: {
+        loginLink
+      },
+      reference: `${regNo}`,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
+    });
+  }
+};
+
+/**
+ * Test if two postcodes match.
+ *
+ * A match is when the alphanumeric characters in the supplied strings equal
+ * each other once all other characters have been removed and everything's been
+ * transformed to lower-case. It's extreme, but ' !"£IV3$%^8NW&*( ' should match
+ * 'iv3 8nw'.
+ *
+ * @param {string} postcode1 a postcode to check
+ * @param {string} postcode2 the other postcode to check
+ * @returns {boolean} true if they kinda match, false otherwise
+ */
+const postcodesMatch = (postcode1, postcode2) => {
+  // Regex that matches any and all non alpha-num characters.
+  const notAlphaNumber = /[^a-z\d]/gi;
+
+  // Clean our two strings to the 'same' representation.
+  const cleanPostcode1 = postcode1.replace(notAlphaNumber, '').toLocaleLowerCase();
+  const cleanPostcode2 = postcode2.replace(notAlphaNumber, '').toLocaleLowerCase();
+
+  // Check if they match, now that they're clean.
+  return cleanPostcode1 === cleanPostcode2;
+};
 
 export {v2router as default};
