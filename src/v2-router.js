@@ -597,17 +597,18 @@ const buildToken = (jwtPrivateKey, id) =>
  * @param {string} notifyApiKey API key for sending emails
  * @param {string} emailAddress where to send the log in email
  * @param {string} loginLink link to log in via
- * @param {string} regNo trap registration number for notify's records
+ * @param {string} existingId SFO licence number for notify's records
  */
-const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, regNo) => {
+const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, existingId) => {
   if (notifyApiKey) {
     const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
 
     await notifyClient.sendEmail('f727cb31-6259-4ee3-a593-6838d1399618', emailAddress, {
       personalisation: {
-        loginLink
+        loginLink,
+        licenceNumber: existingId
       },
-      reference: `${regNo}`,
+      reference: `${existingId}`,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
     });
   }
