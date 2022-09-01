@@ -600,10 +600,11 @@ const buildToken = (jwtPrivateKey, id) =>
  * Send an email to the visitor that contains a link which allows them to log in
  * to the rest of the meat bait return system.
  *
- * @param {string} notifyApiKey API key for sending emails
- * @param {string} emailAddress where to send the log in email
- * @param {string} loginLink link to log in via
- * @param {string} existingId SFO licence number for notify's records
+ * @param {string} notifyApiKey API key for sending emails.
+ * @param {string} emailAddress where to send the log in email.
+ * @param {string} loginLink link to log in via.
+ * @param {string} existingId SFO licence number for notify's records.
+ * @param {string} fullName The name of the licence holder.
  */
 const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, licenceNumber, fullName) => {
   if (notifyApiKey) {
