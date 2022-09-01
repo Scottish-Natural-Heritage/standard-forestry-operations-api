@@ -554,7 +554,13 @@ v2router.get('/applications/:id/login', async (request, response) => {
   // As long as we've managed to build a login link, send the visitor an email
   // with that link included.
   if (loginLink !== undefined) {
-    await sendLoginEmail(config.notifyApiKey, existingApplication.emailAddress, loginLink, existingId);
+    await sendLoginEmail(
+      config.notifyApiKey,
+      existingApplication.emailAddress,
+      loginLink,
+      existingId,
+      existingApplication.fullName
+    );
   }
 
   // If we're in production, no matter what, tell the API consumer that everything went well.
@@ -594,20 +600,23 @@ const buildToken = (jwtPrivateKey, id) =>
  * Send an email to the visitor that contains a link which allows them to log in
  * to the rest of the meat bait return system.
  *
- * @param {string} notifyApiKey API key for sending emails
- * @param {string} emailAddress where to send the log in email
- * @param {string} loginLink link to log in via
- * @param {string} regNo trap registration number for notify's records
+ * @param {string} notifyApiKey API key for sending emails.
+ * @param {string} emailAddress where to send the log in email.
+ * @param {string} loginLink link to log in via.
+ * @param {string} existingId SFO licence number for notify's records.
+ * @param {string} fullName The name of the licence holder.
  */
-const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, regNo) => {
+const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, licenceNumber, fullName) => {
   if (notifyApiKey) {
     const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
 
     await notifyClient.sendEmail('f727cb31-6259-4ee3-a593-6838d1399618', emailAddress, {
       personalisation: {
-        loginLink
+        loginLink,
+        licenceNumber,
+        fullName
       },
-      reference: `${regNo}`,
+      reference: `${licenceNumber}`,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
     });
   }
