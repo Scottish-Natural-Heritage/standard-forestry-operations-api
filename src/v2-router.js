@@ -554,7 +554,13 @@ v2router.get('/applications/:id/login', async (request, response) => {
   // As long as we've managed to build a login link, send the visitor an email
   // with that link included.
   if (loginLink !== undefined) {
-    await sendLoginEmail(config.notifyApiKey, existingApplication.emailAddress, loginLink, existingId);
+    await sendLoginEmail(
+      config.notifyApiKey,
+      existingApplication.emailAddress,
+      loginLink,
+      existingId,
+      existingApplication.fullName
+    );
   }
 
   // If we're in production, no matter what, tell the API consumer that everything went well.
@@ -599,16 +605,17 @@ const buildToken = (jwtPrivateKey, id) =>
  * @param {string} loginLink link to log in via
  * @param {string} existingId SFO licence number for notify's records
  */
-const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, existingId) => {
+const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, licenceNumber, fullName) => {
   if (notifyApiKey) {
     const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
 
     await notifyClient.sendEmail('f727cb31-6259-4ee3-a593-6838d1399618', emailAddress, {
       personalisation: {
         loginLink,
-        licenceNumber: existingId
+        licenceNumber,
+        fullName
       },
-      reference: `${existingId}`,
+      reference: `${licenceNumber}`,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
     });
   }
