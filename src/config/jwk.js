@@ -27,10 +27,9 @@ const testKeyPair = {
  */
 const publicKey = {
   kty: 'EC',
-  kid: 'KMzSz_C_LDlN-dj7J3u9qYlpTpYtANo4unsy9pFRwqI',
   crv: 'P-256',
-  x: 'i6e0757Y7-fATWDxXQmSIsXfNjWWHhRosBvnK3RVnq8',
-  y: 'IThf8O6eI8IL6jpHfFltv9vYCFHNyy0Eb4_kfmuXlzU'
+  x: 'tJp3nHPEbYhGgqHw4M3KBhkSo1sLIk_VDHFjw0ZRo88',
+  y: '7Rb4A4VjdLpj_gAhg_aSxcP5s7On83I2hqYsIvRQxPc'
 };
 
 /**
