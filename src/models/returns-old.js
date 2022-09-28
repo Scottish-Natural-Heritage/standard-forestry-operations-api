@@ -5,16 +5,15 @@ import Sequelize from 'sequelize';
 const {Model} = Sequelize;
 
 /**
- * Build an Return model..
+ * Build an OldReturns model..
  *
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
- * @returns {Sequelize.Model} A returns model
- * model.
+ * @returns {Sequelize.Model} An old returns model.
  */
-const ReturnsModel = (sequelize) => {
-  class Returns extends Model {}
+const OldReturnsModel = (sequelize) => {
+  class OldReturns extends Model {}
 
-  Returns.init(
+  OldReturns.init(
     {
       ApplicationId: {
         type: Sequelize.INTEGER,
@@ -55,13 +54,13 @@ const ReturnsModel = (sequelize) => {
     },
     {
       sequelize,
-      modelName: 'Returns',
+      modelName: 'OldReturns',
       timestamps: true,
       paranoid: true
     }
   );
 
-  return Returns;
+  return OldReturns;
 };
 
-export {ReturnsModel as default};
+export {OldReturnsModel as default};

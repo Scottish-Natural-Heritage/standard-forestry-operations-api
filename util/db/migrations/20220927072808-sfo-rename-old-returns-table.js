@@ -9,7 +9,7 @@ module.exports = {
         schema: databaseConfig.database.schema,
         tableName: 'Returns'
       },
-      'ReturnsOld'
+      'OldReturns'
     );
   },
 
@@ -17,7 +17,7 @@ module.exports = {
     await queryInterface.renameTable(
       {
         schema: databaseConfig.database.schema,
-        tableName: 'ReturnsOld'
+        tableName: 'OldReturns'
       },
       'Returns'
     );
