@@ -1,7 +1,5 @@
 'use strict';
 
-const databaseConfig = require('../../../src/config/database.js');
-
 module.exports = {
   async up (queryInterface, Sequelize) {
     return queryInterface.createTable('Returns', {
