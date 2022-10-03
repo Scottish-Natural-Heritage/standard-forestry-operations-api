@@ -1,7 +1,10 @@
 import database from '../../models/index.js';
 
-const {SettPhotos, Return} = database;
+const {SettPhotos, Returns} = database;
 
+/**
+ * An object to perform 'persistence' operations on our SettPhoto objects.
+ */
 const SettPhotosController = {
   /**
    * Create a new SettPhotos instance wrapped in a DB transaction.
@@ -14,7 +17,7 @@ const SettPhotosController = {
   async create(id, cleanObject) {
     try {
       const newSettPhotoTransaction = await database.sequelize.transaction(async (t) => {
-        await Return.findByPk(id, {transaction: t, rejectOnEmpty: true});
+        await Returns.findByPk(id, {transaction: t, rejectOnEmpty: true});
         const newSettPhotos = await SettPhotos.create(cleanObject, {transaction: t});
         return newSettPhotos;
       });

@@ -7,8 +7,8 @@ import ApplyOther from './apply-other.js';
 import Revocation from './revocation.js';
 import Note from './note.js';
 import Returns from './returns.js';
-import OldReturns from './old-returns';
-import SettPhotos from './sett-photos';
+import OldReturns from './old-returns.js';
+import SettPhotos from './sett-photos.js';
 
 const sequelize = new Sequelize(databaseConfig.database);
 

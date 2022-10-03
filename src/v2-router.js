@@ -7,6 +7,7 @@ import Application, {cleanPatchInput} from './controllers/v2/application.js';
 import Sett from './controllers/v2/sett.js';
 import Returns from './controllers/v2/returns.js';
 import Note from './controllers/v2/note.js';
+import SettPhotos from './controllers/v2/sett-photos.js';
 import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
 
@@ -283,12 +284,13 @@ const cleanReturnInput = (existingId, body) => {
     // The strings are trimmed for leading and trailing whitespace and then
     // copied across if they're in the POST body or are set to undefined if
     // they're missing.
-    beforeObjectiveRef: body.beforeObjectiveRef === undefined ? undefined : body.beforeObjectiveRef.trim(),
-    afterObjectiveRef: body.afterObjectiveRef === undefined ? undefined : body.afterObjectiveRef.trim(),
-    fromDate: body.fromDate === undefined ? undefined : body.fromDate,
-    toDate: body.toDate === undefined ? undefined : body.toDate,
-    comment: body.comment === undefined ? undefined : body.comment.trim(),
-    createdByLicensingOfficer: body.createdByLicensingOfficer
+    usedLicence: body.didYouUse,
+    startDate: body.startDate === undefined ? undefined : body.startDate,
+    endDate: body.endDate === undefined ? undefined : body.endDate,
+    compliance: body.compliance,
+    complianceDetails: body.complianceDetails === undefined ? undefined : body.complianceDetails.trim(),
+    confirmedDeclaration: body.confirmDeclaration,
+    createdByLicensingOfficer: body.createdByLicensingOfficer === undefined ? undefined : body.createdByLicensingOfficer.trim(),
   };
 };
 
@@ -311,14 +313,40 @@ v2router.post('/applications/:id/returns', async (request, response) => {
     );
 
     // Clean up the user's input before we store it in the database.
-    const cleanObject = cleanReturnInput(existingId, request.body);
+    const cleanedReturn = cleanReturnInput(existingId, request.body);
 
     // Create a new return wrapped in a database transaction that will return the ID of the new return.
-    const newId = await Returns.create(existingId, cleanObject);
+    const newId = await Returns.create(existingId, cleanedReturn);
 
     // If we were unable to create the new return then we need to send back a suitable response.
     if (newId === undefined) {
       return response.status(500).send({message: `Could not create return for license ${existingId}.`});
+    }
+
+    // Get the sett photos information from the request.
+    const settIds = request.body.settIds;
+    const settNames = request.body.settNames; // I don't think I need these.
+    const uploadUUIDs = request.body.uploadUUIDs;
+
+    let uploadUUIDsIndex = 0;
+
+    for (let index = 0; index < settIds.length; index++) {
+      const settPhotos = {
+        ReturnId: newId,
+        SettId: Number(settIds[index]),
+        beforeObjConRef: uploadUUIDs[uploadUUIDsIndex].uuid,
+        beforeFileName: uploadUUIDs[uploadUUIDsIndex].fileName,
+        afterObjConRef: uploadUUIDs[uploadUUIDsIndex + 1].uuid,
+        afterFileName: uploadUUIDs[uploadUUIDsIndex + 1].fileName
+      }
+
+      const newSettPhotosId = await SettPhotos.create(newId, settPhotos);
+
+      if (newSettPhotosId === undefined) {
+        return response.status(500).send({message: `Could not create sett photos for return ${newId}.`});
+      }
+
+      uploadUUIDsIndex += 2;
     }
 
     return response.status(201).location(new URL(newId, baseUrl)).send();

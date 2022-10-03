@@ -45,9 +45,6 @@ const ReturnsModel = (sequelize) => {
       confirmedDeclaration: {
         type: Sequelize.BOOLEAN
       },
-      comment: {
-        type: Sequelize.TEXT
-      },
       createdByLicensingOfficer: {
         type: Sequelize.STRING
       }
