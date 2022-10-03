@@ -315,40 +315,20 @@ v2router.post('/applications/:id/returns', async (request, response) => {
     // Clean up the user's input before we store it in the database.
     const cleanedReturn = cleanReturnInput(existingId, request.body);
 
+    // Get the sett photos information from the request.
+    const settIds = request.body.settIds;
+    const settNames = request.body.settNames; // I don't think I need these.
+    const uploadUUIDs = request.body.uploadUUIDs;
+
     // Create a new return wrapped in a database transaction that will return the ID of the new return.
-    const newId = await Returns.create(existingId, cleanedReturn);
+    const newId = await Returns.create(existingId, cleanedReturn, settIds, uploadUUIDs);
 
     // If we were unable to create the new return then we need to send back a suitable response.
     if (newId === undefined) {
       return response.status(500).send({message: `Could not create return for license ${existingId}.`});
     }
 
-    // Get the sett photos information from the request.
-    const settIds = request.body.settIds;
-    const settNames = request.body.settNames; // I don't think I need these.
-    const uploadUUIDs = request.body.uploadUUIDs;
-
-    let uploadUUIDsIndex = 0;
-
-    for (let index = 0; index < settIds.length; index++) {
-      const settPhotos = {
-        ReturnId: newId,
-        SettId: Number(settIds[index]),
-        beforeObjConRef: uploadUUIDs[uploadUUIDsIndex].uuid,
-        beforeFileName: uploadUUIDs[uploadUUIDsIndex].fileName,
-        afterObjConRef: uploadUUIDs[uploadUUIDsIndex + 1].uuid,
-        afterFileName: uploadUUIDs[uploadUUIDsIndex + 1].fileName
-      }
-
-      const newSettPhotosId = await SettPhotos.create(newId, settPhotos);
-
-      if (newSettPhotosId === undefined) {
-        return response.status(500).send({message: `Could not create sett photos for return ${newId}.`});
-      }
-
-      uploadUUIDsIndex += 2;
-    }
-
+    // Return 201 created and add the location of the new return to the response headers.
     return response.status(201).location(new URL(newId, baseUrl)).send();
   } catch (error) {
     return response.status(500).send({error});
