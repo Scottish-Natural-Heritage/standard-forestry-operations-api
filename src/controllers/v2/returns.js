@@ -25,6 +25,8 @@ const ReturnsController = {
         let uploadUUIDsIndex = 0;
 
         // Loop through the settId and uploadUUID arrays and create the entries in the SettPhotos table.
+        // Disabling as it's easier to read as an indexed loop.
+        // eslint-disable-next-line unicorn/no-for-loop
         for (let index = 0; index < settIds.length; index++) {
           const settPhotos = {
             ReturnId: newReturn.id,
@@ -35,11 +37,13 @@ const ReturnsController = {
             afterFileName: uploadUUIDs[uploadUUIDsIndex + 1].fileName
           };
 
+          // Disabling as this await needs to be inside this loop.
+          // eslint-disable-next-line no-await-in-loop
           const newSettPhotosId = await SettPhotos.create(settPhotos, {transaction: t});
 
-          // If something went wrong return a 500 and cancel the transaction.
+          // If something went wrong return undefined.
           if (newSettPhotosId === undefined) {
-            return response.status(500).send({message: `Could not create sett photos for return ${newId}.`});
+            return undefined;
           }
 
           uploadUUIDsIndex += 2;

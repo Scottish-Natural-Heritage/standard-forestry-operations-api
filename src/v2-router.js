@@ -2,12 +2,10 @@ import process from 'process';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import NotifyClient from 'notifications-node-client';
-
 import Application, {cleanPatchInput} from './controllers/v2/application.js';
 import Sett from './controllers/v2/sett.js';
 import Returns from './controllers/v2/returns.js';
 import Note from './controllers/v2/note.js';
-import SettPhotos from './controllers/v2/sett-photos.js';
 import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
 
@@ -290,7 +288,8 @@ const cleanReturnInput = (existingId, body) => {
     compliance: body.compliance,
     complianceDetails: body.complianceDetails === undefined ? undefined : body.complianceDetails.trim(),
     confirmedDeclaration: body.confirmDeclaration,
-    createdByLicensingOfficer: body.createdByLicensingOfficer === undefined ? undefined : body.createdByLicensingOfficer.trim(),
+    createdByLicensingOfficer:
+      body.createdByLicensingOfficer === undefined ? undefined : body.createdByLicensingOfficer.trim()
   };
 };
 
@@ -316,9 +315,8 @@ v2router.post('/applications/:id/returns', async (request, response) => {
     const cleanedReturn = cleanReturnInput(existingId, request.body);
 
     // Get the sett photos information from the request.
-    const settIds = request.body.settIds;
-    const settNames = request.body.settNames; // I don't think I need these.
-    const uploadUUIDs = request.body.uploadUUIDs;
+    const {settIds} = request.body;
+    const {uploadUUIDs} = request.body;
 
     // Create a new return wrapped in a database transaction that will return the ID of the new return.
     const newId = await Returns.create(existingId, cleanedReturn, settIds, uploadUUIDs);
