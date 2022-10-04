@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "9a97a14c-cbde-4103-b4a1-ba17dc1e1145",
+		"_postman_id": "4892ccbd-3c85-404c-a272-868fcc5dd99d",
 		"name": "v2-standard-forestry-operations-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "5746803"
@@ -941,7 +941,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"beforeObjectiveRef\": \"A12345\",\n    \"afterObjectiveRef\": \"A123456\",\n    \"fromDate\": \"2021-07-18T13:39:49.598Z\",\n    \"toDate\": \"2021-07-18T13:39:49.598Z\",\n    \"comment\": \"Tests\",\n    \"createdByLicensingOfficer\": \"9391234\"\n}",
+					"raw": "{\n    \"didYouUse\": true,\n    \"startDate\": \"2021-07-18T13:39:49.598Z\",\n    \"endDate\": \"2021-07-18T13:39:49.598Z\",\n    \"compliance\": true,\n    \"complianceDetails\": \"Some compliance details.\",\n    \"settIds\": [\"1\", \"2\"],\n    \"confirmDeclaration\": true,\n    \"uploadUUIDs\": [\n        {\n            \"uuid\": \"1234-abcd-1234-abcd\",\n            \"fileName\": \"Test_1.jpg\"\n        },\n        {\n            \"uuid\": \"2345-abcd-2345-abcd\",\n            \"fileName\": \"Test_2.jpg\"\n        },\n        {\n            \"uuid\": \"3456-abcd-3456-abcd\",\n            \"fileName\": \"Test_3.jpg\"\n        },\n        {\n            \"uuid\": \"4567-abcd-4567-abcd\",\n            \"fileName\": \"Test_4.jpg\"\n        }\n    ]\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1004,11 +1004,25 @@
 							"",
 							"    pm.expect(jsonData.Returns.length).to.eql(1);",
 							"    ",
-							"    pm.expect(jsonData.Returns[0]).to.have.property('beforeObjectiveRef');;",
-							"    pm.expect(jsonData.Returns[0]).to.have.property('afterObjectiveRef');",
-							"    pm.expect(jsonData.Returns[0]).to.have.property('fromDate');",
-							"    pm.expect(jsonData.Returns[0]).to.have.property('toDate');",
-							"});"
+							"    pm.expect(jsonData.Returns[0]).to.have.property('id');;",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('ApplicationId');;",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('usedLicence');;",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('compliance');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('complianceDetails');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('startDate');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('endDate');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('confirmedDeclaration');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('createdByLicensingOfficer');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('SettPhotos');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('id');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('ReturnId');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('SettId');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('beforeObjConRef');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('afterObjConRef');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('beforeFileName');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('afterFileName');",
+							"});",
+							""
 						],
 						"type": "text/javascript"
 					}

@@ -5,15 +5,15 @@ import Sequelize from 'sequelize';
 const {Model} = Sequelize;
 
 /**
- * Build a Returns model.
+ * Build an OldReturns model.
  *
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
- * @returns {Sequelize.Model} A returns model.
+ * @returns {Sequelize.Model} An old returns model.
  */
-const ReturnsModel = (sequelize) => {
-  class Returns extends Model {}
+const OldReturnsModel = (sequelize) => {
+  class OldReturns extends Model {}
 
-  Returns.init(
+  OldReturns.init(
     {
       ApplicationId: {
         type: Sequelize.INTEGER,
@@ -21,29 +21,32 @@ const ReturnsModel = (sequelize) => {
           notEmpty: true
         }
       },
-      startDate: {
+      beforeObjectiveRef: {
+        type: Sequelize.STRING,
+        validate: {
+          notEmpty: true
+        }
+      },
+      afterObjectiveRef: {
+        type: Sequelize.STRING,
+        validate: {
+          notEmpty: true
+        }
+      },
+      fromDate: {
         type: Sequelize.DATE,
         validate: {
           notEmpty: true
         }
       },
-      endDate: {
+      toDate: {
         type: Sequelize.DATE,
         validate: {
           notEmpty: true
         }
       },
-      usedLicence: {
-        type: Sequelize.BOOLEAN
-      },
-      compliance: {
-        type: Sequelize.BOOLEAN
-      },
-      complianceDetails: {
+      comment: {
         type: Sequelize.TEXT
-      },
-      confirmedDeclaration: {
-        type: Sequelize.BOOLEAN
       },
       createdByLicensingOfficer: {
         type: Sequelize.STRING
@@ -51,13 +54,13 @@ const ReturnsModel = (sequelize) => {
     },
     {
       sequelize,
-      modelName: 'Returns',
+      modelName: 'OldReturns',
       timestamps: true,
       paranoid: true
     }
   );
 
-  return Returns;
+  return OldReturns;
 };
 
-export {ReturnsModel as default};
+export {OldReturnsModel as default};

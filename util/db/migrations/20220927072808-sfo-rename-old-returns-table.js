@@ -3,23 +3,23 @@
 const databaseConfig = require('../../../src/config/database.js');
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn(
+  async up(queryInterface) {
+    await queryInterface.renameTable(
       {
         schema: databaseConfig.database.schema,
-        tableName: 'Applications'
+        tableName: 'Returns'
       },
-      'createdByLicensingOfficer',
-      Sequelize.STRING
+      'OldReturns'
     );
   },
+
   async down(queryInterface) {
-    await queryInterface.removeColumn(
+    await queryInterface.renameTable(
       {
         schema: databaseConfig.database.schema,
-        tableName: 'Applications'
+        tableName: 'OldReturns'
       },
-      'createdByLicensingOfficer'
+      'Returns'
     );
   }
 };

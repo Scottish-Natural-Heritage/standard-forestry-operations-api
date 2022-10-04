@@ -2,7 +2,6 @@ import process from 'process';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import NotifyClient from 'notifications-node-client';
-
 import Application, {cleanPatchInput} from './controllers/v2/application.js';
 import Sett from './controllers/v2/sett.js';
 import Returns from './controllers/v2/returns.js';
@@ -283,12 +282,14 @@ const cleanReturnInput = (existingId, body) => {
     // The strings are trimmed for leading and trailing whitespace and then
     // copied across if they're in the POST body or are set to undefined if
     // they're missing.
-    beforeObjectiveRef: body.beforeObjectiveRef === undefined ? undefined : body.beforeObjectiveRef.trim(),
-    afterObjectiveRef: body.afterObjectiveRef === undefined ? undefined : body.afterObjectiveRef.trim(),
-    fromDate: body.fromDate === undefined ? undefined : body.fromDate,
-    toDate: body.toDate === undefined ? undefined : body.toDate,
-    comment: body.comment === undefined ? undefined : body.comment.trim(),
-    createdByLicensingOfficer: body.createdByLicensingOfficer
+    usedLicence: body.didYouUse,
+    startDate: body.startDate === undefined ? undefined : body.startDate,
+    endDate: body.endDate === undefined ? undefined : body.endDate,
+    compliance: body.compliance,
+    complianceDetails: body.complianceDetails === undefined ? undefined : body.complianceDetails.trim(),
+    confirmedDeclaration: body.confirmDeclaration,
+    createdByLicensingOfficer:
+      body.createdByLicensingOfficer === undefined ? undefined : body.createdByLicensingOfficer.trim()
   };
 };
 
@@ -311,16 +312,21 @@ v2router.post('/applications/:id/returns', async (request, response) => {
     );
 
     // Clean up the user's input before we store it in the database.
-    const cleanObject = cleanReturnInput(existingId, request.body);
+    const cleanedReturn = cleanReturnInput(existingId, request.body);
+
+    // Get the sett photos information from the request.
+    const {settIds} = request.body;
+    const {uploadUUIDs} = request.body;
 
     // Create a new return wrapped in a database transaction that will return the ID of the new return.
-    const newId = await Returns.create(existingId, cleanObject);
+    const newId = await Returns.create(existingId, cleanedReturn, settIds, uploadUUIDs);
 
     // If we were unable to create the new return then we need to send back a suitable response.
     if (newId === undefined) {
       return response.status(500).send({message: `Could not create return for license ${existingId}.`});
     }
 
+    // Return 201 created and add the location of the new return to the response headers.
     return response.status(201).location(new URL(newId, baseUrl)).send();
   } catch (error) {
     return response.status(500).send({error});
