@@ -320,6 +320,7 @@ v2router.post('/applications/:id/returns', async (request, response) => {
     const {uploadUUIDs} = request.body;
 
     // We also need some application details for the return email so grab the application.
+    // eslint-disable-next-line unicorn/prevent-abbreviations
     const application = await Application.findOne(existingId);
 
     // Create a new return wrapped in a database transaction that will return the ID of the new return.

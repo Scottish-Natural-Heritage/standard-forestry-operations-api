@@ -1,5 +1,5 @@
-import database from '../../models/index.js';
 import NotifyClient from 'notifications-node-client';
+import database from '../../models/index.js';
 import config from '../../config/app.js';
 import jsonConsoleLogger, {unErrorJson} from '../../json-console-logger.js';
 
@@ -45,6 +45,7 @@ const createDisplayablePhotoDetails = (uploadDetails, settNames) => {
  */
 const sendReturnEmailUsedLicence = async (
   notifyApiKey,
+  // eslint-disable-next-line unicorn/prevent-abbreviations
   application,
   newReturn,
   settNames,
@@ -85,6 +86,7 @@ const sendReturnEmailUsedLicence = async (
  * @param {any} application
  * @param {string} emailAddress
  */
+// eslint-disable-next-line unicorn/prevent-abbreviations
 const sendReturnEmailNotUsedLicence = async (notifyApiKey, application, emailAddress) => {
   if (notifyApiKey) {
     try {
@@ -118,6 +120,7 @@ const ReturnsController = {
    * @param {any} cleanObject A new return object to be added to the database.
    * @returns {number} The newly created returns id.
    */
+  // eslint-disable-next-line unicorn/prevent-abbreviations
   async create(id, cleanObject, settIds, uploadUUIDs, settNames, application) {
     try {
       const newReturnTransaction = await database.sequelize.transaction(async (t) => {
