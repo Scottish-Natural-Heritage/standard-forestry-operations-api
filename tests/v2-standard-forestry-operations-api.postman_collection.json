@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "4892ccbd-3c85-404c-a272-868fcc5dd99d",
+		"_postman_id": "fe7fe6bb-5740-42ec-bf7b-d54bfdf3074e",
 		"name": "v2-standard-forestry-operations-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "5746803"
@@ -941,7 +941,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"didYouUse\": true,\n    \"startDate\": \"2021-07-18T13:39:49.598Z\",\n    \"endDate\": \"2021-07-18T13:39:49.598Z\",\n    \"compliance\": true,\n    \"complianceDetails\": \"Some compliance details.\",\n    \"settIds\": [\"1\", \"2\"],\n    \"confirmDeclaration\": true,\n    \"uploadUUIDs\": [\n        {\n            \"uuid\": \"1234-abcd-1234-abcd\",\n            \"fileName\": \"Test_1.jpg\"\n        },\n        {\n            \"uuid\": \"2345-abcd-2345-abcd\",\n            \"fileName\": \"Test_2.jpg\"\n        },\n        {\n            \"uuid\": \"3456-abcd-3456-abcd\",\n            \"fileName\": \"Test_3.jpg\"\n        },\n        {\n            \"uuid\": \"4567-abcd-4567-abcd\",\n            \"fileName\": \"Test_4.jpg\"\n        }\n    ]\n}\n",
+					"raw": "{\n    \"didYouUse\": true,\n    \"startDate\": \"2021-07-18T13:39:49.598Z\",\n    \"endDate\": \"2021-07-18T13:39:49.598Z\",\n    \"compliance\": true,\n    \"complianceDetails\": \"Some compliance details.\",\n    \"settIds\": [\"1\", \"2\"],\n    \"settNames\": [\"Badger House 1\", \"Badger House 1\", \"Badger House 2\", \"Badger House 2\"],\n    \"confirmDeclaration\": true,\n    \"uploadUUIDs\": [\n        {\n            \"uuid\": \"1234-abcd-1234-abcd\",\n            \"fileName\": \"Test_1.jpg\"\n        },\n        {\n            \"uuid\": \"2345-abcd-2345-abcd\",\n            \"fileName\": \"Test_2.jpg\"\n        },\n        {\n            \"uuid\": \"3456-abcd-3456-abcd\",\n            \"fileName\": \"Test_3.jpg\"\n        },\n        {\n            \"uuid\": \"4567-abcd-4567-abcd\",\n            \"fileName\": \"Test_4.jpg\"\n        }\n    ]\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
