@@ -11,7 +11,17 @@ const createDisplayDate = (date) => {
 };
 
 const createDisplayablePhotoDetails = (uploadDetails, settNames) => {
+  const photoDetails = [];
 
+  for (let index = 0; index < settNames.length; index += 2) {
+    const settDetails = `${settNames[index]}: Before Image - ${uploadDetails[index].fileName} - After Image - ${
+      uploadDetails[index + 1].fileName
+    }`;
+
+    photoDetails.push(settDetails);
+  }
+
+  return photoDetails.join('\n');
 };
 
 const sendReturnEmailUsedLicence = async (
@@ -33,7 +43,7 @@ const sendReturnEmailUsedLicence = async (
           startDate: createDisplayDate(new Date(newReturn.startDate)),
           endDate: createDisplayDate(new Date(newReturn.endDate)),
           compliance: newReturn.compliance ? 'Yes' : 'No',
-          moreDetails: newReturn.complianceDetails ? newReturn.complianceDetails : 'No additional details provided.',
+          moreDetails: newReturn.complianceDetails ? newReturn.complianceDetails : 'No additional compliance details provided.',
           photosDetails: createDisplayablePhotoDetails(uploadDetails, settNames)
         },
         reference: `NS-SFO-${application.id}`,
@@ -114,7 +124,7 @@ const ReturnsController = {
         }
 
         // Send out the success email, checking if they used the licence or not.
-        if (cleanObject.didYouUse) {
+        if (cleanObject.usedLicence) {
           await sendReturnEmailUsedLicence(
             config.notifyApiKey,
             application,
@@ -123,7 +133,14 @@ const ReturnsController = {
             uploadUUIDs,
             application.emailAddress
           );
-          await sendReturnEmailUsedLicence(config.notifyApiKey, application, 'issuedlicence@nature.scot');
+          await sendReturnEmailUsedLicence(
+            config.notifyApiKey,
+            application,
+            cleanObject,
+            settNames,
+            uploadUUIDs,
+            'issuedlicence@nature.scot'
+          );
         } else {
           await sendReturnEmailNotUsedLicence(config.notifyApiKey, application, application.emailAddress);
           await sendReturnEmailNotUsedLicence(config.notifyApiKey, application, 'issuedlicence@nature.scot');
