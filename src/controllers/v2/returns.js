@@ -186,6 +186,10 @@ const ReturnsController = {
     } catch {
       return undefined;
     }
+  },
+
+  async createLicenceNotUsed (id, cleanObject) {
+
   }
 };
 

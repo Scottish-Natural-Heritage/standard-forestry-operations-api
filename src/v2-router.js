@@ -314,17 +314,25 @@ v2router.post('/applications/:id/returns', async (request, response) => {
     // Clean up the user's input before we store it in the database.
     const cleanedReturn = cleanReturnInput(existingId, request.body);
 
-    // Get the sett photos information from the request.
-    const {settIds} = request.body;
-    const {settNames} = request.body;
-    const {uploadUUIDs} = request.body;
+    let newId;
 
-    // We also need some application details for the return email so grab the application.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
-    const application = await Application.findOne(existingId);
+    // If the user used the licence...
+    if (cleanedReturn.usedLicence) {
+      // Get the sett photos information from the request.
+      const {settIds} = request.body;
+      const {settNames} = request.body;
+      const {uploadUUIDs} = request.body;
 
-    // Create a new return wrapped in a database transaction that will return the ID of the new return.
-    const newId = await Returns.create(existingId, cleanedReturn, settIds, uploadUUIDs, settNames, application);
+      // We also need some application details for the return email so grab the application.
+      // eslint-disable-next-line unicorn/prevent-abbreviations
+      const application = await Application.findOne(existingId);
+
+      // Create a new return wrapped in a database transaction that will return the ID of the new return.
+      newId = await Returns.create(existingId, cleanedReturn, settIds, uploadUUIDs, settNames, application);
+    } else {
+      // If the user did not use the licence we still need to save their more-or-less empty return.
+      newId = await Returns.createLicenceNotUsed(existingId, cleanedReturn);
+    }
 
     // If we were unable to create the new return then we need to send back a suitable response.
     if (newId === undefined) {
