@@ -316,10 +316,15 @@ v2router.post('/applications/:id/returns', async (request, response) => {
 
     // Get the sett photos information from the request.
     const {settIds} = request.body;
+    const {settNames} = request.body;
     const {uploadUUIDs} = request.body;
 
+    // We also need some application details for the return email so grab the application.
+    // eslint-disable-next-line unicorn/prevent-abbreviations
+    const application = await Application.findOne(existingId);
+
     // Create a new return wrapped in a database transaction that will return the ID of the new return.
-    const newId = await Returns.create(existingId, cleanedReturn, settIds, uploadUUIDs);
+    const newId = await Returns.create(existingId, cleanedReturn, settIds, uploadUUIDs, settNames, application);
 
     // If we were unable to create the new return then we need to send back a suitable response.
     if (newId === undefined) {
