@@ -118,6 +118,10 @@ const ReturnsController = {
    *
    * @param {number | undefined} id An existing application/license ID.
    * @param {any} cleanObject A new return object to be added to the database.
+   * @param {string[]} settIds The IDs of the setts the return applies to.
+   * @param {any} uploadUUIDs The IDs of the uploaded images, returned by Objective Connect.
+   * @param {string[]} settNames The names of the setts to which the return applies.
+   * @param {any} application The licence application details.
    * @returns {number} The newly created returns id.
    */
   // eslint-disable-next-line unicorn/prevent-abbreviations
@@ -188,8 +192,28 @@ const ReturnsController = {
     }
   },
 
-  async createLicenceNotUsed (id, cleanObject) {
+  /**
+   * Create a new randomly allocated Return wrapped in a database transaction,
+   * for a return on a licence that was not used.
+   *
+   * Transaction completes all requests and returns the new return transaction id.
+   *
+   * @param {number | undefined} id An existing application/license ID.
+   * @param {any} cleanObject A new return object to be added to the database.
+   * @returns {number} The newly created returns id.
+   */
+  async createLicenceNotUsed(id, cleanObject) {
+    try {
+      const newReturnTransaction = await database.sequelize.transaction(async (t) => {
+        await Application.findByPk(id, {transaction: t, rejectOnEmpty: true});
+        const newReturn = await Returns.create(cleanObject, {transaction: t});
+        return newReturn;
+      });
 
+      return newReturnTransaction.id;
+    } catch {
+      return undefined;
+    }
   }
 };
 
