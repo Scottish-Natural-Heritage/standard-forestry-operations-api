@@ -211,7 +211,8 @@ const ReturnsController = {
       });
 
       return newReturnTransaction.id;
-    } catch {
+    } catch (error) {
+      console.log(error);
       return undefined;
     }
   }
