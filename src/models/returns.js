@@ -22,16 +22,10 @@ const ReturnsModel = (sequelize) => {
         }
       },
       startDate: {
-        type: Sequelize.DATE,
-        validate: {
-          notEmpty: true
-        }
+        type: Sequelize.DATE
       },
       endDate: {
-        type: Sequelize.DATE,
-        validate: {
-          notEmpty: true
-        }
+        type: Sequelize.DATE
       },
       usedLicence: {
         type: Sequelize.BOOLEAN
