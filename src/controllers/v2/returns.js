@@ -159,28 +159,23 @@ const ReturnsController = {
           uploadUUIDsIndex += 2;
         }
 
-        // Send out the success email, checking if they used the licence or not.
-        if (cleanObject.usedLicence) {
-          await sendReturnEmailUsedLicence(
-            config.notifyApiKey,
-            application,
-            cleanObject,
-            settNames,
-            uploadUUIDs,
-            application.emailAddress
-          );
-          await sendReturnEmailUsedLicence(
-            config.notifyApiKey,
-            application,
-            cleanObject,
-            settNames,
-            uploadUUIDs,
-            'issuedlicence@nature.scot'
-          );
-        } else {
-          await sendReturnEmailNotUsedLicence(config.notifyApiKey, application, application.emailAddress);
-          await sendReturnEmailNotUsedLicence(config.notifyApiKey, application, 'issuedlicence@nature.scot');
-        }
+        // Send out the success email.
+        await sendReturnEmailUsedLicence(
+          config.notifyApiKey,
+          application,
+          cleanObject,
+          settNames,
+          uploadUUIDs,
+          application.emailAddress
+        );
+        await sendReturnEmailUsedLicence(
+          config.notifyApiKey,
+          application,
+          cleanObject,
+          settNames,
+          uploadUUIDs,
+          'issuedlicence@nature.scot'
+        );
 
         // Return the newly created return object.
         return newReturn;
@@ -200,13 +195,17 @@ const ReturnsController = {
    *
    * @param {number | undefined} id An existing application/license ID.
    * @param {any} cleanObject A new return object to be added to the database.
+   * @param {any} application The licence application details.
    * @returns {number} The newly created returns id.
    */
-  async createLicenceNotUsed(id, cleanObject) {
+  async createLicenceNotUsed(id, cleanObject, application) {
     try {
       const newReturnTransaction = await database.sequelize.transaction(async (t) => {
         await Application.findByPk(id, {transaction: t, rejectOnEmpty: true});
         const newReturn = await Returns.create(cleanObject, {transaction: t});
+
+        await sendReturnEmailNotUsedLicence(config.notifyApiKey, application, application.emailAddress);
+        await sendReturnEmailNotUsedLicence(config.notifyApiKey, application, 'issuedlicence@nature.scot');
         return newReturn;
       });
 
