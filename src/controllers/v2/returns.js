@@ -198,6 +198,7 @@ const ReturnsController = {
    * @param {any} application The licence application details.
    * @returns {number} The newly created returns id.
    */
+  // eslint-disable-next-line unicorn/prevent-abbreviations
   async createLicenceNotUsed(id, cleanObject, application) {
     try {
       const newReturnTransaction = await database.sequelize.transaction(async (t) => {
