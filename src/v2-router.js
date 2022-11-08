@@ -345,7 +345,22 @@ v2router.post('/applications/:id/returns', async (request, response) => {
       }
     } else {
       // If the user did not use the licence we still need to save their more-or-less empty return.
-      newReturnId = await Returns.createLicenceNotUsed(licenceApplicationId, submittedReturn, application);
+      try {
+        newReturnId = await Returns.createLicenceNotUsed(submittedReturn);
+      } catch (error) {
+        // Log error and bail out.
+        jsonConsoleLogger.error(error);
+        return response.status(500).send({message: `Could not create return for license ${licenceApplicationId}.`});
+      }
+
+      // Send out the success email.
+      try {
+        await EmailService.sendReturnEmailNotUsedLicence(application, application.emailAddress);
+        await EmailService.sendReturnEmailNotUsedLicence(application, 'issuedlicence@nature.scot');
+      } catch (error) {
+        // Log email error and carry on.
+        jsonConsoleLogger.error(error);
+      }
     }
 
     // If we were unable to create the new return then we need to send back a suitable response.
