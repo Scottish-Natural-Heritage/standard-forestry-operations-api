@@ -8,6 +8,7 @@ import Returns from './controllers/v2/returns.js';
 import Note from './controllers/v2/note.js';
 import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
+import {EmailService} from './services/email-service.js';
 
 import jwk from './config/jwk.js';
 
@@ -318,7 +319,7 @@ v2router.post('/applications/:id/returns', async (request, response) => {
 
     // We also need some application details for the return email so grab the application.
     // eslint-disable-next-line unicorn/prevent-abbreviations
-    const application = await Application.findOne(existingId);
+    const application = await Application.findOne(cleanedReturn.ApplicationId);
 
     // If the user used the licence...
     if (cleanedReturn.usedLicence) {
@@ -328,7 +329,28 @@ v2router.post('/applications/:id/returns', async (request, response) => {
       const {uploadUUIDs} = request.body;
 
       // Create a new return wrapped in a database transaction that will return the ID of the new return.
-      newId = await Returns.create(existingId, cleanedReturn, settIds, uploadUUIDs, settNames, application);
+      newId = await Returns.create(cleanedReturn, settIds, uploadUUIDs);
+
+      // Send out the success email.
+      try {
+        await EmailService.sendReturnEmailUsedLicence(
+          application,
+          cleanedReturn,
+          settNames,
+          uploadUUIDs,
+          application.emailAddress
+        );
+        await EmailService.sendReturnEmailUsedLicence(
+          application,
+          cleanedReturn,
+          settNames,
+          uploadUUIDs,
+          'issuedlicence@nature.scot'
+        );
+      } catch (error) {
+        // Log email errors and carry on.
+        jsonConsoleLogger.error(error);
+      }
     } else {
       // If the user did not use the licence we still need to save their more-or-less empty return.
       newId = await Returns.createLicenceNotUsed(existingId, cleanedReturn, application);
