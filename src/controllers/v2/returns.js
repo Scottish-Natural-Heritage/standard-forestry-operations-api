@@ -73,4 +73,4 @@ const ReturnsController = {
   }
 };
 
-export {ReturnsController as default};
+export {ReturnsController};
