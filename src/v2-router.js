@@ -305,13 +305,6 @@ v2router.post('/applications/:id/returns', async (request, response) => {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
     }
 
-    // Create baseUrl.
-    const baseUrl = new URL(
-      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
-        request.originalUrl.endsWith('/') ? '' : '/'
-      }`
-    );
-
     // Clean up the user's input before we store it in the database.
     const cleanedReturn = cleanReturnInput(existingId, request.body);
 
@@ -360,6 +353,13 @@ v2router.post('/applications/:id/returns', async (request, response) => {
     if (newId === undefined) {
       return response.status(500).send({message: `Could not create return for license ${existingId}.`});
     }
+
+    // Create baseUrl.
+    const baseUrl = new URL(
+      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
+        request.originalUrl.endsWith('/') ? '' : '/'
+      }`
+    );
 
     // Return 201 created and add the location of the new return to the response headers.
     return response.status(201).location(new URL(newId, baseUrl)).send();
