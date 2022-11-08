@@ -43,53 +43,46 @@ const ReturnsController = {
    *
    * Transaction completes all requests and returns the new return transaction id.
    *
-   * @param {number | undefined} id An existing application/license ID.
-   * @param {any} cleanObject A new return object to be added to the database.
+   * @param {any} submittedReturn A new return object to be added to the database.
    * @param {string[]} settIds The IDs of the setts the return applies to.
-   * @param {any[]} uploadUUIDs The IDs of the uploaded images, returned by Objective Connect.
-   * @param {string[]} settNames The names of the setts to which the return applies.
-   * @param {any} application The licence application details.
-   * @returns {number} The newly created returns id.
+   * @param {any[]} uploadedFileData The IDs of the uploaded images, returned by Objective Connect.
+   * @returns {number} The newly created return id.
    */
-  async create(cleanObject, settIds, uploadUUIDs) {
-    try {
-      const newReturnTransaction = await database.sequelize.transaction(async (t) => {
-        const newReturn = await Returns.create(cleanObject, {transaction: t});
+  async create(submittedReturn, settIds, uploadedFileData) {
+    const newReturn = await database.sequelize.transaction(async (t) => {
+      const newReturn = await Returns.create(submittedReturn, {transaction: t});
 
-        // For each sett, create a SettPhotos object
-        const settPhotoPromises = [];
-        for (const settId of settIds) {
-          const beforePhoto = uploadUUIDs.find(
-            (u) => u.appMetadata.settid === settId && u.appMetadata.isbefore === 'true'
-          );
-          const afterPhoto = uploadUUIDs.find(
-            (u) => u.appMetadata.settid === settId && u.appMetadata.isbefore === 'false'
-          );
+      // For each sett, create a SettPhotos object
+      const settPhotoPromises = [];
+      for (const settId of settIds) {
+        const beforePhoto = uploadedFileData.find(
+          (u) => u.appMetadata.settid === settId && u.appMetadata.isbefore === 'true'
+        );
+        const afterPhoto = uploadedFileData.find(
+          (u) => u.appMetadata.settid === settId && u.appMetadata.isbefore === 'false'
+        );
 
-          if (beforePhoto && afterPhoto) {
-            const settPhoto = {
-              ReturnId: newReturn.id,
-              SettId: Number(settId),
-              beforeObjConRef: beforePhoto.uuid,
-              beforeFileName: beforePhoto.fileName,
-              afterObjConRef: afterPhoto.uuid,
-              afterFileName: afterPhoto.fileName
-            };
+        if (beforePhoto && afterPhoto) {
+          const settPhoto = {
+            ReturnId: newReturn.id,
+            SettId: Number(settId),
+            beforeObjConRef: beforePhoto.uuid,
+            beforeFileName: beforePhoto.fileName,
+            afterObjConRef: afterPhoto.uuid,
+            afterFileName: afterPhoto.fileName
+          };
 
-            settPhotoPromises.push(SettPhotos.create(settPhoto, {transaction: t}));
-          }
+          settPhotoPromises.push(SettPhotos.create(settPhoto, {transaction: t}));
         }
+      }
 
-        await Promise.all(settPhotoPromises);
+      await Promise.all(settPhotoPromises);
 
-        // Return the newly created return object.
-        return newReturn;
-      });
+      // Return the newly created return object.
+      return newReturn;
+    });
 
-      return newReturnTransaction.id;
-    } catch {
-      return undefined;
-    }
+    return newReturn.id;
   },
 
   /**

@@ -300,58 +300,62 @@ const cleanReturnInput = (existingId, body) => {
 v2router.post('/applications/:id/returns', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
-    const existingId = Number(request.params.id);
-    if (Number.isNaN(existingId)) {
+    // eslint-disable-next-line unicorn/prevent-abbreviations
+    const licenceApplicationId = Number(request.params.id);
+    if (Number.isNaN(licenceApplicationId)) {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
     }
 
     // Clean up the user's input before we store it in the database.
-    const cleanedReturn = cleanReturnInput(existingId, request.body);
-
-    let newId;
+    const submittedReturn = cleanReturnInput(licenceApplicationId, request.body);
 
     // We also need some application details for the return email so grab the application.
     // eslint-disable-next-line unicorn/prevent-abbreviations
-    const application = await Application.findOne(cleanedReturn.ApplicationId);
+    const application = await Application.findOne(submittedReturn.ApplicationId);
 
-    // If the user used the licence...
-    if (cleanedReturn.usedLicence) {
-      // Get the sett photos information from the request.
-      const {settIds} = request.body;
-      const {settNames} = request.body;
-      const {uploadUUIDs} = request.body;
+    // Write the Return data to the database.
+    let newReturnId;
+    if (submittedReturn.usedLicence) {
+      // If the user used the licence, get the sett and photos data from the request.
+      const {settIds, settNames, uploadUUIDs} = request.body;
 
-      // Create a new return wrapped in a database transaction that will return the ID of the new return.
-      newId = await Returns.create(cleanedReturn, settIds, uploadUUIDs);
+      // Insert return and sett photos data into database and return the ID of the new return.
+      try {
+        newReturnId = await Returns.create(submittedReturn, settIds, uploadUUIDs);
+      } catch (error) {
+        // Log error and bail out.
+        jsonConsoleLogger.error(error);
+        return response.status(500).send({message: `Could not create return for license ${licenceApplicationId}.`});
+      }
 
       // Send out the success email.
       try {
         await EmailService.sendReturnEmailUsedLicence(
           application,
-          cleanedReturn,
+          submittedReturn,
           settNames,
           uploadUUIDs,
           application.emailAddress
         );
         await EmailService.sendReturnEmailUsedLicence(
           application,
-          cleanedReturn,
+          submittedReturn,
           settNames,
           uploadUUIDs,
           'issuedlicence@nature.scot'
         );
       } catch (error) {
-        // Log email errors and carry on.
+        // Log email error and carry on.
         jsonConsoleLogger.error(error);
       }
     } else {
       // If the user did not use the licence we still need to save their more-or-less empty return.
-      newId = await Returns.createLicenceNotUsed(existingId, cleanedReturn, application);
+      newReturnId = await Returns.createLicenceNotUsed(licenceApplicationId, submittedReturn, application);
     }
 
     // If we were unable to create the new return then we need to send back a suitable response.
-    if (newId === undefined) {
-      return response.status(500).send({message: `Could not create return for license ${existingId}.`});
+    if (newReturnId === undefined) {
+      return response.status(500).send({message: `Could not create return for license ${licenceApplicationId}.`});
     }
 
     // Create baseUrl.
@@ -362,7 +366,7 @@ v2router.post('/applications/:id/returns', async (request, response) => {
     );
 
     // Return 201 created and add the location of the new return to the response headers.
-    return response.status(201).location(new URL(newId, baseUrl)).send();
+    return response.status(201).location(new URL(newReturnId, baseUrl)).send();
   } catch (error) {
     return response.status(500).send({error});
   }
