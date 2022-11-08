@@ -6,9 +6,6 @@ import jsonConsoleLogger, {unErrorJson} from '../../json-console-logger.js';
 
 const {Application, Note, Returns, Sett, Revocation, OldReturns, SettPhotos} = database;
 
-// Disabling as linter wants us to use "app" instead of "application".
-/* eslint-disable  unicorn/prevent-abbreviations */
-
 /**
  * This function returns a summary address built from the address fields of an application object.
  *
@@ -394,7 +391,5 @@ const ApplicationController = {
     return result;
   }
 };
-
-/* eslint-enable unicorn/prevent-abbreviations */
 
 export {ApplicationController as default, cleanPatchInput};

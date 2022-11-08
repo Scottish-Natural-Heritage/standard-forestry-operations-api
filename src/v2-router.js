@@ -23,7 +23,6 @@ v2router.get('/health', async (request, response) => {
  */
 v2router.get('/applications', async (request, response) => {
   try {
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     const applications = await Application.findAll();
 
     if (applications === undefined || applications === null) {
@@ -47,7 +46,6 @@ v2router.get('/applications/:id', async (request, response) => {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
     }
 
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     const application = await Application.findOne(existingId);
 
     if (application === undefined || application === null) {
@@ -247,7 +245,6 @@ v2router.post('/applications/:id/notes', async (request, response) => {
     );
 
     // Check if there's a application allocated at the specified ID.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     const existingApplication = await Application.findOne(existingId);
     if (existingApplication === undefined || existingApplication === null) {
       return response.status(404).send({message: `application ${existingId} not allocated.`});
@@ -300,7 +297,6 @@ const cleanReturnInput = (existingId, body) => {
 v2router.post('/applications/:id/returns', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     const licenceApplicationId = Number(request.params.id);
     if (Number.isNaN(licenceApplicationId)) {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
@@ -310,7 +306,6 @@ v2router.post('/applications/:id/returns', async (request, response) => {
     const submittedReturn = cleanReturnInput(licenceApplicationId, request.body);
 
     // We also need some application details for the return email so grab the application.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     const application = await Application.findOne(submittedReturn.ApplicationId);
 
     // Write the Return data to the database.
@@ -410,7 +405,6 @@ v2router.patch('/applications/:id', async (request, response) => {
     }
 
     // Check if there's a application allocated at the specified ID.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     const existingApplication = await Application.findOne(existingId);
     if (existingApplication === undefined || existingApplication === null) {
       return response.status(404).send({message: `application ${existingId} not allocated.`});
@@ -425,7 +419,6 @@ v2router.patch('/applications/:id', async (request, response) => {
     }
 
     // Update the application in the database with our client's values.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     const updatedApplication = await Application.update(existingId, cleanObject);
 
     // If they're not successful, send a 500 error.
@@ -455,7 +448,6 @@ v2router.delete('/applications/:id', async (request, response) => {
     // Clean up the user's input before we store it in the database.
     const cleanObject = cleanRevokeInput(existingId, request.body);
     // Attempt to delete the application and all child records.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     const deleteApplication = await Application.delete(existingId, cleanObject);
 
     // If we were unable to delete the application we need to return a 500 with a suitable error message.
@@ -540,7 +532,6 @@ v2router.post('/applications/:id/resend', async (request, response) => {
     }
 
     // Check if there's a application allocated at the specified ID.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     const existingApplication = await Application.findOne(existingId);
     if (existingApplication === undefined || existingApplication === null) {
       return response.status(404).send({message: `application ${existingId} not allocated.`});
@@ -557,8 +548,6 @@ v2router.post('/applications/:id/resend', async (request, response) => {
   }
 });
 
-// Disabling as I'd rather not abbreviate application to app.
-/* eslint-disable unicorn/prevent-abbreviations */
 v2router.get('/applications/:id/login', async (request, response) => {
   // Try to parse the incoming ID to make sure it's really a number.
   const existingId = Number(request.params.id);
@@ -625,7 +614,6 @@ v2router.get('/applications/:id/login', async (request, response) => {
     loginLink
   });
 });
-/* eslint-enable unicorn/prevent-abbreviations */
 
 // Allow an API consumer to retrieve the public half of our ECDSA key to
 // validate our signed JWTs.

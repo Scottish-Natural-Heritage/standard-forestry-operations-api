@@ -39,14 +39,7 @@ const createDisplayablePhotoDetails = (uploadDetails, settNames) => {
  * @param {any} uploadDetails
  * @param {string} emailAddress
  */
-const sendReturnEmailUsedLicence = async (
-  // eslint-disable-next-line unicorn/prevent-abbreviations
-  application,
-  newReturn,
-  settNames,
-  uploadDetails,
-  emailAddress
-) => {
+const sendReturnEmailUsedLicence = async (application, newReturn, settNames, uploadDetails, emailAddress) => {
   if (config.notifyApiKey) {
     try {
       const notifyClient = new NotifyClient.NotifyClient(config.notifyApiKey);

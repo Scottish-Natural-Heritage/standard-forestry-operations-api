@@ -13,7 +13,6 @@ const {Application, Returns, SettPhotos} = database;
  * @param {any} application
  * @param {string} emailAddress
  */
-// eslint-disable-next-line unicorn/prevent-abbreviations
 const sendReturnEmailNotUsedLicence = async (notifyApiKey, application, emailAddress) => {
   if (notifyApiKey) {
     try {
@@ -96,7 +95,6 @@ const ReturnsController = {
    * @param {any} application The licence application details.
    * @returns {number} The newly created returns id.
    */
-  // eslint-disable-next-line unicorn/prevent-abbreviations
   async createLicenceNotUsed(id, cleanObject, application) {
     try {
       const newReturnTransaction = await database.sequelize.transaction(async (t) => {
