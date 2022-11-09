@@ -120,7 +120,7 @@ const ApplicationController = {
    * @returns  {Sequelize.Model} All existing applications.
    */
   async findAll() {
-    return Application.findAll({include: Sett});
+    return Application.findAll({paranoid: false, include: [{model: Sett}, {model: Revocation, paranoid: false}]});
   },
 
   /**
