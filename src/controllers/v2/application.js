@@ -312,11 +312,16 @@ const ApplicationController = {
     // We also need the createdAt date to calculate the start and expiry dates.
     cleanObject.createdAt = newApp.createdAt;
 
-    // Send the applicant their confirmation email.
-    await sendSuccessEmail(config.notifyApiKey, cleanObject, cleanObject.emailAddress);
+    try {
+      // Send the applicant their confirmation email.
+      await sendSuccessEmail(config.notifyApiKey, cleanObject, cleanObject.emailAddress);
 
-    // Send a copy of the licence to the licensing team too.
-    await sendSuccessEmail(config.notifyApiKey, cleanObject, 'issuedlicence@nature.scot');
+      // Send a copy of the licence to the licensing team too.
+      await sendSuccessEmail(config.notifyApiKey, cleanObject, 'issuedlicence@nature.scot');
+    } catch (error) {
+      // Log error and carry on.
+      jsonConsoleLogger.error(unErrorJson(error));
+    }
 
     // On success, return the new application's ID.
     return newApp.id;
