@@ -41,7 +41,7 @@ const createDisplayablePhotoDetails = (uploadDetails, settNames) => {
  * @param {any} application
  * @param {any} newReturn
  * @param {string[]} settNames
- * @param {any} uploadDetails
+ * @param {any[]} uploadDetails
  * @param {string} emailAddress
  */
 const sendReturnEmailUsedLicence = async (application, newReturn, settNames, uploadDetails, emailAddress) => {
