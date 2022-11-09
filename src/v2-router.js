@@ -312,11 +312,11 @@ v2router.post('/applications/:id/returns', async (request, response) => {
     let newReturnId;
     if (submittedReturn.usedLicence) {
       // If the user used the licence, get the sett and photos data from the request.
-      const {settIds, settNames, uploadUUIDs} = request.body;
+      const {settIds, settNames, uploadedFileData} = request.body;
 
       // Insert return and sett photos data into database and return the ID of the new return.
       try {
-        newReturnId = await ReturnsController.create(submittedReturn, settIds, uploadUUIDs);
+        newReturnId = await ReturnsController.create(submittedReturn, settIds, uploadedFileData);
       } catch (error) {
         // Log error and bail out.
         jsonConsoleLogger.error(error);
@@ -329,14 +329,14 @@ v2router.post('/applications/:id/returns', async (request, response) => {
           application,
           submittedReturn,
           settNames,
-          uploadUUIDs,
+          uploadedFileData,
           application.emailAddress
         );
         await EmailService.sendReturnEmailUsedLicence(
           application,
           submittedReturn,
           settNames,
-          uploadUUIDs,
+          uploadedFileData,
           'issuedlicence@nature.scot'
         );
       } catch (error) {
