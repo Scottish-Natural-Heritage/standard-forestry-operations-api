@@ -17,6 +17,15 @@ const ReturnsController = {
    * @returns {number} The newly created return id.
    */
   async create(submittedReturn, settIds, uploadedFileData) {
+    // Validate input parameters.
+    if (!Array.isArray(settIds)) {
+      settIds = [];
+    }
+    if (!Array.isArray(uploadedFileData)) {
+      uploadedFileData = [];
+    }
+
+    // Write Return data to database.
     const newReturn = await database.sequelize.transaction(async (t) => {
       const newReturn = await Returns.create(submittedReturn, {transaction: t});
 
