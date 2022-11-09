@@ -225,7 +225,16 @@ const ApplicationController = {
    * @returns {Sequelize.Model} An existing application.
    */
   async findOne(id) {
-    return Application.findByPk(id, {include: [Sett, {model: Returns, include: [SettPhotos]}, OldReturns, Note]});
+    return Application.findByPk(id, {
+      paranoid: false,
+      include: [
+        {model: Sett},
+        {model: Returns, include: [SettPhotos]},
+        {model: OldReturns},
+        {model: Note},
+        {model: Revocation, paranoid: false}
+      ]
+    });
   },
 
   /**
