@@ -1,6 +1,5 @@
 import NotifyClient from 'notifications-node-client';
 import config from '../config/app.js';
-import jsonConsoleLogger, {unErrorJson} from '../json-console-logger.js';
 
 const NOTIFY_TEMPLATE_RETURN_DID_USE_LICENCE = '0147bd8f-8f8e-4272-9f62-a2228289db1c';
 const NOTIFY_TEMPLATE_RETURN_DID_NOT_USE_LICENCE = 'db12bfaa-05aa-43f3-b6d1-eabb48c60b84';
@@ -65,7 +64,6 @@ const sendReturnEmailUsedLicence = async (application, newReturn, settNames, upl
         emailReplyToId: NOTIFY_REPLY_EMAIL_LICENSING_NATURE_SCOT
       });
     } catch (error) {
-      jsonConsoleLogger.error(unErrorJson(error));
       throw error;
     }
   }
@@ -92,7 +90,6 @@ const sendReturnEmailNotUsedLicence = async (application, emailAddress) => {
         emailReplyToId: NOTIFY_REPLY_EMAIL_LICENSING_NATURE_SCOT
       });
     } catch (error) {
-      jsonConsoleLogger.error(unErrorJson(error));
       throw error;
     }
   }
