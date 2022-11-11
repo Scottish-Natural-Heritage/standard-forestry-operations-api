@@ -21,6 +21,7 @@ const ReturnsController = {
     if (!Array.isArray(settIds)) {
       settIds = [];
     }
+
     if (!Array.isArray(uploadedFileData)) {
       uploadedFileData = [];
     }

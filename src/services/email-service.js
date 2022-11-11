@@ -45,27 +45,23 @@ const createDisplayablePhotoDetails = (uploadDetails, settNames) => {
  */
 const sendReturnEmailUsedLicence = async (application, newReturn, settNames, uploadDetails, emailAddress) => {
   if (config.notifyApiKey) {
-    try {
-      const notifyClient = new NotifyClient.NotifyClient(config.notifyApiKey);
+    const notifyClient = new NotifyClient.NotifyClient(config.notifyApiKey);
 
-      await notifyClient.sendEmail(NOTIFY_TEMPLATE_RETURN_DID_USE_LICENCE, emailAddress, {
-        personalisation: {
-          id: application.id,
-          fullName: application.fullName,
-          startDate: createDisplayDate(new Date(newReturn.startDate)),
-          endDate: createDisplayDate(new Date(newReturn.endDate)),
-          compliance: newReturn.compliance ? 'Yes' : 'No',
-          moreDetails: newReturn.complianceDetails
-            ? newReturn.complianceDetails
-            : 'No additional compliance details provided.',
-          photosDetails: createDisplayablePhotoDetails(uploadDetails, settNames)
-        },
-        reference: `NS-SFO-${application.id}`,
-        emailReplyToId: NOTIFY_REPLY_EMAIL_LICENSING_NATURE_SCOT
-      });
-    } catch (error) {
-      throw error;
-    }
+    await notifyClient.sendEmail(NOTIFY_TEMPLATE_RETURN_DID_USE_LICENCE, emailAddress, {
+      personalisation: {
+        id: application.id,
+        fullName: application.fullName,
+        startDate: createDisplayDate(new Date(newReturn.startDate)),
+        endDate: createDisplayDate(new Date(newReturn.endDate)),
+        compliance: newReturn.compliance ? 'Yes' : 'No',
+        moreDetails: newReturn.complianceDetails
+          ? newReturn.complianceDetails
+          : 'No additional compliance details provided.',
+        photosDetails: createDisplayablePhotoDetails(uploadDetails, settNames)
+      },
+      reference: `NS-SFO-${application.id}`,
+      emailReplyToId: NOTIFY_REPLY_EMAIL_LICENSING_NATURE_SCOT
+    });
   }
 };
 
@@ -78,20 +74,16 @@ const sendReturnEmailUsedLicence = async (application, newReturn, settNames, upl
  */
 const sendReturnEmailNotUsedLicence = async (application, emailAddress) => {
   if (config.notifyApiKey) {
-    try {
-      const notifyClient = new NotifyClient.NotifyClient(config.notifyApiKey);
+    const notifyClient = new NotifyClient.NotifyClient(config.notifyApiKey);
 
-      await notifyClient.sendEmail(NOTIFY_TEMPLATE_RETURN_DID_NOT_USE_LICENCE, emailAddress, {
-        personalisation: {
-          id: application.id,
-          fullName: application.fullName
-        },
-        reference: `NS-SFO-${application.id}`,
-        emailReplyToId: NOTIFY_REPLY_EMAIL_LICENSING_NATURE_SCOT
-      });
-    } catch (error) {
-      throw error;
-    }
+    await notifyClient.sendEmail(NOTIFY_TEMPLATE_RETURN_DID_NOT_USE_LICENCE, emailAddress, {
+      personalisation: {
+        id: application.id,
+        fullName: application.fullName
+      },
+      reference: `NS-SFO-${application.id}`,
+      emailReplyToId: NOTIFY_REPLY_EMAIL_LICENSING_NATURE_SCOT
+    });
   }
 };
 
