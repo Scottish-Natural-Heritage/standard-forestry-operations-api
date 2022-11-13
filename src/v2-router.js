@@ -133,13 +133,6 @@ const cleanAppInput = (body) => {
  */
 v2router.post('/applications', async (request, response) => {
   try {
-    // Create baseUrl.
-    const baseUrl = new URL(
-      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
-        request.originalUrl.endsWith('/') ? '' : '/'
-      }`
-    );
-
     // Clean up the user's input before we store it in the database.
     const cleanObject = cleanAppInput(request.body);
 
@@ -150,6 +143,13 @@ v2router.post('/applications', async (request, response) => {
     if (newId === undefined) {
       return response.status(500).send({message: `Could not create application.`});
     }
+
+    // Create baseUrl.
+    const baseUrl = new URL(
+      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
+        request.originalUrl.endsWith('/') ? '' : '/'
+      }`
+    );
 
     // Return the new location of the newly created application.
     return response.status(201).location(new URL(newId, baseUrl)).send();
@@ -188,12 +188,6 @@ v2router.post('/applications/:id/setts', async (request, response) => {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
     }
 
-    const baseUrl = new URL(
-      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
-        request.originalUrl.endsWith('/') ? '' : '/'
-      }`
-    );
-
     // Clean up the user's input before we store it in the database.
     const cleanObject = cleanSettInput(existingId, request.body);
 
@@ -203,6 +197,12 @@ v2router.post('/applications/:id/setts', async (request, response) => {
     if (newId === undefined) {
       return response.status(500).send({message: `Could not create sett for license ${existingId}.`});
     }
+
+    const baseUrl = new URL(
+      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
+        request.originalUrl.endsWith('/') ? '' : '/'
+      }`
+    );
 
     return response.status(201).location(new URL(newId, baseUrl)).send();
   } catch (error) {
@@ -238,12 +238,6 @@ v2router.post('/applications/:id/notes', async (request, response) => {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
     }
 
-    const baseUrl = new URL(
-      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
-        request.originalUrl.endsWith('/') ? '' : '/'
-      }`
-    );
-
     // Check if there's a application allocated at the specified ID.
     const existingApplication = await ApplicationController.findOne(existingId);
     if (existingApplication === undefined || existingApplication === null) {
@@ -259,6 +253,12 @@ v2router.post('/applications/:id/notes', async (request, response) => {
     if (newNote === undefined) {
       return response.status(500).send({message: `Could not create note for licence ${existingId}.`});
     }
+
+    const baseUrl = new URL(
+      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
+        request.originalUrl.endsWith('/') ? '' : '/'
+      }`
+    );
 
     return response.status(201).location(new URL(newNote, baseUrl)).send();
   } catch (error) {
