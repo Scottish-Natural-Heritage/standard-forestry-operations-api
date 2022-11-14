@@ -2,12 +2,13 @@ import process from 'process';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import NotifyClient from 'notifications-node-client';
-import Application, {cleanPatchInput} from './controllers/v2/application.js';
+import ApplicationController, {cleanPatchInput} from './controllers/v2/application.js';
 import Sett from './controllers/v2/sett.js';
-import Returns from './controllers/v2/returns.js';
+import {ReturnsController} from './controllers/v2/returns.js';
 import Note from './controllers/v2/note.js';
 import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
+import {EmailService} from './services/email-service.js';
 
 import jwk from './config/jwk.js';
 
@@ -22,8 +23,7 @@ v2router.get('/health', async (request, response) => {
  */
 v2router.get('/applications', async (request, response) => {
   try {
-    // eslint-disable-next-line unicorn/prevent-abbreviations
-    const applications = await Application.findAll();
+    const applications = await ApplicationController.findAll();
 
     if (applications === undefined || applications === null) {
       return response.status(404).send({message: `No applications found.`});
@@ -46,8 +46,7 @@ v2router.get('/applications/:id', async (request, response) => {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
     }
 
-    // eslint-disable-next-line unicorn/prevent-abbreviations
-    const application = await Application.findOne(existingId);
+    const application = await ApplicationController.findOne(existingId);
 
     if (application === undefined || application === null) {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
@@ -145,7 +144,7 @@ v2router.post('/applications', async (request, response) => {
     const cleanObject = cleanAppInput(request.body);
 
     // Create a new id wrapped in a database transaction
-    const newId = await Application.create(cleanObject);
+    const newId = await ApplicationController.create(cleanObject);
 
     // If we were not able to create the new application then we need to respond with a 500 error.
     if (newId === undefined) {
@@ -246,8 +245,7 @@ v2router.post('/applications/:id/notes', async (request, response) => {
     );
 
     // Check if there's a application allocated at the specified ID.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
-    const existingApplication = await Application.findOne(existingId);
+    const existingApplication = await ApplicationController.findOne(existingId);
     if (existingApplication === undefined || existingApplication === null) {
       return response.status(404).send({message: `application ${existingId} not allocated.`});
     }
@@ -299,9 +297,75 @@ const cleanReturnInput = (existingId, body) => {
 v2router.post('/applications/:id/returns', async (request, response) => {
   try {
     // Try to parse the incoming ID to make sure it's really a number.
-    const existingId = Number(request.params.id);
-    if (Number.isNaN(existingId)) {
+    const licenceApplicationId = Number(request.params.id);
+    if (Number.isNaN(licenceApplicationId)) {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+    }
+
+    // Clean up the user's input before we store it in the database.
+    const submittedReturn = cleanReturnInput(licenceApplicationId, request.body);
+
+    // We also need some application details for the return email so grab the application.
+    const application = await ApplicationController.findOne(submittedReturn.ApplicationId);
+
+    // Write the Return data to the database.
+    let newReturnId;
+    if (submittedReturn.usedLicence) {
+      // If the user used the licence, get the sett and photos data from the request.
+      const {settIds, settNames, uploadedFileData} = request.body;
+
+      // Insert return and sett photos data into database and return the ID of the new return.
+      try {
+        newReturnId = await ReturnsController.create(submittedReturn, settIds, uploadedFileData);
+      } catch (error) {
+        // Log error and bail out.
+        jsonConsoleLogger.error(error);
+        return response.status(500).send({message: `Could not create return for license ${licenceApplicationId}.`});
+      }
+
+      // Send out the success email.
+      try {
+        await EmailService.sendReturnEmailUsedLicence(
+          application,
+          submittedReturn,
+          settNames,
+          uploadedFileData,
+          application.emailAddress
+        );
+        await EmailService.sendReturnEmailUsedLicence(
+          application,
+          submittedReturn,
+          settNames,
+          uploadedFileData,
+          'issuedlicence@nature.scot'
+        );
+      } catch (error) {
+        // Log email error and carry on.
+        jsonConsoleLogger.error(error);
+      }
+    } else {
+      // If the user did not use the licence we still need to save their more-or-less empty return.
+      try {
+        newReturnId = await ReturnsController.createLicenceNotUsed(submittedReturn);
+      } catch (error) {
+        // Log error and bail out.
+        jsonConsoleLogger.error(error);
+        return response.status(500).send({message: `Could not create return for license ${licenceApplicationId}.`});
+      }
+
+      // Send out the success email.
+      try {
+        await EmailService.sendReturnEmailNotUsedLicence(application, application.emailAddress);
+        await EmailService.sendReturnEmailNotUsedLicence(application, 'issuedlicence@nature.scot');
+      } catch (error) {
+        // Log email error and carry on.
+        jsonConsoleLogger.error(error);
+      }
+    }
+
+    // If we were unable to create the new return then we need to send back a suitable response.
+    if (newReturnId === undefined) {
+      return response.status(500).send({message: `Could not create return for license ${licenceApplicationId}.`});
     }
 
     // Create baseUrl.
@@ -311,36 +375,8 @@ v2router.post('/applications/:id/returns', async (request, response) => {
       }`
     );
 
-    // Clean up the user's input before we store it in the database.
-    const cleanedReturn = cleanReturnInput(existingId, request.body);
-
-    let newId;
-
-    // We also need some application details for the return email so grab the application.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
-    const application = await Application.findOne(existingId);
-
-    // If the user used the licence...
-    if (cleanedReturn.usedLicence) {
-      // Get the sett photos information from the request.
-      const {settIds} = request.body;
-      const {settNames} = request.body;
-      const {uploadUUIDs} = request.body;
-
-      // Create a new return wrapped in a database transaction that will return the ID of the new return.
-      newId = await Returns.create(existingId, cleanedReturn, settIds, uploadUUIDs, settNames, application);
-    } else {
-      // If the user did not use the licence we still need to save their more-or-less empty return.
-      newId = await Returns.createLicenceNotUsed(existingId, cleanedReturn, application);
-    }
-
-    // If we were unable to create the new return then we need to send back a suitable response.
-    if (newId === undefined) {
-      return response.status(500).send({message: `Could not create return for license ${existingId}.`});
-    }
-
     // Return 201 created and add the location of the new return to the response headers.
-    return response.status(201).location(new URL(newId, baseUrl)).send();
+    return response.status(201).location(new URL(newReturnId, baseUrl)).send();
   } catch (error) {
     return response.status(500).send({error});
   }
@@ -384,8 +420,7 @@ v2router.patch('/applications/:id', async (request, response) => {
     }
 
     // Check if there's a application allocated at the specified ID.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
-    const existingApplication = await Application.findOne(existingId);
+    const existingApplication = await ApplicationController.findOne(existingId);
     if (existingApplication === undefined || existingApplication === null) {
       return response.status(404).send({message: `application ${existingId} not allocated.`});
     }
@@ -399,8 +434,7 @@ v2router.patch('/applications/:id', async (request, response) => {
     }
 
     // Update the application in the database with our client's values.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
-    const updatedApplication = await Application.update(existingId, cleanObject);
+    const updatedApplication = await ApplicationController.update(existingId, cleanObject);
 
     // If they're not successful, send a 500 error.
     if (updatedApplication === undefined) {
@@ -429,8 +463,7 @@ v2router.delete('/applications/:id', async (request, response) => {
     // Clean up the user's input before we store it in the database.
     const cleanObject = cleanRevokeInput(existingId, request.body);
     // Attempt to delete the application and all child records.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
-    const deleteApplication = await Application.delete(existingId, cleanObject);
+    const deleteApplication = await ApplicationController.delete(existingId, cleanObject);
 
     // If we were unable to delete the application we need to return a 500 with a suitable error message.
     if (deleteApplication === false) {
@@ -514,14 +547,13 @@ v2router.post('/applications/:id/resend', async (request, response) => {
     }
 
     // Check if there's a application allocated at the specified ID.
-    // eslint-disable-next-line unicorn/prevent-abbreviations
-    const existingApplication = await Application.findOne(existingId);
+    const existingApplication = await ApplicationController.findOne(existingId);
     if (existingApplication === undefined || existingApplication === null) {
       return response.status(404).send({message: `application ${existingId} not allocated.`});
     }
 
     // Call the application's resend function to resend the licence email.
-    const result = await Application.resend(existingId, existingApplication);
+    const result = await ApplicationController.resend(existingId, existingApplication);
 
     // Return success response.
     return response.status(200).send(result);
@@ -531,15 +563,13 @@ v2router.post('/applications/:id/resend', async (request, response) => {
   }
 });
 
-// Disabling as I'd rather not abbreviate application to app.
-/* eslint-disable unicorn/prevent-abbreviations */
 v2router.get('/applications/:id/login', async (request, response) => {
   // Try to parse the incoming ID to make sure it's really a number.
   const existingId = Number(request.params.id);
   const idInvalid = Number.isNaN(existingId);
 
   // Check if there's an application allocated at the specified ID.
-  const existingApplication = await Application.findOne(existingId);
+  const existingApplication = await ApplicationController.findOne(existingId);
   const idNotFound = existingApplication === undefined || existingApplication === null;
 
   // Check that the visitor's given us a postcode.
@@ -599,7 +629,6 @@ v2router.get('/applications/:id/login', async (request, response) => {
     loginLink
   });
 });
-/* eslint-enable unicorn/prevent-abbreviations */
 
 // Allow an API consumer to retrieve the public half of our ECDSA key to
 // validate our signed JWTs.

@@ -48,6 +48,15 @@
     "rules": {
       "unicorn/prefer-module": 0,
       "unicorn/prefer-node-protocol": 0,
+      "unicorn/prevent-abbreviations": [
+        "error", {
+          "replacements": {
+            "application": {
+              "app": false
+            }
+          }
+        }
+      ],
       "import/extensions": 0,
       "new-cap": 0,
       "no-console": 0

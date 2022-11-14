@@ -14,7 +14,6 @@ v1router.get('/health', async (request, response) => {
 
 v1router.get('/applications', async (request, response) => {
   try {
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     const applications = await Application.findAll();
 
     if (applications === undefined || applications === null) {
@@ -38,7 +37,6 @@ v1router.get('/applications/:id', async (request, response) => {
       return response.status(404).send({message: `Application ${request.params.id} not valid.`});
     }
 
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     const applications = await Application.findOne(existingId);
 
     if (applications === undefined || applications === null) {
@@ -61,7 +59,6 @@ v1router.post('/applications', async (request, response) => {
   );
 
   try {
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     const newApplication = await Application.create();
     response.status(201).location(new URL(newApplication.id, baseUrl)).send();
   } catch (error) {
@@ -343,7 +340,6 @@ v1router.delete('/applications/:id', async (request, response) => {
     // Clean up the user's input before we store it in the database.
     const cleanObject = cleanRevokeInput(existingId, request.body);
 
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     const deleteApplication = await Application.delete(existingId, cleanObject);
 
     if (deleteApplication === false) {
