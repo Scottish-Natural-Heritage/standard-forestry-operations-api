@@ -5,11 +5,10 @@ import Sequelize from 'sequelize';
 const {Model} = Sequelize;
 
 /**
- * Build an Return model..
+ * Build a Returns model.
  *
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
- * @returns {Sequelize.Model} A returns model
- * model.
+ * @returns {Sequelize.Model} A returns model.
  */
 const ReturnsModel = (sequelize) => {
   class Returns extends Model {}
@@ -22,32 +21,23 @@ const ReturnsModel = (sequelize) => {
           notEmpty: true
         }
       },
-      beforeObjectiveRef: {
-        type: Sequelize.STRING,
-        validate: {
-          notEmpty: true
-        }
+      startDate: {
+        type: Sequelize.DATE
       },
-      afterObjectiveRef: {
-        type: Sequelize.STRING,
-        validate: {
-          notEmpty: true
-        }
+      endDate: {
+        type: Sequelize.DATE
       },
-      fromDate: {
-        type: Sequelize.DATE,
-        validate: {
-          notEmpty: true
-        }
+      usedLicence: {
+        type: Sequelize.BOOLEAN
       },
-      toDate: {
-        type: Sequelize.DATE,
-        validate: {
-          notEmpty: true
-        }
+      compliance: {
+        type: Sequelize.BOOLEAN
       },
-      comment: {
+      complianceDetails: {
         type: Sequelize.TEXT
+      },
+      confirmedDeclaration: {
+        type: Sequelize.BOOLEAN
       },
       createdByLicensingOfficer: {
         type: Sequelize.STRING

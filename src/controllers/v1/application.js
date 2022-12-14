@@ -48,7 +48,6 @@ const tryCreate = async () => {
  * @param {string} notifyApiKey API key for sending emails.
  * @param {any} application An enhanced JSON version of the model.
  */
-// eslint-disable-next-line unicorn/prevent-abbreviations
 const sendSuccessEmail = async (notifyApiKey, application) => {
   if (notifyApiKey) {
     try {
@@ -76,7 +75,6 @@ const sendSuccessEmail = async (notifyApiKey, application) => {
 /**
  * An object to perform 'persistence' operations on our application objects.
  */
-// eslint-disable-next-line unicorn/prevent-abbreviations
 const ApplicationController = {
   /**
    * Create a new randomly allocated application.
@@ -120,7 +118,7 @@ const ApplicationController = {
    * @returns  {Sequelize.Model} All existing applications.
    */
   async findAll() {
-    return Application.findAll({include: Sett});
+    return Application.findAll({paranoid: false, include: [{model: Sett}, {model: Revocation, paranoid: false}]});
   },
 
   /**

@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "642885c1-c930-40d6-92f7-c1a95a7aadb8",
+		"_postman_id": "f554bea2-0281-47f3-a795-5f32e15cd73a",
 		"name": "v2-standard-forestry-operations-api",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5746803"
 	},
 	"item": [
 		{
@@ -242,6 +243,66 @@
 						"v2",
 						"applications",
 						"{{SFO_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log in to supply return",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							"\r",
+							"pm.test('Debug response is valid', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.idInvalid).to.eql(false);\r",
+							"    pm.expect(jsonData.idNotFound).to.eql(false);\r",
+							"    pm.expect(jsonData.postcodeInvalid).to.eql(false);\r",
+							"    pm.expect(jsonData.postcodeIncorrect).to.eql(false);\r",
+							"    pm.expect(jsonData.urlInvalid).to.eql(false);\r",
+							"    pm.expect(jsonData.token).to.not.eql(undefined);\r",
+							"    pm.expect(jsonData.loginLink.startsWith('https://example.org/login?token=')).to.eql(true);\r",
+							"    pm.expect(jsonData.loginLink.endsWith(jsonData.token)).to.eql(true);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/standard-forestry-operations-api/v2/applications/{{SFO_NEW_APP_ID}}/login?postcode=IV3 8NW&redirectBaseUrl=https://example.org/login?token=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"standard-forestry-operations-api",
+						"v2",
+						"applications",
+						"{{SFO_NEW_APP_ID}}",
+						"login"
+					],
+					"query": [
+						{
+							"key": "postcode",
+							"value": "IV3 8NW"
+						},
+						{
+							"key": "redirectBaseUrl",
+							"value": "https://example.org/login?token="
+						}
 					]
 				}
 			},
@@ -880,7 +941,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"beforeObjectiveRef\": \"A12345\",\n    \"afterObjectiveRef\": \"A123456\",\n    \"fromDate\": \"2021-07-18T13:39:49.598Z\",\n    \"toDate\": \"2021-07-18T13:39:49.598Z\",\n    \"comment\": \"Tests\",\n    \"createdByLicensingOfficer\": \"9391234\"\n}",
+					"raw": "{\n    \"didYouUse\": true,\n    \"startDate\": \"2021-07-18T13:39:49.598Z\",\n    \"endDate\": \"2021-07-18T13:39:49.598Z\",\n    \"compliance\": true,\n    \"complianceDetails\": \"Some compliance details.\",\n    \"settIds\": [\"1\", \"2\"],\n    \"settNames\": [\"Badger House 1\", \"Badger House 1\", \"Badger House 2\", \"Badger House 2\"],\n    \"confirmDeclaration\": true,\n    \"uploadedFileData\": [\n        {\n            \"uuid\": \"1234-abcd-1234-abcd\",\n            \"fileName\": \"Test_1.jpg\",\n            \"appMetadata\": {\n                \"isbefore\": \"true\",\n                \"settid\": \"1\"\n            }\n        },\n        {\n            \"uuid\": \"2345-abcd-2345-abcd\",\n            \"fileName\": \"Test_2.jpg\",\n            \"appMetadata\": {\n                \"isbefore\": \"false\",\n                \"settid\": \"1\"\n            }\n        },\n        {\n            \"uuid\": \"3456-abcd-3456-abcd\",\n            \"fileName\": \"Test_3.jpg\",\n            \"appMetadata\": {\n                \"isbefore\": \"true\",\n                \"settid\": \"2\"\n            }\n        },\n        {\n            \"uuid\": \"4567-abcd-4567-abcd\",\n            \"fileName\": \"Test_4.jpg\",\n            \"appMetadata\": {\n                \"isbefore\": \"false\",\n                \"settid\": \"2\"\n            }\n        }\n    ]\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -943,11 +1004,25 @@
 							"",
 							"    pm.expect(jsonData.Returns.length).to.eql(1);",
 							"    ",
-							"    pm.expect(jsonData.Returns[0]).to.have.property('beforeObjectiveRef');;",
-							"    pm.expect(jsonData.Returns[0]).to.have.property('afterObjectiveRef');",
-							"    pm.expect(jsonData.Returns[0]).to.have.property('fromDate');",
-							"    pm.expect(jsonData.Returns[0]).to.have.property('toDate');",
-							"});"
+							"    pm.expect(jsonData.Returns[0]).to.have.property('id');;",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('ApplicationId');;",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('usedLicence');;",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('compliance');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('complianceDetails');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('startDate');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('endDate');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('confirmedDeclaration');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('createdByLicensingOfficer');",
+							"    pm.expect(jsonData.Returns[0]).to.have.property('SettPhotos');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('id');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('ReturnId');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('SettId');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('beforeObjConRef');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('afterObjConRef');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('beforeFileName');",
+							"    pm.expect(jsonData.Returns[0].SettPhotos[0]).to.have.property('afterFileName');",
+							"});",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -1034,9 +1109,9 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test('Status code is 404 Not Found', function () {\r",
-							"    pm.response.to.have.status(404);\r",
-							"    pm.response.to.have.status('Not Found');\r",
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
 							"});\r",
 							""
 						],

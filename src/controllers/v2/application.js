@@ -4,10 +4,7 @@ import database from '../../models/index.js';
 import config from '../../config/app.js';
 import jsonConsoleLogger, {unErrorJson} from '../../json-console-logger.js';
 
-const {Application, Note, Returns, Sett, Revocation} = database;
-
-// Disabling as linter wants us to use "app" instead of "application".
-/* eslint-disable  unicorn/prevent-abbreviations */
+const {Application, Note, Returns, Sett, Revocation, OldReturns, SettPhotos} = database;
 
 /**
  * This function returns a summary address built from the address fields of an application object.
@@ -225,7 +222,16 @@ const ApplicationController = {
    * @returns {Sequelize.Model} An existing application.
    */
   async findOne(id) {
-    return Application.findByPk(id, {include: [Sett, Returns, Note]});
+    return Application.findByPk(id, {
+      paranoid: false,
+      include: [
+        {model: Sett},
+        {model: Returns, include: [{model: SettPhotos}]},
+        {model: OldReturns},
+        {model: Note},
+        {model: Revocation, paranoid: false}
+      ]
+    });
   },
 
   /**
@@ -315,11 +321,16 @@ const ApplicationController = {
     // We also need the createdAt date to calculate the start and expiry dates.
     cleanObject.createdAt = newApp.createdAt;
 
-    // Send the applicant their confirmation email.
-    await sendSuccessEmail(config.notifyApiKey, cleanObject, cleanObject.emailAddress);
+    try {
+      // Send the applicant their confirmation email.
+      await sendSuccessEmail(config.notifyApiKey, cleanObject, cleanObject.emailAddress);
 
-    // Send a copy of the licence to the licensing team too.
-    await sendSuccessEmail(config.notifyApiKey, cleanObject, 'issuedlicence@nature.scot');
+      // Send a copy of the licence to the licensing team too.
+      await sendSuccessEmail(config.notifyApiKey, cleanObject, 'issuedlicence@nature.scot');
+    } catch (error) {
+      // Log error and carry on.
+      jsonConsoleLogger.error(unErrorJson(error));
+    }
 
     // On success, return the new application's ID.
     return newApp.id;
@@ -394,7 +405,5 @@ const ApplicationController = {
     return result;
   }
 };
-
-/* eslint-enable unicorn/prevent-abbreviations */
 
 export {ApplicationController as default, cleanPatchInput};
