@@ -8,7 +8,7 @@ import axios from 'axios';
  * Start up node-cron.
  */
 const initScheduledJobs = () => {
-  const scheduledJobFunction = cron.schedule('0 6 * * *', () => {
+  const scheduledJobFunction = cron.schedule('0 6 * * *', async () => {
     console.log("Triggering cron job(s).");
 
     // Get the date.
