@@ -563,6 +563,14 @@ v2router.post('/applications/:id/resend', async (request, response) => {
   }
 });
 
+v2router.post('/expired-no-return-reminder', async (request, response) => {
+
+});
+
+v2router.post('/soon-to-expire-return-reminder', async (request, response) => {
+
+});
+
 v2router.get('/applications/:id/login', async (request, response) => {
   // Try to parse the incoming ID to make sure it's really a number.
   const existingId = Number(request.params.id);
