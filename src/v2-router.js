@@ -564,6 +564,9 @@ v2router.post('/applications/:id/resend', async (request, response) => {
   }
 });
 
+/**
+ * Send out a reminder email on licences that have expired with no returns submitted.
+ */
 v2router.post('/expired-no-return-reminder', async (request, response) => {
   // We need to know the date and year.
   const currentDate = new Date();
@@ -588,6 +591,9 @@ v2router.post('/expired-no-return-reminder', async (request, response) => {
   }
 });
 
+/**
+ * Send out a reminder email on licences that are due to expire soon.
+ */
 v2router.post('/soon-to-expire-return-reminder', async (request, response) => {
   // We need to know the date.
   const currentDate = new Date();
