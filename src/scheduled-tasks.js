@@ -4,7 +4,8 @@ import cron from 'node-cron';
 // Use to make HTTP calls.
 import axios from 'axios';
 
-import JsonUtils from './json-utils';
+// Let us log structured messages to the console.
+import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 
 /**
  * Start up node-cron.
@@ -23,7 +24,7 @@ const initScheduledJobs = () => {
       try {
         await axios.post(`http://localhost:3003${config.pathPrefix}/expired-no-return-reminder`);
       } catch (error) {
-        console.error(JsonUtils.unErrorJson(error));
+        jsonConsoleLogger.error(unErrorJson(error));
       }
     }
 
@@ -32,7 +33,7 @@ const initScheduledJobs = () => {
       try {
         await axios.post(`http://localhost:3003${config.pathPrefix}/soon-to-expire-return-reminder`);
       } catch (error) {
-        console.error(JsonUtils.unErrorJson(error));
+        jsonConsoleLogger.error(unErrorJson(error));
       }
     }
 
