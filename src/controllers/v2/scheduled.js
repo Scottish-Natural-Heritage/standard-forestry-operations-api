@@ -1,4 +1,3 @@
-import utils from 'naturescot-utils';
 import NotifyClient from 'notifications-node-client';
 import database from '../../models/index.js';
 import config from '../../config/app.js';
@@ -76,7 +75,7 @@ const ScheduledController = {
     return Application.findAll({include: Returns, OldReturns, Revocation});
   },
 
-  sendExpiredReturnReminder: async (applications) => {
+  async sendExpiredReturnReminder(applications) {
     // A count of the number of emails sent.
     let sentCount = 0;
 
@@ -91,7 +90,7 @@ const ScheduledController = {
     return sentCount;
   },
 
-  sendSoonExpiredReturnReminder: async (applications) => {
+  async sendSoonExpiredReturnReminder(applications) {
     // A count of the number of emails sent.
     let sentCount = 0;
 
