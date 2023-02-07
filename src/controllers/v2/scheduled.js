@@ -3,6 +3,11 @@ import NotifyClient from 'notifications-node-client';
 import database from '../../models/index.js';
 import config from '../../config/app.js';
 import jsonConsoleLogger, {unErrorJson} from '../../json-console-logger.js';
+import {
+  EXPIRED_NO_RETURN_NOTIFY_TEMPLATE_ID,
+  SOON_TO_EXPIRE_NOTIFY_TEMPLATE_ID,
+  LICENSING_REPLY_TO_NOTIFY_EMAIL_ID
+} from '../../notify-template-ids';
 
 const {Application, Returns, Revocation, OldReturns} = database;
 
@@ -19,9 +24,9 @@ const sendLicenceExpiredNoReturnEmail = async (emailDetails, emailAddress) => {
       const notifyClient = new NotifyClient.NotifyClient(config.notifyApiKey);
 
       // Send the email via notify.
-      await notifyClient.sendEmail('47ea178f-d671-4328-96f6-4f5af9b31715', emailAddress, {
+      await notifyClient.sendEmail(EXPIRED_NO_RETURN_NOTIFY_TEMPLATE_ID, emailAddress, {
         personalisation: emailDetails,
-        emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
+        emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID
       });
     } catch (error) {
       jsonConsoleLogger.error(unErrorJson(error));
@@ -37,15 +42,15 @@ const sendLicenceExpiredNoReturnEmail = async (emailDetails, emailAddress) => {
  * @param {string} emailDetails The details to use in personalisation of email.
  * @param {any} emailAddress The email address of the recipient.
  */
- const sendLicenceSoonExpiredNoReturnEmail = async (emailDetails, emailAddress) => {
+const sendLicenceSoonExpiredNoReturnEmail = async (emailDetails, emailAddress) => {
   if (config.notifyApiKey) {
     try {
       const notifyClient = new NotifyClient.NotifyClient(config.notifyApiKey);
 
       // Send the email via notify.
-      await notifyClient.sendEmail('2ff21166-4787-4646-9832-1c2a8027fba0', emailAddress, {
+      await notifyClient.sendEmail(SOON_TO_EXPIRE_NOTIFY_TEMPLATE_ID, emailAddress, {
         personalisation: emailDetails,
-        emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
+        emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID
       });
     } catch (error) {
       jsonConsoleLogger.error(unErrorJson(error));
@@ -99,7 +104,7 @@ const ScheduledController = {
     }
 
     return sentCount;
-  },
+  }
 };
 
 export {ScheduledController as default};
