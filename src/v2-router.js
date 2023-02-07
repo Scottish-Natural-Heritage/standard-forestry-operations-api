@@ -572,6 +572,8 @@ v2router.post('/expired-no-return-reminder', async (request, response) => {
   try {
     const applications = await ScheduledController.findAll();
 
+    // Filter the applications so only those that have expired (expiryDate is previous year)
+    // and have no returns are left.
     const filteredApplications = applications.filter((application) => {
       return (
         new Date(application.expiryDate).getFullYear() === currentYear - 1 &&
@@ -590,13 +592,13 @@ v2router.post('/expired-no-return-reminder', async (request, response) => {
 });
 
 v2router.post('/soon-to-expire-return-reminder', async (request, response) => {
-  // We need to know the date and year.
+  // We need to know the date.
   const currentDate = new Date();
-  // const currentYear = currentDate.getFullYear();
 
   try {
     const applications = await ScheduledController.findAll();
 
+    // Filter the applications so only those that have not yet expired are left.
     const filteredApplications = applications.filter((application) => {
       return (
         application.expiryDate > currentDate

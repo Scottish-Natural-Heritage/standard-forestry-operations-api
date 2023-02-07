@@ -7,7 +7,7 @@ import {
   EXPIRED_NO_RETURN_NOTIFY_TEMPLATE_ID,
   SOON_TO_EXPIRE_NOTIFY_TEMPLATE_ID,
   LICENSING_REPLY_TO_NOTIFY_EMAIL_ID
-} from '../../notify-template-ids';
+} from '../../notify-template-ids.js';
 
 const {Application, Returns, Revocation, OldReturns} = database;
 
