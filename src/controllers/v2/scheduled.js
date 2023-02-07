@@ -67,12 +67,15 @@ const setReturnReminderEmailDetails = (application) => {
 
 const ScheduledController = {
   /**
-   * Retrieve all applications from the database.
+   * Retrieve all applications from the database. Include old returns, new returns and revocations.
+   * Used to decide which email addresses need reminder emails sent.
    *
    * @returns  {Sequelize.Model} All existing applications.
    */
   async findAll() {
-    return Application.findAll({include: Returns, OldReturns, Revocation});
+    return Application.findAll({
+      include: [{model: Returns}, {model: OldReturns}, {model: Revocation}]
+    });
   },
 
   async sendExpiredReturnReminder(applications) {

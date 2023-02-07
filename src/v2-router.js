@@ -576,9 +576,13 @@ v2router.post('/expired-no-return-reminder', async (request, response) => {
     const applications = await ScheduledController.findAll();
 
     // Filter the applications so only those that have expired (expiryDate is previous year)
-    // and have no returns are left.
+    // and have no returns (old or new) are left.
     const filteredApplications = applications.filter((application) => {
-      return new Date(application.expiryDate).getFullYear() === currentYear - 1 && application.Returns.length === 0;
+      return (
+        new Date(application.expiryDate).getFullYear() === currentYear - 1 &&
+        application.Returns.length === 0 &&
+        application.OldReturns.length === 0
+      );
     });
 
     // Try to send out reminder emails.
