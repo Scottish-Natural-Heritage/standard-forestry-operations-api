@@ -6,6 +6,7 @@ import ApplicationController, {cleanPatchInput} from './controllers/v2/applicati
 import Sett from './controllers/v2/sett.js';
 import {ReturnsController} from './controllers/v2/returns.js';
 import Note from './controllers/v2/note.js';
+import ScheduledController from './controllers/v2/scheduled.js';
 import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
 import {EmailService} from './services/email-service.js';
@@ -564,11 +565,37 @@ v2router.post('/applications/:id/resend', async (request, response) => {
 });
 
 v2router.post('/expired-no-return-reminder', async (request, response) => {
+  // We need to know the date and year.
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
 
+  try {
+    const applications = await ScheduledController.findAll();
+
+    const filteredApplications = applications.filter((application) => {
+      return (
+        new Date(application.expiryDate).getFullYear() === currentYear - 1 &&
+        application.Returns.length === 0
+      );
+    });
+
+    // Try to send out reminder emails.
+    const emailsSent = await ScheduledController.sendExpiredReturnReminder(filteredApplications);
+
+    return response.status(200).send({message: `Sent ${emailsSent} expired licence with no return reminder emails.`});
+  } catch (error) {
+    jsonConsoleLogger.error(unErrorJson(error));
+    return response.status(500).send({error});
+  }
 });
 
 v2router.post('/soon-to-expire-return-reminder', async (request, response) => {
+  try {
 
+  } catch (error) {
+    jsonConsoleLogger.error(unErrorJson(error));
+    return response.status(500).send({error});
+  }
 });
 
 v2router.get('/applications/:id/login', async (request, response) => {
