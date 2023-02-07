@@ -590,8 +590,23 @@ v2router.post('/expired-no-return-reminder', async (request, response) => {
 });
 
 v2router.post('/soon-to-expire-return-reminder', async (request, response) => {
-  try {
+  // We need to know the date and year.
+  const currentDate = new Date();
+  // const currentYear = currentDate.getFullYear();
 
+  try {
+    const applications = await ScheduledController.findAll();
+
+    const filteredApplications = applications.filter((application) => {
+      return (
+        application.expiryDate > currentDate
+      );
+    });
+
+    // Try to send out reminder emails.
+    const emailsSent = await ScheduledController.sendSoonExpiredReturnReminder(filteredApplications);
+
+    return response.status(200).send({message: `Sent ${emailsSent} soon to expire licence with no return reminder emails.`});
   } catch (error) {
     jsonConsoleLogger.error(unErrorJson(error));
     return response.status(500).send({error});
