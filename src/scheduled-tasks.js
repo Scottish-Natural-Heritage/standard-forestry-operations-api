@@ -4,6 +4,8 @@ import cron from 'node-cron';
 // Use to make HTTP calls.
 import axios from 'axios';
 
+import JsonUtils from './json-utils';
+
 /**
  * Start up node-cron.
  */
@@ -16,10 +18,19 @@ const initScheduledJobs = () => {
 
     // Tasks here.
 
-    // Check for expired licences with not returns submitted, on the 1st of January and 1st of February.
+    // Check for expired licences with no returns submitted, on the 1st of January and 1st of February.
     if (currentDate.getDate() === 1 && (currentDate.getMonth() === 0 || currentDate.getMonth === 1)) {
       try {
-        await axios.post(`http://localhost:3017${config.pathPrefix}/expired-no-return-reminder`);
+        await axios.post(`http://localhost:3003${config.pathPrefix}/expired-no-return-reminder`);
+      } catch (error) {
+        console.error(JsonUtils.unErrorJson(error));
+      }
+    }
+
+    // Check for soon-to-expire licences, on 1st of November.
+    if (currentDate.getDate() === 1 && currentDate.getMonth() === 10) {
+      try {
+        await axios.post(`http://localhost:3003${config.pathPrefix}/soon-to-expire-return-reminder`);
       } catch (error) {
         console.error(JsonUtils.unErrorJson(error));
       }
