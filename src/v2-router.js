@@ -6,6 +6,7 @@ import ApplicationController, {cleanPatchInput} from './controllers/v2/applicati
 import Sett from './controllers/v2/sett.js';
 import {ReturnsController} from './controllers/v2/returns.js';
 import Note from './controllers/v2/note.js';
+import ScheduledController from './controllers/v2/scheduled.js';
 import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
 import {EmailService} from './services/email-service.js';
@@ -557,6 +558,64 @@ v2router.post('/applications/:id/resend', async (request, response) => {
 
     // Return success response.
     return response.status(200).send(result);
+  } catch (error) {
+    jsonConsoleLogger.error(unErrorJson(error));
+    return response.status(500).send({error});
+  }
+});
+
+/**
+ * Send out a reminder email on licences that have expired with no returns submitted.
+ */
+v2router.post('/expired-no-return-reminder', async (request, response) => {
+  // We need to know the date and year.
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+
+  try {
+    const applications = await ScheduledController.findAll();
+
+    // Filter the applications so only those that have expired (expiryDate is previous year)
+    // and have no returns (old or new) are left.
+    const filteredApplications = applications.filter((application) => {
+      return (
+        new Date(application.expiryDate).getFullYear() === currentYear - 1 &&
+        application.Returns.length === 0 &&
+        application.OldReturns.length === 0
+      );
+    });
+
+    // Try to send out reminder emails.
+    const emailsSent = await ScheduledController.sendExpiredReturnReminder(filteredApplications);
+
+    return response.status(200).send({message: `Sent ${emailsSent} expired licence with no return reminder emails.`});
+  } catch (error) {
+    jsonConsoleLogger.error(unErrorJson(error));
+    return response.status(500).send({error});
+  }
+});
+
+/**
+ * Send out a reminder email on licences that are due to expire soon.
+ */
+v2router.post('/soon-to-expire-return-reminder', async (request, response) => {
+  // We need to know the date.
+  const currentDate = new Date();
+
+  try {
+    const applications = await ScheduledController.findAll();
+
+    // Filter the applications so only those that have not yet expired are left.
+    const filteredApplications = applications.filter((application) => {
+      return application.expiryDate > currentDate;
+    });
+
+    // Try to send out reminder emails.
+    const emailsSent = await ScheduledController.sendSoonExpiredReturnReminder(filteredApplications);
+
+    return response
+      .status(200)
+      .send({message: `Sent ${emailsSent} soon to expire licence with no return reminder emails.`});
   } catch (error) {
     jsonConsoleLogger.error(unErrorJson(error));
     return response.status(500).send({error});
