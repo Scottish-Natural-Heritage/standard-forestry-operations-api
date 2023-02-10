@@ -26,7 +26,7 @@ if (process.env.NODE_ENV === 'production') {
         type: Sequelize.QueryTypes.RAW
       });
 
-      await queryInterface.sequelize.query('CREATE VIEW sfo_Returns AS SELECT * FROM sfo."Returns";', {
+      await queryInterface.sequelize.query('CREATE VIEW sfo_Returns AS SELECT * FROM sfo."OldReturns";', {
         type: Sequelize.QueryTypes.RAW
       });
     }
