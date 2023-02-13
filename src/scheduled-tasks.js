@@ -22,7 +22,7 @@ const initScheduledJobs = () => {
     // Tasks here.
 
     // Check for expired licences with no returns submitted, on the 1st of January and 1st of February.
-    if (currentDate.getDate() === 1 && (currentDate.getMonth() === 0 || currentDate.getMonth() === 1)) {
+    if (currentDate.getDate() === 14 && (currentDate.getMonth() === 0 || currentDate.getMonth() === 1)) {
       try {
         await axios.post(`http://localhost:${config.port}${config.pathPrefix}/v2/expired-no-return-reminder`);
       } catch (error) {
@@ -31,7 +31,7 @@ const initScheduledJobs = () => {
     }
 
     // Check for soon-to-expire licences, on 1st of November.
-    if (currentDate.getDate() === 1 && currentDate.getMonth() === 10) {
+    if (currentDate.getDate() === 14 && currentDate.getMonth() === 1) {
       try {
         await axios.post(`http://localhost:${config.port}${config.pathPrefix}/v2/soon-to-expire-return-reminder`);
       } catch (error) {
