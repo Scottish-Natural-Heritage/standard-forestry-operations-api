@@ -66,16 +66,9 @@ v2router.get('/applications/:id', async (request, response) => {
  * @returns {Date} the calculated expiry date.
  */
 const calculateExpiryDate = () => {
-  let expiryDate;
   const currentYear = new Date().getFullYear();
 
-  if (new Date().getMonth() + 1 < 7) {
-    expiryDate = new Date(currentYear, 6, 1);
-  } else if (new Date().getMonth() + 1 < 12) {
-    expiryDate = new Date(currentYear, 10, 30);
-  } else {
-    expiryDate = new Date(currentYear + 1, 10, 30);
-  }
+  const expiryDate = new Date().getMonth() + 1 < 12 ? new Date(currentYear, 10, 30) : new Date(currentYear + 1, 10, 30);
 
   return expiryDate;
 };
