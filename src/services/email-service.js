@@ -98,9 +98,9 @@ const sendReturnEmailNotUsedLicence = async (application, emailAddress) => {
  * @param {string} existingId SFO licence number for notify's records.
  * @param {string} fullName The name of the licence holder.
  */
-const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, licenceNumber, fullName) => {
-  if (notifyApiKey) {
-    const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
+const sendLoginEmail = async (emailAddress, loginLink, licenceNumber, fullName) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient.NotifyClient(config.notifyApiKey);
 
     await notifyClient.sendEmail(NOTIFY_TEMPLATE_RETURN_MAGIC_LINK, emailAddress, {
       personalisation: {

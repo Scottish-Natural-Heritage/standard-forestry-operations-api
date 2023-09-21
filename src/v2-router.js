@@ -656,7 +656,6 @@ v2router.get('/applications/:id/login', async (request, response) => {
   if (loginLink !== undefined) {
     try {
       await EmailService.sendLoginEmail(
-        config.notifyApiKey,
         existingApplication.emailAddress,
         loginLink,
         existingId,
