@@ -1,7 +1,6 @@
 import process from 'process';
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import NotifyClient from 'notifications-node-client';
 import ApplicationController, {cleanPatchInput} from './controllers/v2/application.js';
 import Sett from './controllers/v2/sett.js';
 import {ReturnsController} from './controllers/v2/returns.js';
@@ -656,7 +655,7 @@ v2router.get('/applications/:id/login', async (request, response) => {
   // with that link included.
   if (loginLink !== undefined) {
     try {
-      await sendLoginEmail(
+      await EmailService.sendLoginEmail(
         config.notifyApiKey,
         existingApplication.emailAddress,
         loginLink,
@@ -701,32 +700,6 @@ v2router.get('/public-key', async (request, response) => response.status(200).se
  */
 const buildToken = (jwtPrivateKey, id) =>
   jwt.sign({}, jwtPrivateKey, {subject: `${id}`, algorithm: 'ES256', expiresIn: '30m', noTimestamp: true});
-
-/**
- * Send an email to the visitor that contains a link which allows them to log in
- * to the rest of the meat bait return system.
- *
- * @param {string} notifyApiKey API key for sending emails.
- * @param {string} emailAddress where to send the log in email.
- * @param {string} loginLink link to log in via.
- * @param {string} existingId SFO licence number for notify's records.
- * @param {string} fullName The name of the licence holder.
- */
-const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, licenceNumber, fullName) => {
-  if (notifyApiKey) {
-    const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
-
-    await notifyClient.sendEmail('f727cb31-6259-4ee3-a593-6838d1399618', emailAddress, {
-      personalisation: {
-        loginLink,
-        licenceNumber,
-        fullName
-      },
-      reference: `${licenceNumber}`,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
-    });
-  }
-};
 
 /**
  * Test if two postcodes match.
