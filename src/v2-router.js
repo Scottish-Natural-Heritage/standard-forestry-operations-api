@@ -655,13 +655,19 @@ v2router.get('/applications/:id/login', async (request, response) => {
   // As long as we've managed to build a login link, send the visitor an email
   // with that link included.
   if (loginLink !== undefined) {
-    await sendLoginEmail(
-      config.notifyApiKey,
-      existingApplication.emailAddress,
-      loginLink,
-      existingId,
-      existingApplication.fullName
-    );
+    try {
+      await sendLoginEmail(
+        config.notifyApiKey,
+        existingApplication.emailAddress,
+        loginLink,
+        existingId,
+        existingApplication.fullName
+      );
+    } catch (error) {
+      console.error('Notify service returned an error:', error.message);
+      // Return 500 Internal Server error.
+      return response.status(500).send();
+    }
   }
 
   // If we're in production, no matter what, tell the API consumer that everything went well.
