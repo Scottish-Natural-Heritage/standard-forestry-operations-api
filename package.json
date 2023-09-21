@@ -17,7 +17,7 @@
     "test": "start-server-and-test start http://localhost:3003/standard-forestry-operations-api/v1/health nm:run"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "license": "MIT",
   "dependencies": {
