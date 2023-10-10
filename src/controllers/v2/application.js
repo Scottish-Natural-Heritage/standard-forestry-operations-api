@@ -223,14 +223,14 @@ const ApplicationController = {
    */
   async findOne(id) {
     return Application.findByPk(id, {
-      paranoid: false,
       include: [
         {model: Sett},
         {model: Returns, include: [{model: SettPhotos}]},
         {model: OldReturns},
         {model: Note},
         {model: Revocation, paranoid: false}
-      ]
+      ],
+      paranoid: false
     });
   },
 
