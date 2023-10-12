@@ -225,7 +225,7 @@ const ApplicationController = {
     return Application.findByPk(id, {
       paranoid: false,
       include: [
-        {model: Sett, paranoid: false},
+        {model: Sett},
         {model: Returns, include: [{model: SettPhotos}]},
         {model: OldReturns},
         {model: Note},
