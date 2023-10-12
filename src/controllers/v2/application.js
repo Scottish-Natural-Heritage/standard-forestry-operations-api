@@ -223,16 +223,17 @@ const ApplicationController = {
    */
   async findOne(id) {
     return Application.findByPk(id, {
-      paranoid: false,
       include: [
         {model: Sett},
         {model: Returns, include: [{model: SettPhotos}]},
         {model: OldReturns},
         {model: Note},
         {model: Revocation, paranoid: false}
-      ]
+      ], paranoid: false,
     });
   },
+
+  findAll: async () => Registration.findAll({include: [{model: Revocation, paranoid: false}], paranoid: false}),
 
   /**
    * Retrieve all applications from the database.
@@ -240,7 +241,7 @@ const ApplicationController = {
    * @returns  {Sequelize.Model} All existing applications.
    */
   async findAll() {
-    return Application.findAll({include: Sett, Note});
+    return Application.findAll({include: [{Sett, Note, model: Revocation, paranoid: false}], paranoid: false});
   },
 
   /**
