@@ -229,11 +229,10 @@ const ApplicationController = {
         {model: OldReturns},
         {model: Note},
         {model: Revocation, paranoid: false}
-      ], paranoid: false,
+      ],
+      paranoid: false
     });
   },
-
-  findAll: async () => Registration.findAll({include: [{model: Revocation, paranoid: false}], paranoid: false}),
 
   /**
    * Retrieve all applications from the database.
