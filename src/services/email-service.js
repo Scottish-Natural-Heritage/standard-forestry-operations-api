@@ -3,6 +3,7 @@ import config from '../config/app.js';
 
 const NOTIFY_TEMPLATE_RETURN_DID_USE_LICENCE = '0147bd8f-8f8e-4272-9f62-a2228289db1c';
 const NOTIFY_TEMPLATE_RETURN_DID_NOT_USE_LICENCE = 'db12bfaa-05aa-43f3-b6d1-eabb48c60b84';
+const NOTIFY_TEMPLATE_RETURN_MAGIC_LINK = 'f727cb31-6259-4ee3-a593-6838d1399618';
 
 const NOTIFY_REPLY_EMAIL_LICENSING_NATURE_SCOT = '4b49467e-2a35-4713-9d92-809c55bf1cdd';
 
@@ -87,4 +88,30 @@ const sendReturnEmailNotUsedLicence = async (application, emailAddress) => {
   }
 };
 
-export const EmailService = {sendReturnEmailUsedLicence, sendReturnEmailNotUsedLicence};
+/**
+ * Send an email to the visitor that contains a link which allows them to log in
+ * to the rest of the meat bait return system.
+ *
+ * @param {string} notifyApiKey API key for sending emails.
+ * @param {string} emailAddress where to send the log in email.
+ * @param {string} loginLink link to log in via.
+ * @param {string} existingId SFO licence number for notify's records.
+ * @param {string} fullName The name of the licence holder.
+ */
+const sendLoginEmail = async (emailAddress, loginLink, licenceNumber, fullName) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient.NotifyClient(config.notifyApiKey);
+
+    await notifyClient.sendEmail(NOTIFY_TEMPLATE_RETURN_MAGIC_LINK, emailAddress, {
+      personalisation: {
+        loginLink,
+        licenceNumber,
+        fullName
+      },
+      reference: `${licenceNumber}`,
+      emailReplyToId: NOTIFY_REPLY_EMAIL_LICENSING_NATURE_SCOT
+    });
+  }
+};
+
+export const EmailService = {sendReturnEmailUsedLicence, sendReturnEmailNotUsedLicence, sendLoginEmail};
