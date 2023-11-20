@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "38a120aa-7f63-467e-93c2-bcaa79dfcc0a",
+		"_postman_id": "877c54a7-8ca4-481b-8f57-82bb88fd0cee",
 		"name": "v2-standard-forestry-operations-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3784343"
+		"_exporter_id": "8799100"
 	},
 	"item": [
 		{
@@ -747,7 +747,7 @@
 							"    pm.expect(jsonData).to.have.property('emailAddress');",
 							"    pm.expect(jsonData).to.have.property('Setts');",
 							"",
-							"    pm.expect(jsonData.Setts.length).to.eql(2);",
+							"    pm.expect(jsonData.Setts.length).to.eql(3);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -1109,9 +1109,9 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test('Status code is 404 Not Found', function () {\r",
-							"    pm.response.to.have.status(404);\r",
-							"    pm.response.to.have.status('Not Found');\r",
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
 							"});\r",
 							""
 						],

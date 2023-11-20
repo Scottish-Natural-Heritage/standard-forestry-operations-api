@@ -1,11 +1,11 @@
 import process from 'process';
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import NotifyClient from 'notifications-node-client';
 import ApplicationController, {cleanPatchInput} from './controllers/v2/application.js';
 import Sett from './controllers/v2/sett.js';
 import {ReturnsController} from './controllers/v2/returns.js';
 import Note from './controllers/v2/note.js';
+import ScheduledController from './controllers/v2/scheduled.js';
 import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
 import {EmailService} from './services/email-service.js';
@@ -65,16 +65,9 @@ v2router.get('/applications/:id', async (request, response) => {
  * @returns {Date} the calculated expiry date.
  */
 const calculateExpiryDate = () => {
-  let expiryDate;
   const currentYear = new Date().getFullYear();
 
-  if (new Date().getMonth() + 1 < 7) {
-    expiryDate = new Date(currentYear, 6, 1);
-  } else if (new Date().getMonth() + 1 < 12) {
-    expiryDate = new Date(currentYear, 10, 30);
-  } else {
-    expiryDate = new Date(currentYear + 1, 10, 30);
-  }
+  const expiryDate = new Date().getMonth() + 1 < 12 ? new Date(currentYear, 10, 30) : new Date(currentYear + 1, 10, 30);
 
   return expiryDate;
 };
@@ -619,6 +612,64 @@ v2router.post('/applications/:id/resend', async (request, response) => {
   }
 });
 
+/**
+ * Send out a reminder email on licences that have expired with no returns submitted.
+ */
+v2router.post('/expired-no-return-reminder', async (request, response) => {
+  // We need to know the date and year.
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+
+  try {
+    const applications = await ScheduledController.findAll();
+
+    // Filter the applications so only those that have expired (expiryDate is previous year)
+    // and have no returns (old or new) are left.
+    const filteredApplications = applications.filter((application) => {
+      return (
+        new Date(application.expiryDate).getFullYear() === currentYear - 1 &&
+        application.Returns.length === 0 &&
+        application.OldReturns.length === 0
+      );
+    });
+
+    // Try to send out reminder emails.
+    const emailsSent = await ScheduledController.sendExpiredReturnReminder(filteredApplications);
+
+    return response.status(200).send({message: `Sent ${emailsSent} expired licence with no return reminder emails.`});
+  } catch (error) {
+    jsonConsoleLogger.error(unErrorJson(error));
+    return response.status(500).send({error});
+  }
+});
+
+/**
+ * Send out a reminder email on licences that are due to expire soon.
+ */
+v2router.post('/soon-to-expire-return-reminder', async (request, response) => {
+  // We need to know the date.
+  const currentDate = new Date();
+
+  try {
+    const applications = await ScheduledController.findAll();
+
+    // Filter the applications so only those that have not yet expired are left.
+    const filteredApplications = applications.filter((application) => {
+      return application.expiryDate > currentDate;
+    });
+
+    // Try to send out reminder emails.
+    const emailsSent = await ScheduledController.sendSoonExpiredReturnReminder(filteredApplications);
+
+    return response
+      .status(200)
+      .send({message: `Sent ${emailsSent} soon to expire licence with no return reminder emails.`});
+  } catch (error) {
+    jsonConsoleLogger.error(unErrorJson(error));
+    return response.status(500).send({error});
+  }
+});
+
 v2router.get('/applications/:id/login', async (request, response) => {
   // Try to parse the incoming ID to make sure it's really a number.
   const existingId = Number(request.params.id);
@@ -659,13 +710,18 @@ v2router.get('/applications/:id/login', async (request, response) => {
   // As long as we've managed to build a login link, send the visitor an email
   // with that link included.
   if (loginLink !== undefined) {
-    await sendLoginEmail(
-      config.notifyApiKey,
-      existingApplication.emailAddress,
-      loginLink,
-      existingId,
-      existingApplication.fullName
-    );
+    try {
+      await EmailService.sendLoginEmail(
+        existingApplication.emailAddress,
+        loginLink,
+        existingId,
+        existingApplication.fullName
+      );
+    } catch (error) {
+      console.error('Notify service returned an error:', error.message);
+      // Return 500 Internal Server error.
+      return response.status(500).send();
+    }
   }
 
   // If we're in production, no matter what, tell the API consumer that everything went well.
@@ -699,32 +755,6 @@ v2router.get('/public-key', async (request, response) => response.status(200).se
  */
 const buildToken = (jwtPrivateKey, id) =>
   jwt.sign({}, jwtPrivateKey, {subject: `${id}`, algorithm: 'ES256', expiresIn: '30m', noTimestamp: true});
-
-/**
- * Send an email to the visitor that contains a link which allows them to log in
- * to the rest of the meat bait return system.
- *
- * @param {string} notifyApiKey API key for sending emails.
- * @param {string} emailAddress where to send the log in email.
- * @param {string} loginLink link to log in via.
- * @param {string} existingId SFO licence number for notify's records.
- * @param {string} fullName The name of the licence holder.
- */
-const sendLoginEmail = async (notifyApiKey, emailAddress, loginLink, licenceNumber, fullName) => {
-  if (notifyApiKey) {
-    const notifyClient = new NotifyClient.NotifyClient(notifyApiKey);
-
-    await notifyClient.sendEmail('f727cb31-6259-4ee3-a593-6838d1399618', emailAddress, {
-      personalisation: {
-        loginLink,
-        licenceNumber,
-        fullName
-      },
-      reference: `${licenceNumber}`,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd'
-    });
-  }
-};
 
 /**
  * Test if two postcodes match.

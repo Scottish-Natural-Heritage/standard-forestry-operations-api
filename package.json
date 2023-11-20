@@ -17,7 +17,7 @@
     "test": "start-server-and-test start http://localhost:3003/standard-forestry-operations-api/v1/health nm:run"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=20.0.0"
   },
   "license": "MIT",
   "dependencies": {
@@ -33,10 +33,12 @@
     "sequelize": "^6.6.2",
     "sequelize-cli": "^6.2.0",
     "sqlite3": "^5.0.2",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "node-cron": "^3.0.2",
+    "axios": "^1.3.1"
   },
   "devDependencies": {
-    "newman": "^5.2.3",
+    "newman": "^6.0.0",
     "nodemon": "^2.0.18",
     "prettier": "^2.3.1",
     "start-server-and-test": "^1.12.5",
