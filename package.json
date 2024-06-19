@@ -7,6 +7,7 @@
   "type": "module",
   "scripts": {
     "lint": "xo",
+    "lint:code:fix": "xo --fix",
     "premigrations": "npx sequelize-cli db:migrate --env preMigrations --migrations-path util/db/pre-migrations >/dev/null",
     "migrations": "npx sequelize-cli db:migrate --env database >/dev/null",
     "prestart": "npm run migrations",
@@ -21,11 +22,13 @@
   },
   "license": "MIT",
   "dependencies": {
+    "axios": "^1.7.2",
     "express": "^4.18.1",
-    "morgan": "^1.10.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.2",
     "jwk-to-pem": "^2.0.5",
+    "morgan": "^1.10.0",
     "naturescot-utils": "^1.2.0",
+    "node-cron": "^3.0.2",
     "notifications-node-client": "^8.1.0",
     "on-finished": "^2.3.0",
     "pg": "^8.6.0",
@@ -33,16 +36,14 @@
     "sequelize": "^6.6.2",
     "sequelize-cli": "^6.2.0",
     "sqlite3": "^5.0.2",
-    "winston": "^3.3.3",
-    "node-cron": "^3.0.2",
-    "axios": "^1.7.2"
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "newman": "^6.0.0",
     "nodemon": "^3.1.0",
     "prettier": "^2.3.1",
     "start-server-and-test": "^2.0.3",
-    "xo": "^0.50.0"
+    "xo": "^0.58.0"
   },
   "xo": {
     "space": 2,
@@ -51,7 +52,8 @@
       "unicorn/prefer-module": 0,
       "unicorn/prefer-node-protocol": 0,
       "unicorn/prevent-abbreviations": [
-        "error", {
+        "error",
+        {
           "replacements": {
             "application": {
               "app": false
