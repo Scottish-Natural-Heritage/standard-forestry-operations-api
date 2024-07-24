@@ -9,7 +9,6 @@ import ScheduledController from './controllers/v2/scheduled.js';
 import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
 import config from './config/app.js';
 import {EmailService} from './services/email-service.js';
-
 import jwk from './config/jwk.js';
 
 const v2router = express.Router();
@@ -717,8 +716,8 @@ const postcodesMatch = (postcode1, postcode2) => {
   const notAlphaNumber = /[^a-z\d]/gi;
 
   // Clean our two strings to the 'same' representation.
-  const cleanPostcode1 = postcode1.replace(notAlphaNumber, '').toLocaleLowerCase();
-  const cleanPostcode2 = postcode2.replace(notAlphaNumber, '').toLocaleLowerCase();
+  const cleanPostcode1 = postcode1.replaceAll(notAlphaNumber, '').toLocaleLowerCase();
+  const cleanPostcode2 = postcode2.replaceAll(notAlphaNumber, '').toLocaleLowerCase();
 
   // Check if they match, now that they're clean.
   return cleanPostcode1 === cleanPostcode2;

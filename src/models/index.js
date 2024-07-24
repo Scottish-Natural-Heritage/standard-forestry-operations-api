@@ -1,6 +1,5 @@
 import Sequelize from 'sequelize';
 import databaseConfig from '../config/database.js';
-
 import Application from './application.js';
 import Sett from './sett.js';
 import ApplyOther from './apply-other.js';
