@@ -55,9 +55,7 @@ const sendReturnEmailUsedLicence = async (application, newReturn, settNames, upl
         startDate: createDisplayDate(new Date(newReturn.startDate)),
         endDate: createDisplayDate(new Date(newReturn.endDate)),
         compliance: newReturn.compliance ? 'Yes' : 'No',
-        moreDetails: newReturn.complianceDetails
-          ? newReturn.complianceDetails
-          : 'No additional compliance details provided.',
+        moreDetails: newReturn?.complianceDetails ?? 'No additional compliance details provided.',
         photosDetails: createDisplayablePhotoDetails(uploadDetails, settNames)
       },
       reference: `NS-SFO-${application.id}`,
