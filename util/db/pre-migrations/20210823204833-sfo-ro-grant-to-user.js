@@ -18,6 +18,10 @@ if (process.env.NODE_ENV === 'production') {
         type: Sequelize.QueryTypes.RAW
       });
 
+      await queryInterface.sequelize.query('grant sfo to licensing;', {
+        type: Sequelize.QueryTypes.RAW
+      });
+
       await queryInterface.sequelize.query(
         'alter default privileges for role licensing, sfo in schema sfo grant select on tables to rosfo;',
         {
@@ -32,6 +36,10 @@ if (process.env.NODE_ENV === 'production') {
           type: Sequelize.QueryTypes.RAW
         }
       );
+
+      await queryInterface.sequelize.query('revoke sfo from licensing;', {
+        type: Sequelize.QueryTypes.RAW
+      });
 
       await queryInterface.sequelize.query('revoke select on schema sfo from rosfo;', {
         type: Sequelize.QueryTypes.RAW
