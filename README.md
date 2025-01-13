@@ -1,6 +1,6 @@
 # standard-forestry-operations-api
 
-Apply for a Standard Forestry Operations licence
+Apply for a Standard Forestry Operations licence.
 
 ## Develop
 
