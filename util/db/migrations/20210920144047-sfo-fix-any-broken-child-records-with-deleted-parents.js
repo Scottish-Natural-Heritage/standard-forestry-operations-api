@@ -3,7 +3,7 @@ const process = require('process');
 
 /* eslint-disable unicorn/no-useless-promise-resolve-reject */
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV !== 'all') {
   module.exports = {
     async up(queryInterface, Sequelize) {
       await queryInterface.sequelize.query(

@@ -3,7 +3,7 @@ const process = require('process');
 
 // The pre-migrations only make sense when running inside the production docker
 // environment. They are not required for the development SQLite DB.
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV !== 'all') {
   module.exports = {
     async up(queryInterface, Sequelize) {
       // Allow our app's user to connect to the database.

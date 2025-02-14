@@ -1,7 +1,7 @@
 'use strict';
 const process = require('process');
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV !== 'all') {
   module.exports = {
     async up(queryInterface, Sequelize) {
       await queryInterface.sequelize.query('CREATE VIEW sfo_Applications AS SELECT * FROM sfo."Applications";', {
