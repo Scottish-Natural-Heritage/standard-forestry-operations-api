@@ -1,20 +1,20 @@
 import process from 'process';
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import ApplicationController, {cleanPatchInput} from './controllers/v2/application.js';
+import ApplicationController, { cleanPatchInput } from './controllers/v2/application.js';
 import Sett from './controllers/v2/sett.js';
-import {ReturnsController} from './controllers/v2/returns.js';
+import { ReturnsController } from './controllers/v2/returns.js';
 import Note from './controllers/v2/note.js';
 import ScheduledController from './controllers/v2/scheduled.js';
-import jsonConsoleLogger, {unErrorJson} from './json-console-logger.js';
+import jsonConsoleLogger, { unErrorJson } from './json-console-logger.js';
 import config from './config/app.js';
-import {EmailService} from './services/email-service.js';
+import { EmailService } from './services/email-service.js';
 import jwk from './config/jwk.js';
 
 const v2router = express.Router();
 
 v2router.get('/health', async (request, response) => {
-  response.status(200).send({message: 'OK'});
+  response.status(200).send({ message: 'OK' });
 });
 
 /**
@@ -25,13 +25,13 @@ v2router.get('/applications', async (request, response) => {
     const applications = await ApplicationController.findAll();
 
     if (applications === undefined || applications === null) {
-      return response.status(404).send({message: `No applications found.`});
+      return response.status(404).send({ message: `No applications found.` });
     }
 
     return response.status(200).send(applications);
   } catch (error) {
     jsonConsoleLogger.error(unErrorJson(error));
-    return response.status(500).send({error});
+    return response.status(500).send({ error });
   }
 });
 
@@ -42,19 +42,19 @@ v2router.get('/applications/:id', async (request, response) => {
   try {
     const existingId = Number(request.params.id);
     if (Number.isNaN(existingId)) {
-      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+      return response.status(404).send({ message: `Application ${request.params.id} not valid.` });
     }
 
     const application = await ApplicationController.findOne(existingId);
 
     if (application === undefined || application === null) {
-      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+      return response.status(404).send({ message: `Application ${request.params.id} not valid.` });
     }
 
     return response.status(200).send(application);
   } catch (error) {
     jsonConsoleLogger.error(unErrorJson(error));
-    return response.status(500).send({error});
+    return response.status(500).send({ error });
   }
 });
 
@@ -106,17 +106,17 @@ const cleanAppInput = (body) => {
       body.setts === undefined
         ? undefined
         : body.setts.map((sett) => {
-            return {
-              // The number is just copied across.
-              entrances: sett.entrances,
+          return {
+            // The number is just copied across.
+            entrances: sett.entrances,
 
-              // The three strings are trimmed then copied.
-              id: sett.id === undefined ? undefined : sett.id.trim(),
-              gridReference: sett.gridReference === undefined ? undefined : sett.gridReference.trim(),
-              createdByLicensingOfficer:
-                sett.createdByLicensingOfficer === undefined ? undefined : sett.createdByLicensingOfficer.trim()
-            };
-          })
+            // The three strings are trimmed then copied.
+            id: sett.id === undefined ? undefined : sett.id.trim(),
+            gridReference: sett.gridReference === undefined ? undefined : sett.gridReference.trim(),
+            createdByLicensingOfficer:
+              sett.createdByLicensingOfficer === undefined ? undefined : sett.createdByLicensingOfficer.trim()
+          };
+        })
   };
 };
 
@@ -127,8 +127,7 @@ v2router.post('/applications', async (request, response) => {
   try {
     // Create baseUrl.
     const baseUrl = new URL(
-      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
-        request.originalUrl.endsWith('/') ? '' : '/'
+      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${request.originalUrl.endsWith('/') ? '' : '/'
       }`
     );
 
@@ -140,13 +139,13 @@ v2router.post('/applications', async (request, response) => {
 
     // If we were not able to create the new application then we need to respond with a 500 error.
     if (newId === undefined) {
-      return response.status(500).send({message: `Could not create application.`});
+      return response.status(500).send({ message: `Could not create application.` });
     }
 
     // Return the new location of the newly created application.
     return response.status(201).location(new URL(newId, baseUrl)).send();
   } catch (error) {
-    return response.status(500).send({message: `Could not create application. in final catch ${error.message}`});
+    return response.status(500).send({ message: `Could not create application. in final catch ${error.message}` });
   }
 });
 
@@ -177,12 +176,11 @@ v2router.post('/applications/:id/setts', async (request, response) => {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
     if (Number.isNaN(existingId)) {
-      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+      return response.status(404).send({ message: `Application ${request.params.id} not valid.` });
     }
 
     const baseUrl = new URL(
-      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
-        request.originalUrl.endsWith('/') ? '' : '/'
+      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${request.originalUrl.endsWith('/') ? '' : '/'
       }`
     );
 
@@ -193,12 +191,12 @@ v2router.post('/applications/:id/setts', async (request, response) => {
     const newId = await Sett.create(existingId, cleanObject);
 
     if (newId === undefined) {
-      return response.status(500).send({message: `Could not create sett for license ${existingId}.`});
+      return response.status(500).send({ message: `Could not create sett for license ${existingId}.` });
     }
 
     return response.status(201).location(new URL(newId, baseUrl)).send();
   } catch (error) {
-    return response.status(500).send({error});
+    return response.status(500).send({ error });
   }
 });
 
@@ -227,19 +225,18 @@ v2router.post('/applications/:id/notes', async (request, response) => {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
     if (Number.isNaN(existingId)) {
-      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+      return response.status(404).send({ message: `Application ${request.params.id} not valid.` });
     }
 
     const baseUrl = new URL(
-      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
-        request.originalUrl.endsWith('/') ? '' : '/'
+      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${request.originalUrl.endsWith('/') ? '' : '/'
       }`
     );
 
     // Check if there's a application allocated at the specified ID.
     const existingApplication = await ApplicationController.findOne(existingId);
     if (existingApplication === undefined || existingApplication === null) {
-      return response.status(404).send({message: `application ${existingId} not allocated.`});
+      return response.status(404).send({ message: `application ${existingId} not allocated.` });
     }
 
     // Clean up the user's input before we store it in the database.
@@ -249,12 +246,12 @@ v2router.post('/applications/:id/notes', async (request, response) => {
     const newNote = await Note.create(existingId, cleanObject);
 
     if (newNote === undefined) {
-      return response.status(500).send({message: `Could not create note for licence ${existingId}.`});
+      return response.status(500).send({ message: `Could not create note for licence ${existingId}.` });
     }
 
     return response.status(201).location(new URL(newNote, baseUrl)).send();
   } catch (error) {
-    return response.status(500).send({error});
+    return response.status(500).send({ error });
   }
 });
 
@@ -291,7 +288,7 @@ v2router.post('/applications/:id/returns', async (request, response) => {
     // Try to parse the incoming ID to make sure it's really a number.
     const licenceApplicationId = Number(request.params.id);
     if (Number.isNaN(licenceApplicationId)) {
-      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+      return response.status(404).send({ message: `Application ${request.params.id} not valid.` });
     }
 
     // Clean up the user's input before we store it in the database.
@@ -304,7 +301,7 @@ v2router.post('/applications/:id/returns', async (request, response) => {
     let newReturnId;
     if (submittedReturn.usedLicence) {
       // If the user used the licence, get the sett and photos data from the request.
-      const {settIds, settNames, uploadedFileData} = request.body;
+      const { settIds, settNames, uploadedFileData } = request.body;
 
       // Insert return and sett photos data into database and return the ID of the new return.
       try {
@@ -312,7 +309,7 @@ v2router.post('/applications/:id/returns', async (request, response) => {
       } catch (error) {
         // Log error and bail out.
         jsonConsoleLogger.error(error);
-        return response.status(500).send({message: `Could not create return for license ${licenceApplicationId}.`});
+        return response.status(500).send({ message: `Could not create return for license ${licenceApplicationId}.` });
       }
 
       // Send out the success email.
@@ -342,7 +339,7 @@ v2router.post('/applications/:id/returns', async (request, response) => {
       } catch (error) {
         // Log error and bail out.
         jsonConsoleLogger.error(error);
-        return response.status(500).send({message: `Could not create return for license ${licenceApplicationId}.`});
+        return response.status(500).send({ message: `Could not create return for license ${licenceApplicationId}.` });
       }
 
       // Send out the success email.
@@ -357,27 +354,26 @@ v2router.post('/applications/:id/returns', async (request, response) => {
 
     // If we were unable to create the new return then we need to send back a suitable response.
     if (newReturnId === undefined) {
-      return response.status(500).send({message: `Could not create return for license ${licenceApplicationId}.`});
+      return response.status(500).send({ message: `Could not create return for license ${licenceApplicationId}.` });
     }
 
     // Create baseUrl.
     const baseUrl = new URL(
-      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${
-        request.originalUrl.endsWith('/') ? '' : '/'
+      `${request.protocol}://${request.hostname}:${config.port}${request.originalUrl}${request.originalUrl.endsWith('/') ? '' : '/'
       }`
     );
 
     // Return 201 created and add the location of the new return to the response headers.
     return response.status(201).location(new URL(newReturnId, baseUrl)).send();
   } catch (error) {
-    return response.status(500).send({error});
+    return response.status(500).send({ error });
   }
 });
 
 // Allow an API consumer to save a application against an allocated but un-assigned application number.
 // No PUT endpoint is required as we now use a PATCH method of updating details.
 v2router.put('/applications/:id', async (request, response) => {
-  return response.status(501).send({message: 'Not implemented.'});
+  return response.status(501).send({ message: 'Not implemented.' });
 });
 
 /**
@@ -408,13 +404,13 @@ v2router.patch('/applications/:id', async (request, response) => {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
     if (Number.isNaN(existingId)) {
-      return response.status(404).send({message: `application ${request.params.id} not valid.`});
+      return response.status(404).send({ message: `application ${request.params.id} not valid.` });
     }
 
     // Check if there's a application allocated at the specified ID.
     const existingApplication = await ApplicationController.findOne(existingId);
     if (existingApplication === undefined || existingApplication === null) {
-      return response.status(404).send({message: `application ${existingId} not allocated.`});
+      return response.status(404).send({ message: `application ${existingId} not allocated.` });
     }
 
     // Clean up the user's input before we store it in the database.
@@ -422,7 +418,7 @@ v2router.patch('/applications/:id', async (request, response) => {
     try {
       cleanObject = cleanPatchInput(request.body);
     } catch (error) {
-      return response.status(400).send({message: `Could not update application ${existingId}. ${error.message}`});
+      return response.status(400).send({ message: `Could not update application ${existingId}. ${error.message}` });
     }
 
     // Update the application in the database with our client's values.
@@ -430,14 +426,14 @@ v2router.patch('/applications/:id', async (request, response) => {
 
     // If they're not successful, send a 500 error.
     if (updatedApplication === undefined) {
-      return response.status(500).send({message: `Could not update application ${existingId}.`});
+      return response.status(500).send({ message: `Could not update application ${existingId}.` });
     }
 
     // If they are, send back the updated fields.
     return response.status(200).send(updatedApplication);
   } catch (error) {
     // When anything else goes wrong send the error to the client.
-    return response.status(500).send({error});
+    return response.status(500).send({ error });
   }
 });
 
@@ -449,7 +445,7 @@ v2router.delete('/applications/:id', async (request, response) => {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
     if (Number.isNaN(existingId)) {
-      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+      return response.status(404).send({ message: `Application ${request.params.id} not valid.` });
     }
 
     // Clean up the user's input before we store it in the database.
@@ -459,14 +455,14 @@ v2router.delete('/applications/:id', async (request, response) => {
 
     // If we were unable to delete the application we need to return a 500 with a suitable error message.
     if (deleteApplication === false) {
-      return response.status(500).send({message: `Could not delete Application ${existingId}.`});
+      return response.status(500).send({ message: `Could not delete Application ${existingId}.` });
     }
 
     // If we were able to delete the application we need to return a 200.
     return response.status(200).send();
   } catch (error) {
     // If anything goes wrong (such as a validation error), tell the client.
-    return response.status(500).send({error});
+    return response.status(500).send({ error });
   }
 });
 
@@ -474,7 +470,7 @@ v2router.delete('/applications/:id', async (request, response) => {
 // behalf of others service is up and running.
 // this may need done in the future but currently we cant apply on behalf of.
 v2router.post('/apply-other', async (request, response) => {
-  return response.status(501).send({message: 'Not implemented.'});
+  return response.status(501).send({ message: 'Not implemented.' });
 });
 
 /**
@@ -485,27 +481,27 @@ v2router.delete('/applications/:id/setts/:settId', async (request, response) => 
     // Try to parse the incoming application ID to make sure it's really a number.
     const existingId = Number(request.params.id);
     if (Number.isNaN(existingId)) {
-      return response.status(404).send({message: `Application ${request.params.id} not valid.`});
+      return response.status(404).send({ message: `Application ${request.params.id} not valid.` });
     }
 
     // Try to parse the incoming Sett ID to make sure it's really a number.
     const existingSettId = Number(request.params.settId);
     if (Number.isNaN(existingSettId)) {
-      return response.status(404).send({message: `Sett ${request.params.settId} not valid.`});
+      return response.status(404).send({ message: `Sett ${request.params.settId} not valid.` });
     }
 
     // Attempt to delete the sett.
     const deleteSett = await Sett.delete(existingSettId);
     // If we were unable to delete the sett we need to return a 500 with a suitable error message.
     if (deleteSett === false) {
-      return response.status(500).send({message: `Could not delete Sett ${existingSettId}.`});
+      return response.status(500).send({ message: `Could not delete Sett ${existingSettId}.` });
     }
 
     // If we were able to delete the sett we need to return a 200.
     return response.status(200).send();
   } catch (error) {
     // If anything goes wrong (such as a validation error), tell the client.
-    return response.status(500).send({error});
+    return response.status(500).send({ error });
   }
 });
 
@@ -517,13 +513,13 @@ v2router.get('/setts', async (request, response) => {
     const setts = await Sett.findAll();
 
     if (setts === undefined || setts === null) {
-      return response.status(404).send({message: `No setts found.`});
+      return response.status(404).send({ message: `No setts found.` });
     }
 
     return response.status(200).send(setts);
   } catch (error) {
     jsonConsoleLogger.error(unErrorJson(error));
-    return response.status(500).send({error});
+    return response.status(500).send({ error });
   }
 });
 
@@ -535,13 +531,13 @@ v2router.post('/applications/:id/resend', async (request, response) => {
     // Try to parse the incoming ID to make sure it's really a number.
     const existingId = Number(request.params.id);
     if (Number.isNaN(existingId)) {
-      return response.status(404).send({message: `application ${request.params.id} not valid.`});
+      return response.status(404).send({ message: `application ${request.params.id} not valid.` });
     }
 
     // Check if there's a application allocated at the specified ID.
     const existingApplication = await ApplicationController.findOne(existingId);
     if (existingApplication === undefined || existingApplication === null) {
-      return response.status(404).send({message: `application ${existingId} not allocated.`});
+      return response.status(404).send({ message: `application ${existingId} not allocated.` });
     }
 
     // Call the application's resend function to resend the licence email.
@@ -551,7 +547,7 @@ v2router.post('/applications/:id/resend', async (request, response) => {
     return response.status(200).send(result);
   } catch (error) {
     jsonConsoleLogger.error(unErrorJson(error));
-    return response.status(500).send({error});
+    return response.status(500).send({ error });
   }
 });
 
@@ -579,10 +575,10 @@ v2router.post('/expired-no-return-reminder', async (request, response) => {
     // Try to send out reminder emails.
     const emailsSent = await ScheduledController.sendExpiredReturnReminder(filteredApplications);
 
-    return response.status(200).send({message: `Sent ${emailsSent} expired licence with no return reminder emails.`});
+    return response.status(200).send({ message: `Sent ${emailsSent} expired licence with no return reminder emails.` });
   } catch (error) {
     jsonConsoleLogger.error(unErrorJson(error));
-    return response.status(500).send({error});
+    return response.status(500).send({ error });
   }
 });
 
@@ -606,10 +602,10 @@ v2router.post('/soon-to-expire-return-reminder', async (request, response) => {
 
     return response
       .status(200)
-      .send({message: `Sent ${emailsSent} soon to expire licence with no return reminder emails.`});
+      .send({ message: `Sent ${emailsSent} soon to expire licence with no return reminder emails.` });
   } catch (error) {
     jsonConsoleLogger.error(unErrorJson(error));
-    return response.status(500).send({error});
+    return response.status(500).send({ error });
   }
 });
 
@@ -623,7 +619,7 @@ v2router.get('/applications/:id/login', async (request, response) => {
   const idNotFound = existingApplication === undefined || existingApplication === null;
 
   // Check that the visitor's given us a postcode.
-  const {postcode} = request.query;
+  const { postcode } = request.query;
   const postcodeInvalid = postcode === undefined;
 
   // Check that the visitor's supplied postcode matches their stored one.
@@ -633,7 +629,7 @@ v2router.get('/applications/:id/login', async (request, response) => {
     !postcodesMatch(existingApplication.addressPostcode, postcode);
 
   // Check that the visitor's given us a base url.
-  const {redirectBaseUrl} = request.query;
+  const { redirectBaseUrl } = request.query;
   const urlInvalid = redirectBaseUrl === undefined || redirectBaseUrl === null;
 
   // As long as we're happy that the visitor's provided use with valid
@@ -697,7 +693,7 @@ v2router.get('/public-key', async (request, response) => response.status(200).se
  * @returns {string} a signed JWT
  */
 const buildToken = (jwtPrivateKey, id) =>
-  jwt.sign({}, jwtPrivateKey, {subject: `${id}`, algorithm: 'ES256', expiresIn: '30m', noTimestamp: true});
+  jwt.sign({}, jwtPrivateKey, { subject: `${id}`, algorithm: 'ES256', expiresIn: '30m', noTimestamp: true });
 
 /**
  * Test if two postcodes match.
@@ -723,4 +719,4 @@ const postcodesMatch = (postcode1, postcode2) => {
   return cleanPostcode1 === cleanPostcode2;
 };
 
-export {v2router as default};
+export { v2router as default };
