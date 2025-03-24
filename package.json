@@ -14,7 +14,6 @@
     "start": "node --no-warnings src/server.js",
     "dev": "SFO_API_PORT=3999 nodemon --exec \"npm run lint && npm run start\" -e js",
     "nm:run": "newman run tests/v2-standard-forestry-operations-api.postman_collection.json",
-    "pretest": "rm .development.db || true",
     "test": "start-server-and-test start http://localhost:3003/standard-forestry-operations-api/v1/health nm:run",
     "local:start-postgres": "docker start sfo-database || ( docker run --name sfo-database -e POSTGRES_USER=licensing -e POSTGRES_PASSWORD=${LICENSING_DB_PASS-override_this_value} -p 5432:5432 --restart=always -d postgres:alpine; echo Created new container. )",
     "local:stop-postgres": "docker stop sfo-database",
