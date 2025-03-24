@@ -1,8 +1,6 @@
 'use strict';
-const process = require('process');
 const config = require('../../../src/config/database.js').ssDatabase;
 
-if (process.env.NODE_ENV === 'production') {
   module.exports = {
     async up(queryInterface, Sequelize) {
       await queryInterface.sequelize.query('ALTER ROLE rosfo WITH PASSWORD :roSfoPassword;', {
@@ -27,13 +25,3 @@ if (process.env.NODE_ENV === 'production') {
       });
     }
   };
-} else {
-  module.exports = {
-    up() {
-      return Promise.resolve();
-    },
-    down() {
-      return Promise.resolve();
-    }
-  };
-}

@@ -1,7 +1,5 @@
-const process = require('process');
 const config = require('./app');
 
-if (process.env.NODE_ENV === 'production') {
   module.exports = {
     preMigrations: {
       username: 'licensing',
@@ -31,17 +29,3 @@ if (process.env.NODE_ENV === 'production') {
       logging: false
     }
   };
-} else {
-  module.exports = {
-    preMigrations: {
-      dialect: 'sqlite',
-      storage: './.development.db',
-      logging: false
-    },
-    database: {
-      dialect: 'sqlite',
-      storage: './.development.db',
-      logging: false
-    }
-  };
-}
