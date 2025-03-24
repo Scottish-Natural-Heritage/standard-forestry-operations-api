@@ -12,6 +12,17 @@ jobs:
     name: Build and Push the Image
     runs-on: ubuntu-latest
 
+    # See: https://docs.github.com/en/actions/use-cases-and-examples/using-containerized-services/about-service-containers
+    services:
+      licensing-database:
+        image: postgres:alpine
+        env:
+          POSTGRES_USER: licensing
+          POSTGRES_PASSWORD: licensing
+          POSTGRES_DB: licensing
+        ports:
+          - 5432:5432
+
     steps:
       - uses: actions/checkout@v2
 
@@ -37,6 +48,7 @@ jobs:
       - name: Check the integration tests
         env:
           SFO_NOTIFY_API_KEY: ${{ secrets.SFO_NOTIFY_TEST_KEY }}
+          LICENSING_DB_PASS: licensing
         run: |
           npm run test
 
