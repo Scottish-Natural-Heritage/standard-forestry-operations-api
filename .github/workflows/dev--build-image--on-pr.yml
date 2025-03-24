@@ -48,6 +48,7 @@ jobs:
       - name: Check the integration tests
         env:
           SFO_NOTIFY_API_KEY: ${{ secrets.SFO_NOTIFY_TEST_KEY }}
+          LICENSING_DB_PASS: licensing
         run: |
           npm run test
 
