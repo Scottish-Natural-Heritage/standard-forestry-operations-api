@@ -8,7 +8,7 @@ import {
   LICENSING_REPLY_TO_NOTIFY_EMAIL_ID
 } from '../../notify-template-ids.js';
 
-const {Application, Returns, Revocation, OldReturns} = database;
+const {Application, Returns, Revocation, OldReturns, Note} = database;
 
 /**
  * Send reminder email to applicant informing them their licence
@@ -106,6 +106,65 @@ const ScheduledController = {
     }
 
     return sentCount;
+  },
+
+  /**
+   * Retrieve all applications that have not yet had their PII redacted,
+   * including soft-deleted (cancelled/revoked) records and their Revocation.
+   *
+   * @returns {Sequelize.Model[]} Applications pending retention processing.
+   */
+  async findApplicationsForRetention() {
+    return Application.findAll({
+      where: {piiRedactedAt: null},
+      include: [{model: Revocation, paranoid: false}],
+      paranoid: false
+    });
+  },
+
+  /**
+   * Apply the retention policy to the supplied applications by redacting PII
+   * fields and hard-deleting associated Notes, Returns and OldReturns.
+   *
+   * @param {Sequelize.Model[]} applications Applications whose retention period has expired.
+   * @returns {number} The number of applications processed.
+   */
+  async applyRetentionPolicy(applications) {
+    let processedCount = 0;
+
+    for (const application of applications) {
+      // eslint-disable-next-line no-await-in-loop
+      await database.sequelize.transaction(async (t) => {
+        // Redact PII on the Application row (addressPostcode is retained per spec).
+        await Application.update(
+          {
+            fullName: null,
+            companyOrganisation: null,
+            emailAddress: null,
+            phoneNumber: null,
+            addressLine1: null,
+            addressLine2: null,
+            addressTown: null,
+            addressCounty: null,
+            piiRedactedAt: new Date()
+          },
+          {where: {id: application.id}, paranoid: false, validate: false, transaction: t}
+        );
+
+        // Hard-delete officer notes.
+        await Note.destroy({where: {ApplicationId: application.id}, force: true, transaction: t});
+
+        // Hard-delete Returns history.
+        await Returns.destroy({where: {ApplicationId: application.id}, force: true, transaction: t});
+
+        // Hard-delete OldReturns history.
+        await OldReturns.destroy({where: {ApplicationId: application.id}, force: true, transaction: t});
+      });
+
+      processedCount++;
+    }
+
+    return processedCount;
   }
 };
 
