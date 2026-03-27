@@ -36,6 +36,13 @@ const initScheduledJobs = () => {
       }
     }
 
+    // Apply data retention policy daily.
+    try {
+      await axios.post(`http://localhost:${config.port}${config.pathPrefix}/v2/apply-retention-policy`);
+    } catch (error) {
+      jsonConsoleLogger.error(unErrorJson(error));
+    }
+
     console.log('Ending cron job(s).');
   });
 
