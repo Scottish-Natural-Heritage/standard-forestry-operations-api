@@ -138,11 +138,11 @@ const ScheduledController = {
         // Redact PII on the Application row (addressPostcode is retained per spec).
         await Application.update(
           {
-            fullName: null,
+            fullName: 'No data',
             companyOrganisation: null,
-            emailAddress: null,
-            phoneNumber: null,
-            addressLine1: null,
+            emailAddress: 'No data',
+            phoneNumber: 'No data',
+            addressLine1: 'No data',
             addressLine2: null,
             addressTown: null,
             addressCounty: null,
