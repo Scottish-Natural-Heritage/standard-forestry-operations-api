@@ -45,7 +45,8 @@
     "xo": "^0.58.0"
   },
   "overrides": {
-    "lodash": "^4.17.23"
+    "lodash": "^4.17.23",
+    "picomatch": "^4.0.3"
   },
   "xo": {
     "space": 2,
