@@ -75,6 +75,9 @@ const ApplicationModel = (sequelize) => {
       },
       uprn: {
         type: Sequelize.STRING
+      },
+      piiRedactedAt: {
+        type: Sequelize.DATE
       }
     },
     {

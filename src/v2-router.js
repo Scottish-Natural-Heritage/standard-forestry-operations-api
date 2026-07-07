@@ -613,6 +613,39 @@ v2router.post('/soon-to-expire-return-reminder', async (request, response) => {
   }
 });
 
+/**
+ * Apply the data retention policy: redact PII and delete history/notes for
+ * applications whose 5-year retention window has expired.
+ */
+v2router.post('/apply-retention-policy', async (request, response) => {
+  const fiveYearsAgo = new Date();
+  fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
+
+  try {
+    const applications = await ScheduledController.findApplicationsForRetention();
+
+    // Filter to those whose retention period has actually expired.
+    const applicationsToRedact = applications.filter((application) => {
+      const revocation = application.Revocation;
+      if (revocation) {
+        // Cancelled (isRevoked=false) or revoked (isRevoked=true):
+        // retention window runs from the date of that action.
+        return new Date(revocation.createdAt) <= fiveYearsAgo;
+      }
+
+      // Expired licence: retention window runs from expiry date.
+      return application.expiryDate && new Date(application.expiryDate) <= fiveYearsAgo;
+    });
+
+    const count = await ScheduledController.applyRetentionPolicy(applicationsToRedact);
+
+    return response.status(200).send({message: `Retention policy applied to ${count} application(s).`});
+  } catch (error) {
+    jsonConsoleLogger.error(unErrorJson(error));
+    return response.status(500).send({error});
+  }
+});
+
 v2router.get('/applications/:id/login', async (request, response) => {
   // Try to parse the incoming ID to make sure it's really a number.
   const existingId = Number(request.params.id);
