@@ -103,8 +103,8 @@ const cleanAppInput = (body) => {
 
     // We copy across the setts, cleaning them as we go.
     setts:
-      body.setts === undefined
-        ? undefined
+      !Array.isArray(body.setts)
+        ? []
         : body.setts.map((sett) => {
             return {
               // The number is just copied across.
